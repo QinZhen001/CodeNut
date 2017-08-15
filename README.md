@@ -251,8 +251,11 @@ Date: Tue, 15 Aug 2017 13:54:12 GMT
 必要参数：Json格式：{'target':'x', 'type':'x', 'content':'x'}
 
 > **关键字说明**
+> 
 > target：Python 中的 class 类，目前是：题目 Problem 类 和 用户 User 类（首字母大写）。
+>
 > type：class 类中的属性，即数据库中的字段。
+>
 > content：要搜索的内容。
 
 **示例**
