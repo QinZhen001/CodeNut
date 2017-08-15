@@ -23,7 +23,7 @@
 
 **请求方法**
 
-| 请求 | 后缀 | 说明 | Json格式 |
+| 请求 | 后缀 | 说明 | json格式 |
 | ---- |----:| :------:| :------:|
 | GET | /problems | 列出所有题目 | 无 |
 | GET | /problems?page=xx&per_page=xx | 分页（page：页码，per_page：每页内容数量）                  | 无 |
@@ -144,7 +144,7 @@ Date: Tue, 15 Aug 2017 13:47:23 GMT
 
 **请求方法**
 
-| 请求 | 后缀 | 说明 | Json格式 |
+| 请求 | 后缀 | 说明 | json格式 |
 | ---- |----:| :------:| :------:|
 | GET | /users | 列出所有用户 | 无 |
 | GET | /users?page=xx&per_page=xx | 分页（page：页码，per_page：每页内容数量）                  | 无 |
@@ -248,7 +248,7 @@ Date: Tue, 15 Aug 2017 13:54:12 GMT
 
 ## 搜索
 
-必要参数：Json格式：{'target':'x', 'type':'x', 'content':'x'}
+必要参数：json格式：{"target":"x", "type":"x", "content":"x"}
 
 > **关键字说明**
 > 
