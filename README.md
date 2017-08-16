@@ -4,7 +4,7 @@
 
 本 API 使用 RESTful API 风格编写，详情可以看看阮一峰的文章 [《RESTful API 设计指南》](http://www.ruanyifeng.com/blog/2014/05/restful_api.html)。
 
-网址：[api.txdna.cn](api.txdna.cn)
+网址：[api.txdna.cn](http://api.txdna.cn)
 
 ## 登录方法
 
