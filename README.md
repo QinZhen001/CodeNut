@@ -10,12 +10,32 @@
 
 没有登录时：{"msg": "no", "error": "unauthorized"}，并且 header 头部显示 **403** 错误。
 
-登陆后，使用 **[api.txdna.cn/token](api.txdna.cn/token)** 获取 token。
+登录：向 **[api.txdna.cn/login](api.txdna.cn/login)** 发送 {"token": "xx"} 或 {"username": "xx", "password": "xx"}, 成功会返回 token 和存活时间；失败，则是上面没有登录时的信息。
 
 **示例**
 
 ```bash
-curl -u 2:1 -i http://api.txdna.cn/token
+curl -i -H "Content-Type:application/json" -X POST -d '{"password":"admin","username":"admin"}' http://api.txdna.cn/login 
+HTTP/1.1 200 OK
+Server: nginx/1.13.4
+Date: Wed, 16 Aug 2017 15:16:02 GMT
+Content-Type: application/json
+Content-Length: 162
+Connection: keep-alive
+Access-Control-Allow-Origin: *
+
+{
+  "duration": 86400, # 存活时间，默认24小时有效
+  "token": "eyJpYXQiOjE1MDI4OTY1NjIsImV4cCI6MTUwMjk4Mjk2MiwiYWxnIjoiSFMyNTYifQ.eyJpZCI6MX0.7AfsZGdg0sqAAejPKSDWBkLrekN3kU5NGTk8sTXtU3I"
+}
+```
+
+登陆后：可以使用 **[api.txdna.cn/token](api.txdna.cn/token)** 更新 token。
+
+**示例**
+
+```bash
+curl -u eyJpYXQiOjE1MDI4OTY2MDUsImV4cCI6MTUwMjk4MzAwNSwiYWxnIjoiSFMyNTYifQ.eyJpZCI6MX0.htDV0-LdyQ7_kz7wekQLKbhnOJqdPXqUhRtZTuGRA1s -i http://api.txdna.cn/token
 HTTP/1.0 200 OK
 Content-Type: application/json
 Access-Control-Allow-Origin: *
@@ -24,7 +44,7 @@ Server: Werkzeug/0.12.2 Python/3.5.3
 Date: Wed, 16 Aug 2017 05:45:20 GMT
 
 {
-  "duration": 86400, # 默认24小时有效
+  "duration": 86400,
   "token": "eyJleHAiOjE1MDI5NDg3MjAsImFsZyI6IkhTMjU2IiwiaWF0IjoxNTAyODYyMzIwfQ.eyJpZCI6M30.Tpg-t8hg4qQChQNr1GPfGh8dYSsq7CRez5tSc1l3w-4"
 }
 ```
@@ -54,9 +74,9 @@ Date: Wed, 16 Aug 2017 05:45:20 GMT
 | ---- |----:| :------:| :------:|
 | GET | /problems | 列出所有题目 | 无 |
 | GET | /problems?page=xx&per_page=xx | 分页（page：页码，per_page：每页内容数量）                  | 无 |
-| POST | /problems | 新建题目 | 必要参数{"title":"x", "description":"x", "level":"x", "tag":"x"} |
+| POST | /problems | 新建题目 | 必要参数{"title": "x", "description": "x", "level":"x", "tag":"x"} |
 | GET | /problems/ID | 获取某个指定题目的信息 | 无 |
-| PUT | /problems/ID | 更新某个指定题目的信息 | 除了 id 的任意参数（如{"title":"x", "description":"x"}） |
+| PUT | /problems/ID | 更新某个指定题目的信息 | 除了 id 的任意参数（如{"title": "x", "description": "x"}） |
 | DELETE | /problems/ID | 删除某个题目 | 无 |
 
 **示例**
@@ -175,9 +195,9 @@ Date: Tue, 15 Aug 2017 13:47:23 GMT
 | ---- |----:| :------:| :------:|
 | GET | /users | 列出所有用户 | 无 |
 | GET | /users?page=xx&per_page=xx | 分页（page：页码，per_page：每页内容数量）                  | 无 |
-| POST | /users | 新建用户 | 必要参数{"email":"x", "password":"x", "username":"x"} |
+| POST | /users | 新建用户 | 必要参数 {"email": "x", "password" :"x", "username": "x"} |
 | GET | /users/ID | 获取某个指定用户的信息 | 无 |
-| PUT | /users/ID | 更新某个指定用户的信息 | 除了 id username 的任意参数（如{"realname":"x", "school":"x"}） |
+| PUT | /users/ID | 更新某个指定用户的信息 | 除了 id username 的任意参数（如{"realname": "x", "school": "x"}） |
 | DELETE | /users/ID | 删除某个用户 | 无 |
 
 **分页列出用户**（需要登录）：
@@ -258,7 +278,7 @@ Date: Tue, 15 Aug 2017 13:53:34 GMT
 ```
 > **更新密码**
 >
-> json 格式：{"oldpassword":"旧密码","password":"新密码"}
+> json 格式：{"oldpassword": "旧密码", "password": "新密码"}
 >
 > **注意**：在更新了 **密码** 字段后，一定要自动注销账户！
 
@@ -280,7 +300,7 @@ Date: Tue, 15 Aug 2017 13:54:12 GMT
 
 ## 搜索
 
-必要参数：json格式：{"target":"x", "type":"x", "content":"x"}
+必要参数：json格式 {"target": "x", "type": "x", "content": "x"}
 
 > **关键字说明**
 > 
