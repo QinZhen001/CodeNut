@@ -10,13 +10,12 @@
 
 没有登录时：{"msg": "no", "error": "unauthorized"}，并且 header 头部显示 **403** 错误。
 
-登录：**[api.txdna.cn/login](http://api.txdna.cn/login)**
+| 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
+| :----:|:----:| :------:| :-------------:| :------------:| :------------:|
+| POST | /login | 登录 | {"token": "xx"} 或 {"username": "xx", "password": "xx"} | token 和存活时间 | 没有登录时的信息 |
+| GET/POST | /token | 更新 token | 无 | 同上 | 同上 |
 
-**POST** {"token": "xx"} 或 {"username": "xx", "password": "xx"}
-
-成功：返回 token 和存活时间；失败：则是上面没有登录时的信息。
-
-**示例**
+**login 示例**
 
 ```bash
 curl -i -H "Content-Type:application/json" -X POST -d '{"password":"admin","username":"admin"}' http://api.txdna.cn/login 
@@ -34,9 +33,7 @@ Access-Control-Allow-Origin: *
 }
 ```
 
-登陆后：**[api.txdna.cn/token](http://api.txdna.cn/token)** **GET** 或 **POST** 更新 token。
-
-**示例**
+**token 示例**
 
 ```bash
 curl -u eyJpYXQiOjE1MDI4OTY2MDUsImV4cCI6MTUwMjk4MzAwNSwiYWxnIjoiSFMyNTYifQ.eyJpZCI6MX0.htDV0-LdyQ7_kz7wekQLKbhnOJqdPXqUhRtZTuGRA1s -i http://api.txdna.cn/token
@@ -62,7 +59,7 @@ Date: Wed, 16 Aug 2017 05:45:20 GMT
 **数据库字段**
 
 | 字段        | 类型         | 说明     |
-| ---------- |------------:| :--------:|
+| :----------: |:------------:| :--------:|
 | id         | int(11)      | 题号 |
 | title      | varchar(128)  | 标题 |
 | description   | text | 题目描述 |
@@ -74,14 +71,14 @@ Date: Wed, 16 Aug 2017 05:45:20 GMT
 
 **请求方法**
 
-| 请求 | 后缀 | 说明 | json格式 |
-| ---- |----:| :------:| :------:|
-| GET | /problems | 列出所有题目 | 无 |
-| GET | /problems?page=xx&per_page=xx | 分页（ page：页码，per_page：每页内容数量 ）                  | 无 |
-| POST | /problems | 新建题目 | 必要参数 {"title": "x", "description": "x", "level":"x", "tag":"x"} |
-| GET | /problems/ID | 获取某个指定题目的信息 | 无 |
-| PUT | /problems/ID | 更新某个指定题目的信息 | 除了 id 的任意参数（如 {"title": "x", "description": "x"} ） |
-| DELETE | /problems/ID | 删除某个题目 | 无 |
+| 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
+| :----:|:----:| :------:| :-------------:| :------------:| :------------:|
+| GET  | /problems | 列出所有题目 | 无 | json 数组 | 无 |
+| GET  | /problems?page=xx&per_page=xx | 分页（ page：页码，per_page：每页内容数量 ） | 无 | json 数组 | 无 |
+| POST | /problems | 新建题目 | 必要参数 {"title": "x", "description": "x", "level":"x", "tag":"x"} | {"msg": "ok", "title": "题目标题"} | {"msg": "no", "error": "x"} |
+| GET  | /problems/ID | 获取某个指定题目的信息 | 无 | json 对象 | {"msg": "no", "error": "problem doesn't exist"} |
+| PUT  | /problems/ID | 更新某个指定题目的信息 | 除了 id 的任意字段（如 {"title": "x", "description": "x"} ） | {"msg": "ok"} | {"msg": "no", "error": "x"} |
+| DELETE | /problems/ID | 删除某个题目 | 无 | {"msg": "ok"} | {"msg": "no", "error": "x"} |
 
 **示例**
 
@@ -195,14 +192,14 @@ Date: Tue, 15 Aug 2017 13:47:23 GMT
 
 **请求方法**
 
-| 请求 | 后缀 | 说明 | json格式 |
-| ---- |----:| :------:| :------:|
-| GET | /users | 列出所有用户 | 无 |
-| GET | /users?page=xx&per_page=xx | 分页（page：页码，per_page：每页内容数量）                  | 无 |
-| POST | /users | 新建用户 | 必要参数 {"email": "x", "password" :"x", "username": "x"} |
-| GET | /users/ID | 获取某个指定用户的信息 | 无 |
-| PUT | /users/ID | 更新某个指定用户的信息 | 除了 id username 的任意参数（如 {"realname": "x", "school": "x"} ） |
-| DELETE | /users/ID | 删除某个用户 | 无 |
+| 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
+| :----:|:----:| :------:| :-------------:| :------------:| :------------:|
+| GET  | /users | 列出所有用户 | 无 | json 数组 | 无 |
+| GET  | /users?page=xx&per_page=xx | 分页（ page：页码，per_page：每页内容数量 ） | 无 | json 数组 | 无 |
+| POST | /users | 新建用户 | 必要参数 {"email": "x", "password": "x", "username":"x"} | {"msg": "ok", "email": "邮箱", "username": "用户名"} | {"msg": "no", "error": "x"} |
+| GET  | /users/ID | 获取某个指定用户的信息 | 无 | json 对象 | {"msg": "no", "error": "problem doesn't exist"} |
+| PUT  | /users/ID | 更新某个指定用户的信息 | 除了 id username 的任意字段（如 {"realname": "x", "school": "x"} ） | {"msg": "ok"} | {"msg": "no", "error": "x"} |
+| DELETE | /users/ID | 删除某个用户 | 无 | {"msg": "ok"} | {"msg": "no", "error": "x"} |
 
 **分页列出用户**（需要登录）：
 
@@ -302,9 +299,11 @@ Date: Tue, 15 Aug 2017 13:54:12 GMT
 }
 ```
 
-## 搜索
+## 搜索 search
 
-必要参数：json格式 {"target": "x", "type": "x", "content": "x"}
+| 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
+| :----:|:----:| :------:| :-------------:| :------------:| :------------:|
+| POST  | /search | 搜索 | {"target": "x", "type": "x", "content": "x"} | json 数组 | 空数组[] |
 
 > **关键字说明**
 > 
