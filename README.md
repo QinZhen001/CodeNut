@@ -10,7 +10,11 @@
 
 没有登录时：{"msg": "no", "error": "unauthorized"}，并且 header 头部显示 **403** 错误。
 
-登录：向 **[api.txdna.cn/login](http://api.txdna.cn/login)** 发送 {"token": "xx"} 或 {"username": "xx", "password": "xx"}, 成功会返回 token 和存活时间；失败，则是上面没有登录时的信息。
+登录：**[api.txdna.cn/login](http://api.txdna.cn/login)**
+
+**POST** {"token": "xx"} 或 {"username": "xx", "password": "xx"}
+
+成功：返回 token 和存活时间；失败：则是上面没有登录时的信息。
 
 **示例**
 
@@ -30,7 +34,7 @@ Access-Control-Allow-Origin: *
 }
 ```
 
-登陆后：可以使用 **[api.txdna.cn/token](http://api.txdna.cn/token)** 更新 token。
+登陆后：**[api.txdna.cn/token](http://api.txdna.cn/token)** **GET** 或 **POST** 更新 token。
 
 **示例**
 
