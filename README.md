@@ -197,7 +197,7 @@ Date: Tue, 15 Aug 2017 13:47:23 GMT
 | GET  | /users | 列出所有用户 | 无 | json 数组 | 无 |
 | GET  | /users?page=xx&per_page=xx | 分页（ page：页码，per_page：每页内容数量 ） | 无 | json 数组 | 无 |
 | POST | /users | 新建用户 | 必要参数 {"email": "x", "password": "x", "username":"x"} | {"msg": "ok", "email": "邮箱", "username": "用户名"} | {"msg": "no", "error": "x"} |
-| GET  | /users/ID | 获取某个指定用户的信息 | 无 | json 对象 | {"msg": "no", "error": "problem doesn't exist"} |
+| GET  | /users/ID | 获取某个指定用户的信息 | 无 | json 对象 | {"msg": "no", "error": "user doesn't exist"} |
 | PUT  | /users/ID | 更新某个指定用户的信息 | 除了 id username 的任意字段（如 {"realname": "x", "school": "x"} ） | {"msg": "ok"} | {"msg": "no", "error": "x"} |
 | DELETE | /users/ID | 删除某个用户 | 无 | {"msg": "ok"} | {"msg": "no", "error": "x"} |
 
@@ -303,7 +303,7 @@ Date: Tue, 15 Aug 2017 13:54:12 GMT
 
 | 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
 | :----:|:----:| :------:| :-------------:| :------------:| :------------:|
-| POST  | /search | 搜索 | {"target": "x", "type": "x", "content": "x"} | json 数组 | 空数组[] |
+| POST  | /search | 搜索 | {"target": "x", "type": "x", "content": "x"} | json 数组 | 空数组[ ] |
 
 > **关键字说明**
 > 
