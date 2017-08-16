@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request, jsonify, g, url_for, make_response
+from flask import Flask, request, jsonify, g, url_for
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from passlib.apps import custom_app_context as pwd_context
@@ -13,8 +13,11 @@ from werkzeug.contrib.fixers import ProxyFix
 
 # initialization
 app = Flask(__name__)
+# token secret key
 app.config['SECRET_KEY'] = 'the quick brown fox jumps over the lazy dog'
+# set database url
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:root@localhost:3306/codenut?charset=utf8'
+# auto commit database modify when request teardown
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 
@@ -24,10 +27,53 @@ auth = HTTPBasicAuth()
 CORS(app)
 
 
+# custom json format error
+@app.errorhandler(400)
+def error_request(error):
+    # error request, return 400
+    return jsonify({'msg': 'no', 'error': 'error request'}), 400
+
+
+@app.errorhandler(403)
+def forbidden(error):
+    # server forbid the request, return 403
+    return jsonify({'msg': 'no', 'error': 'forbidden'}), 403
+
+
 @app.errorhandler(404)
 def not_found(error):
     # request not found, return 404
-    return make_response(jsonify({'msg': 'no'}), 404)
+    return jsonify({'msg': 'no', 'error': 'not found'}), 404
+
+
+@app.errorhandler(408)
+def time_out(error):
+    # request time out, return 408
+    return jsonify({'msg': 'no', 'error': 'time out'}), 408
+
+
+@app.errorhandler(500)
+def internal_error(error):
+    # server internal error, return 500
+    return jsonify({'msg': 'no', 'error': 'server internal error'}), 500
+
+
+@app.errorhandler(503)
+def unavailable(error):
+    # request not found, return 503
+    return jsonify({'msg': 'no', 'error': 'service unavailable'}), 503
+
+
+# wrapper
+def manager_only(func):
+    # wrapper: only manager role can delete or other thing.
+    @wraps(func)
+    def wrapped_func(*args, **kwargs):
+        if g.user.role != 3:
+            return jsonify({'msg': 'no', 'error': 'do not go beyond manager\'s commission'})
+        return func(*args, **kwargs)
+
+    return wrapped_func
 
 
 def json_required(func):
@@ -41,22 +87,14 @@ def json_required(func):
     return wrapped_func
 
 
-@app.route('/search', methods=['POST'])
-@json_required
-def search():
-    # target: Model, type: Model attribute, content: going to search
-    target = request.json.get('target')
-    type = request.json.get('type')
-    content = request.json.get('content')
-    cls = eval(target)
-    attr = eval(target + '.' + type)
-    query = db.session.query(cls).filter(attr.like('%{}%'.format(content))).all()
-    return json.dumps([{key: i.__dict__[key]
-                        if key != '_sa_instance_state' and key != 'description' and key != 'solution'
-                        and key != 'password' and key != 'role'
-                        else None for key in i.__dict__} for i in query])
+@app.route('/resource', methods=['GET', 'POST'])
+@auth.login_required
+@manager_only
+def test_wrapper():
+    return jsonify({'data': 'Hello, %s!' % g.user.username})
 
 
+# Model
 class Problem(db.Model):
     """Problem Model"""
     __tablename__ = 'problems'
@@ -74,6 +112,97 @@ class Problem(db.Model):
         return "<Problem(title='%s')>" % self.title
 
 
+class User(db.Model):
+    """User Model"""
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    email = db.Column(db.Unicode(64, collation='utf8_bin'), nullable=False, unique=True)
+    password = db.Column(db.Unicode(256, collation='utf8_bin'), nullable=False)
+    username = db.Column(db.Unicode(32, collation='utf8_bin'), nullable=False, unique=True, index=True)
+    realname = db.Column(db.Unicode(32, collation='utf8_bin'), nullable=True)
+    profile = db.Column(db.Unicode(256, collation='utf8_bin'), nullable=True)
+    occupation = db.Column(db.Unicode(128, collation='utf8_bin'), nullable=True)
+    school = db.Column(db.Unicode(64, collation='utf8_bin'), nullable=True)
+    company = db.Column(db.Unicode(64, collation='utf8_bin'), nullable=True)
+    about_me = db.Column(db.Text, nullable=True)
+    blog = db.Column(db.Unicode(64, collation='utf8_bin'), nullable=True)
+    role = db.Column(db.Integer, server_default='0')
+
+    def __repr__(self):
+        return "<User(name='%s')>" % self.username
+
+    def hash_password(self, password):
+        self.password = pwd_context.hash(password)
+
+    def verify_password(self, password):
+        return pwd_context.verify(password, self.password)
+
+    def generate_auth_token(self, expiration=600):
+        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None  # valid token, but expired
+        except BadSignature:
+            return None  # invalid token
+        user = User.query.get(data['id'])
+        return user
+
+
+# auth
+@app.route('/token', methods=['GET', 'POST'])
+@auth.login_required
+def get_auth_token():
+    # usge: when receive {"error": "unauthorized"}, redirect to login view
+    # if login successfully, get this token, and store it in client by localStorage
+    token = g.user.generate_auth_token(86400)
+    return jsonify({'token': token.decode('ascii'), 'duration': 86400})
+
+
+@auth.verify_password
+def verify_password(username_or_token, password):
+    # first try to authenticate by token
+    user = User.verify_auth_token(username_or_token)
+    if not user:
+        # try to authenticate with username/password
+        user = User.query.filter_by(username=username_or_token).first()
+        if not user or not user.verify_password(password):
+            return False
+    g.user = user
+    return True
+
+
+@auth.error_handler
+def unauthorized():
+    # request need login, return 403
+    # (401: unauthorized, but it will alert a login window, so 403 instead of 401)
+    return jsonify({'msg': 'no', 'error': 'unauthorized'}), 403
+
+
+# router
+@app.route('/search', methods=['POST'])
+@json_required
+def search():
+    # target: Model, type: Model attribute, content: going to search
+    target = request.json.get('target')
+    type = request.json.get('type')
+    content = request.json.get('content')
+    cls = eval(target)
+    attr = eval(target + '.' + type)
+    query = db.session.query(cls).filter(attr.like('%{}%'.format(content))).all()
+    return json.dumps([{key: i.__dict__[key]
+                        if key != '_sa_instance_state' and key != 'description' and key != 'solution'
+                        and key != 'password' and key != 'role'
+                        else None for key in i.__dict__} for i in query])
+
+
+# problems router
 @app.route('/problems', methods=['GET'])
 def get_all_problems():
     # GET to get all problems
@@ -100,6 +229,7 @@ def get_problem_detail(id):
 @app.route('/problems', methods=['POST'])
 @json_required
 @auth.login_required
+@manager_only
 def create_problem():
     # POST to create a problem
     # require: title, description, level, tag
@@ -127,6 +257,7 @@ def create_problem():
 @app.route('/problems/<int:id>', methods=['PUT'])
 @json_required
 @auth.login_required
+@manager_only
 def update_problem(id):
     # PUT to update a problem
     old = Problem.query.get(id)
@@ -149,6 +280,7 @@ def update_problem(id):
 
 @app.route('/problems/<int:id>', methods=['DELETE'])
 @auth.login_required
+@manager_only
 def delete_problem(id):
     # DELETE to delete a problem
     problem = Problem.query.get(id)
@@ -163,70 +295,7 @@ def delete_problem(id):
         return jsonify({'msg': 'no', 'error': str(e)})
 
 
-##########################################################################
-class User(db.Model):
-    """User Model"""
-    __tablename__ = 'users'
-
-    id = db.Column(db.Integer, primary_key=True, unique=True)
-    email = db.Column(db.Unicode(64, collation='utf8_bin'), nullable=False, unique=True)
-    password = db.Column(db.Unicode(256, collation='utf8_bin'), nullable=False)
-    username = db.Column(db.Unicode(32, collation='utf8_bin'), nullable=False, unique=True, index=True)
-    realname = db.Column(db.Unicode(32, collation='utf8_bin'), nullable=True)
-    profile = db.Column(db.Unicode(256, collation='utf8_bin'), nullable=True)
-    occupation = db.Column(db.Unicode(128, collation='utf8_bin'), nullable=True)
-    school = db.Column(db.Unicode(64, collation='utf8_bin'), nullable=True)
-    company = db.Column(db.Unicode(64, collation='utf8_bin'), nullable=True)
-    about_me = db.Column(db.Text, nullable=True)
-    blog = db.Column(db.Unicode(64, collation='utf8_bin'), nullable=True)
-    role = db.Column(db.Integer, server_default='0')
-
-    def __repr__(self):
-        return "<User(name='%s')>" % self.username
-
-    def hash_password(self, password):
-        self.password = pwd_context.hash(password)
-
-    def verify_password(self, password):
-        return pwd_context.verify(password, self.password)
-
-    def generate_auth_token(self, expiration=3600):
-        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
-        return s.dumps({'id': self.id})
-
-    @staticmethod
-    def verify_auth_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
-        try:
-            data = s.loads(token)
-        except SignatureExpired:
-            return None  # valid token, but expired
-        except BadSignature:
-            return None  # invalid token
-        user = User.query.get(data['id'])
-        return user
-
-
-@app.route('/token', methods=['GET', 'POST'])
-@auth.login_required
-def get_auth_token():
-    token = g.user.generate_auth_token(3600)
-    return jsonify({'token': token.decode('ascii'), 'duration': 3600})
-
-
-@auth.verify_password
-def verify_password(username_or_token, password):
-    # first try to authenticate by token
-    user = User.verify_auth_token(username_or_token)
-    if not user:
-        # try to authenticate with username/password
-        user = User.query.filter_by(username=username_or_token).first()
-        if not user or not user.verify_password(password):
-            return False
-    g.user = user
-    return True
-
-
+# users router
 @app.route('/users', methods=['GET'])
 @auth.login_required
 def get_all_users():
@@ -287,19 +356,21 @@ def update_user(id):
     old = User.query.get(id)
     for key in request.json:
         # if key is wrong
-        if key not in old.__dict__:
+        if key not in old.__dict__ and key != 'oldpassword':
             return jsonify({'msg': 'no', 'error': 'User has no attribute {}'.format(key)})
         # do not modify these attribution
-        if key == 'id' or key == 'email' or key == 'username' or key == 'role':
+        if key == 'id' or key == 'username' or key == 'role':
             return jsonify({'msg': 'no', 'error': 'can not modify {}'.format(key)})
-        # set old user's attribution as json value
-        setattr(old, key, request.json.get(key))
         # if new password not None
-        if key == 'password':
+        if key == 'oldpassword' or key == 'password':
             # check old password that is correct or not
+            # after modify, must logout!
             if not verify_password(old.username, request.json.get('oldpassword')):
                 return jsonify({'msg': 'no', 'error': 'old password not correct'})
-            old.hash_password(request.json.get(key))
+            old.hash_password(request.json.get('password'))
+        else:
+            # set old user's attribution as json value
+            setattr(old, key, request.json.get(key))
     try:
         db.session.commit()
         return jsonify({'msg': 'yes'})
@@ -308,11 +379,9 @@ def update_user(id):
         return jsonify({'msg': 'no', 'error': str(e)})
 
 
-# check user is admin by token
-
-# need admin role
 @app.route('/users/<int:id>', methods=['DELETE'])
 @auth.login_required
+@manager_only
 def delete_users(id):
     user = User.query.get(id)
     if not user:
@@ -324,13 +393,6 @@ def delete_users(id):
     except Exception as e:
         db.session.rollback()
         return jsonify({'msg': 'no', 'error': str(e)})
-
-"""
-@app.route('/resource', methods=['GET', 'POST'])
-@auth.login_required
-def get_resource():
-    return jsonify({'data': 'Hello, %s!' % g.user.username})
-"""
 
 if __name__ == '__main__':
     #"""

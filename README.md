@@ -6,6 +6,33 @@
 
 网址：[api.txdna.cn](api.txdna.cn)
 
+## 登录方法
+
+没有登录时：{"msg": "no", "error": "unauthorized"}，并且 header 头部显示 **403** 错误。
+
+登陆后，使用 **[api.txdna.cn/token](api.txdna.cn/token)** 获取 token。
+
+**示例**
+
+```bash
+curl -u 2:1 -i http://api.txdna.cn/token
+HTTP/1.0 200 OK
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+Content-Length: 162
+Server: Werkzeug/0.12.2 Python/3.5.3
+Date: Wed, 16 Aug 2017 05:45:20 GMT
+
+{
+  "duration": 86400, # 默认24小时有效
+  "token": "eyJleHAiOjE1MDI5NDg3MjAsImFsZyI6IkhTMjU2IiwiaWF0IjoxNTAyODYyMzIwfQ.eyJpZCI6M30.Tpg-t8hg4qQChQNr1GPfGh8dYSsq7CRez5tSc1l3w-4"
+}
+```
+
+> 权限低于 **3** 的用户使用特定 API 会显示越权：{"msg": "no", "error": "do not go beyond manager's commission"}
+
+> **出现常见请求错误时，请查看 error 字段内容**：{"msg": "no", "error": "xx"}
+
 ## 题目 problems
 
 **数据库字段**
@@ -49,7 +76,7 @@ Access-Control-Allow-Origin: *
 [{"_sa_instance_state": null, "title": "Two Sum", "submitted": 0, "level": 1, "tag": "Array,Hash Table", "solution": null, "accepted": 0, "description": null, "id": 499}, ... ,{"_sa_instance_state": null, "title": "Add Two Numbers", "submitted": 0, "level": 2, "tag": "Linked List,Math", "solution": null, "accepted": 0, "description": null, "id": 498}]
 ```
 
-**新建题目**（需要登录）：
+**新建题目**（暂时需要权限为3的管理员登录）：
 
 ```bash
 curl -u admin:admin -i -H "Content-Type: application/json" -X POST -d '{"title":"test", "description":"test", "level":"1", "tag":"array"}' http://api.txdna.cn/problems
@@ -91,7 +118,7 @@ Date: Tue, 15 Aug 2017 13:43:30 GMT
 }
 ```
 
-**更新某个指定题目的信息**（需要登录）：
+**更新某个指定题目的信息**（暂时需要权限为3的管理员登录）：
 
 ```bash
 curl -u admin:admin -i -H "Content-Type: application/json" -X PUT -d '{"title":"test modify"}' http://api.txdna.cn/problems/501
@@ -107,7 +134,7 @@ Date: Tue, 15 Aug 2017 13:46:16 GMT
 }
 ```
 
-**删除某个题目**（需要登录）：
+**删除某个题目**（暂时需要权限为3的管理员登录）：
 
 ```bash
 curl -u admin:admin -i -X DELETE http://api.txdna.cn/problems/501       
@@ -130,9 +157,9 @@ Date: Tue, 15 Aug 2017 13:47:23 GMT
 | 字段  | 类型         | 说明                  |
 | ----- |-----:| :--------------------:|
 | id         | int(11)      | 用户ID |
-| email      | varchar(64)  | 邮箱（不可更改）|
+| email      | varchar(64)  | 邮箱 （唯一）|
 | password   | varchar(256) | 密码|
-| username   | varchar(32)  | 用户名（不可更改）|
+| username   | varchar(32)  | 用户名（不可更改，唯一）|
 | realname   | varchar(32)  | 真名 |
 | profile    | varchar(256) | 头像图片地址 |
 | occupation | varchar(128) | 职业 |
@@ -150,7 +177,7 @@ Date: Tue, 15 Aug 2017 13:47:23 GMT
 | GET | /users?page=xx&per_page=xx | 分页（page：页码，per_page：每页内容数量）                  | 无 |
 | POST | /users | 新建用户 | 必要参数{"email":"x", "password":"x", "username":"x"} |
 | GET | /users/ID | 获取某个指定用户的信息 | 无 |
-| PUT | /users/ID | 更新某个指定用户的信息 | 除了 id email username 的任意参数（如{"realname":"x", "school":"x"}） |
+| PUT | /users/ID | 更新某个指定用户的信息 | 除了 id username 的任意参数（如{"realname":"x", "school":"x"}） |
 | DELETE | /users/ID | 删除某个用户 | 无 |
 
 **分页列出用户**（需要登录）：
@@ -229,8 +256,13 @@ Date: Tue, 15 Aug 2017 13:53:34 GMT
   "msg": "yes"
 }
 ```
+> **更新密码**
+>
+> json 格式：{"oldpassword":"旧密码","password":"新密码"}
+>
+> **注意**：在更新了 **密码** 字段后，一定要自动注销账户！
 
-**删除某个用户**（需要登录）：
+**删除某个用户**（暂时需要权限为3的管理员登录）：
 
 ```bash
 curl -u admin:admin -i http://api.txdna.cn/users/2
