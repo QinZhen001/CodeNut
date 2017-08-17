@@ -6,13 +6,29 @@
 
 网址：[api.txdna.cn](http://api.txdna.cn)
 
-## 登录方法
+以下示例均使用 Linux 下的 `curl` 命令
+
+**更新内容：**
+
+```text
+登录时不允许使用 token
+
+id 哈希，防止真实 id 直接暴露（如 RMAsv 等短哈希值）
+
+/token 与 /login 成功的返回值一致，并且带有哈希后的用户 id
+
+原返回值 json 数组 如 GET请求 /problems, /users 更改为 json 对象 {"result": [ array { xx }, { xx } ]}
+
+删除无用返回值
+```
+
+### 登录方法
 
 没有登录时：{"msg": "no", "error": "unauthorized"}，并且 header 头部显示 **403** 错误。
 
 | 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
 | :----:|:----:| :------:| :-------------:| :------------:| :------------:|
-| POST | /login | 登录 | {"token": "xx"} 或 {"username": "xx", "password": "xx"} | token 和存活时间 | 没有登录时的信息 |
+| POST | /login | 登录 | {"username": "xx", "password": "xx"} | 用户哈希后 id， token 和存活时间 | 没有登录时的信息 |
 | GET/POST | /token | 更新 token | 无 | 同上 | 同上 |
 
 **login 示例**
@@ -29,6 +45,7 @@ Access-Control-Allow-Origin: *
 
 {
   "duration": 86400, # 存活时间，默认24小时有效
+  "id": "o6",
   "token": "eyJpYXQiOjE1MDI4OTY1NjIsImV4cCI6MTUwMjk4Mjk2MiwiYWxnIjoiSFMyNTYifQ.eyJpZCI6MX0.7AfsZGdg0sqAAejPKSDWBkLrekN3kU5NGTk8sTXtU3I"
 }
 ```
@@ -46,6 +63,7 @@ Date: Wed, 16 Aug 2017 05:45:20 GMT
 
 {
   "duration": 86400,
+  "id": "o6",
   "token": "eyJleHAiOjE1MDI5NDg3MjAsImFsZyI6IkhTMjU2IiwiaWF0IjoxNTAyODYyMzIwfQ.eyJpZCI6M30.Tpg-t8hg4qQChQNr1GPfGh8dYSsq7CRez5tSc1l3w-4"
 }
 ```
@@ -53,6 +71,27 @@ Date: Wed, 16 Aug 2017 05:45:20 GMT
 > 权限低于 **3** 的用户使用特定 API 会显示越权：{"msg": "no", "error": "do not go beyond manager's commission"}
 
 > **出现常见请求错误时，请查看 error 字段内容**：{"msg": "no", "error": "xx"}
+>
+> **<更删改> 常见失败示例**
+> ```bash
+> curl -u admin:admin -i http://api.txdna.cn/users/2
+> HTTP/1.0 200 OK
+> Content-Type: application/json
+> Access-Control-Allow-Origin: *
+> Content-Length: 19
+> Server: Werkzeug/0.12.2 Python/3.5.3
+> Date: Tue, 15 Aug 2017 13:54:12 GMT
+> 
+> {
+>   "msg": "no",
+>   "error": "xx"
+> }
+> 
+> **得到空对象列表示例**
+> {
+>   "result": []
+> }
+```
 
 ## 题目 problems
 
@@ -73,16 +112,14 @@ Date: Wed, 16 Aug 2017 05:45:20 GMT
 
 | 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
 | :----:|:----:| :------:| :-------------:| :------------:| :------------:|
-| GET  | /problems | 列出所有题目 | 无 | json 数组 | 无 |
+| GET  | /problems | 列出所有题目 | 无 | json 对象 | 无 |
 | GET  | /problems?page=xx&per_page=xx | 分页（ page：页码，per_page：每页内容数量 ） | 无 | json 数组 | 无 |
 | POST | /problems | 新建题目 | 必要参数 {"title": "x", "description": "x", "level":"x", "tag":"x"} | {"msg": "ok", "title": "题目标题"} | {"msg": "no", "error": "x"} |
 | GET  | /problems/ID | 获取某个指定题目的信息 | 无 | json 对象 | {"msg": "no", "error": "problem doesn't exist"} |
 | PUT  | /problems/ID | 更新某个指定题目的信息 | 除了 id 的任意字段（如 {"title": "x", "description": "x"} ） | {"msg": "ok"} | {"msg": "no", "error": "x"} |
 | DELETE | /problems/ID | 删除某个题目 | 无 | {"msg": "ok"} | {"msg": "no", "error": "x"} |
 
-**示例**
-
-使用 Linux 下的 `curl` 命令，**分页列出题目**：
+### 分页列出题目：
 
 ```bash
 $ curl -i -X GET http://api.txdna.cn/problems?page=1&per_page=20
@@ -94,10 +131,36 @@ Content-Length: 3684
 Connection: keep-alive
 Access-Control-Allow-Origin: *
 
-[{"_sa_instance_state": null, "title": "Two Sum", "submitted": 0, "level": 1, "tag": "Array,Hash Table", "solution": null, "accepted": 0, "description": null, "id": 499}, ... ,{"_sa_instance_state": null, "title": "Add Two Numbers", "submitted": 0, "level": 2, "tag": "Linked List,Math", "solution": null, "accepted": 0, "description": null, "id": 498}]
+HTTP/1.0 200 OK
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+Content-Length: 342
+Server: Werkzeug/0.12.2 Python/3.5.3
+Date: Thu, 17 Aug 2017 09:25:08 GMT
+
+{
+  "result": [
+    {
+      "accepted": 0, 
+      "id": "aAL", 
+      "level": 1, 
+      "submitted": 0, 
+      "tag": "Array,Hash Table", 
+      "title": "Two Sum"
+    }, 
+    {
+      "accepted": 0, 
+      "id": "ozb", 
+      "level": 2, 
+      "submitted": 0, 
+      "tag": "Linked List,Math", 
+      "title": "Add Two Numbers"
+    }
+  ]
+}
 ```
 
-**新建题目**（暂时需要权限为3的管理员登录）：
+### 新建题目（暂时需要权限为3的管理员登录）：
 
 ```bash
 curl -u admin:admin -i -H "Content-Type: application/json" -X POST -d '{"title":"test", "description":"test", "level":"1", "tag":"array"}' http://api.txdna.cn/problems
@@ -115,7 +178,7 @@ Date: Tue, 15 Aug 2017 13:38:21 GMT
 }
 ```
 
-**获取某个指定题目的信息**：
+### 获取某个指定题目的信息：
 
 ```bash
 curl -i -X GET http://api.txdna.cn/problems/1                           
@@ -127,19 +190,18 @@ Server: Werkzeug/0.12.2 Python/3.5.3
 Date: Tue, 15 Aug 2017 13:43:30 GMT
 
 {
-  "_sa_instance_state": null,  # 无用字段
   "accepted": 0, 
-  "description": ...,
-  "id": 1, 
-  "level": 2, 
-  "solution": ...,
+  "description": "<p></p><p>Given a string containing just the characters <code>'('</code>, <code>')'</code>, <code>'{'</code>, <code>'}'</code>, <code>'['</code> and <code>']'</code>, determine if the input string is valid.</p><p>The brackets must close in the correct order, <code>\"()\"</code> and <code>\"()[]{}\"</code> are all valid but <code>\"(]\"</code> and <code>\"([)]\"</code> are not.</p>", 
+  "id": "RMA", 
+  "level": 1, 
+  "solution": null, 
   "submitted": 0, 
-  "tag": "Tree", 
-  "title": "Print Binary Tree"
+  "tag": "Stack,String", 
+  "title": "Valid Parentheses"
 }
 ```
 
-**更新某个指定题目的信息**（暂时需要权限为3的管理员登录）：
+### 更新某个指定题目的信息（暂时需要权限为3的管理员登录）：
 
 ```bash
 curl -u admin:admin -i -H "Content-Type: application/json" -X PUT -d '{"title":"test modify"}' http://api.txdna.cn/problems/501
@@ -151,11 +213,11 @@ Server: Werkzeug/0.12.2 Python/3.5.3
 Date: Tue, 15 Aug 2017 13:46:16 GMT
 
 {
-  "msg": "yes"
+  "msg": "ok"
 }
 ```
 
-**删除某个题目**（暂时需要权限为3的管理员登录）：
+### 删除某个题目（暂时需要权限为3的管理员登录）：
 
 ```bash
 curl -u admin:admin -i -X DELETE http://api.txdna.cn/problems/501       
@@ -167,7 +229,7 @@ Server: Werkzeug/0.12.2 Python/3.5.3
 Date: Tue, 15 Aug 2017 13:47:23 GMT
 
 {
-  "msg": "yes"
+  "msg": "ok"
 }
 ```
 
@@ -194,28 +256,56 @@ Date: Tue, 15 Aug 2017 13:47:23 GMT
 
 | 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
 | :----:|:----:| :------:| :-------------:| :------------:| :------------:|
-| GET  | /users | 列出所有用户 | 无 | json 数组 | 无 |
-| GET  | /users?page=xx&per_page=xx | 分页（ page：页码，per_page：每页内容数量 ） | 无 | json 数组 | 无 |
+| GET  | /users | 列出所有用户 | 无 | json 对象 | 无 |
+| GET  | /users?page=xx&per_page=xx | 分页（ page：页码，per_page：每页内容数量 ） | 无 | json 对象 | 无 |
 | POST | /users | 新建用户 | 必要参数 {"email": "x", "password": "x", "username":"x"} | {"msg": "ok", "email": "邮箱", "username": "用户名"} | {"msg": "no", "error": "x"} |
 | GET  | /users/ID | 获取某个指定用户的信息 | 无 | json 对象 | {"msg": "no", "error": "user doesn't exist"} |
 | PUT  | /users/ID | 更新某个指定用户的信息 | 除了 id username 的任意字段（如 {"realname": "x", "school": "x"} ） | {"msg": "ok"} | {"msg": "no", "error": "x"} |
 | DELETE | /users/ID | 删除某个用户 | 无 | {"msg": "ok"} | {"msg": "no", "error": "x"} |
 
-**分页列出用户**（需要登录）：
+### 分页列出用户（需要登录）：
 
 ```bash
-curl -u admin:admin -i -X GET http://api.txdna.cn/users?page=1&per_page=2
+curl -u admin:admin -i -X GET http://api.txdna.cn/users?page=1&per_page=2 
 HTTP/1.0 200 OK
-Content-Type: text/html; charset=utf-8
-Content-Length: 565
+Content-Type: application/json
 Access-Control-Allow-Origin: *
+Content-Length: 613
 Server: Werkzeug/0.12.2 Python/3.5.3
-Date: Tue, 15 Aug 2017 13:49:33 GMT
+Date: Thu, 17 Aug 2017 09:25:45 GMT
 
-[{"_sa_instance_state": null, "email": "admin1@qq.com", "profile": null, "blog": null, "school": null, "about_me": null, "occupation": null, "role": null, "password": null, "username": "admin1", "realname": null, "id": 2, "company": null}, {"_sa_instance_state": null, "email": "admin@qq.com", "profile": "https://www.tupianku.com/view/large/13862/640.jpeg", "blog": "https://github.com", "school": "wyu", "about_me": "Code Nut admin", "occupation": "student", "role": null, "password": null, "username": "admin", "realname": "admin", "id": 1, "company": "anchor"}]
+{
+  "result": [
+    {
+      "about_me": null, 
+      "blog": null, 
+      "company": null, 
+      "email": "2", 
+      "id": "dx", 
+      "occupation": null, 
+      "profile": null, 
+      "realname": null, 
+      "school": "s", 
+      "username": "2"
+    }, 
+    {
+      "about_me": "Code Nut admin", 
+      "blog": "https://github.com", 
+      "company": "anchor", 
+      "email": "admin@qq.com", 
+      "id": "o6", 
+      "occupation": "student", 
+      "profile": "https://www.tupianku.com/view/large/13862/640.jpeg", 
+      "realname": "admin", 
+      "school": "wyu", 
+      "username": "admin"
+    }
+  ]
+}
+
 ```
 
-**新建用户**：
+### 新建用户：
 
 ```bash
 curl -i -H "Content-Type: application/json" -X POST -d '{"username":"admin","password":"admin","email":"admin@qq.com"}' http://api.txdna.cn/users
@@ -234,7 +324,7 @@ Date: Tue, 15 Aug 2017 13:07:21 GMT
 }
 ```
 
-**获取某个指定用户的信息**（需要登录）：
+### 获取某个指定用户的信息（需要登录）：
 
 ```bash
 curl -u admin:admin -i -X GET  http://api.txdna.cn/users/1
@@ -262,7 +352,7 @@ Date: Tue, 15 Aug 2017 13:52:24 GMT
 }
 ```
 
-**更新某个指定用户的信息**（需要登录）：
+### 更新某个指定用户的信息（需要登录）：
 
 ```bash
 curl -u admin:admin -i -H "Content-Type: application/json" -X PUT -d '{"realname":"test modify"}' http://api.txdna.cn/users/2
@@ -274,16 +364,17 @@ Server: Werkzeug/0.12.2 Python/3.5.3
 Date: Tue, 15 Aug 2017 13:53:34 GMT
 
 {
-  "msg": "yes"
+  "msg": "ok"
 }
 ```
+
 > **更新密码**
 >
 > json 格式：{"oldpassword": "旧密码", "password": "新密码"}
 >
-> **注意**：在更新了 **密码** 字段后，一定要自动注销账户！
+> **注意**：在更新了 **密码** 字段后，一定要自动注销账户！所以建议单独开个修改密码的页面。
 
-**删除某个用户**（暂时需要权限为3的管理员登录）：
+### 删除某个用户（暂时需要权限为3的管理员登录）：
 
 ```bash
 curl -u admin:admin -i http://api.txdna.cn/users/2
@@ -295,7 +386,7 @@ Server: Werkzeug/0.12.2 Python/3.5.3
 Date: Tue, 15 Aug 2017 13:54:12 GMT
 
 {
-  "msg": "yes"
+  "msg": "ok"
 }
 ```
 
@@ -303,7 +394,7 @@ Date: Tue, 15 Aug 2017 13:54:12 GMT
 
 | 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
 | :----:|:----:| :------:| :-------------:| :------------:| :------------:|
-| POST  | /search | 搜索 | {"target": "x", "type": "x", "content": "x"} | json 数组 | 空数组[ ] |
+| POST  | /search | 搜索 | {"target": "x", "type": "x", "content": "x"} | json 对象 | "result"对象是空数组[ ] |
 
 > **关键字说明**
 > 
@@ -313,7 +404,7 @@ Date: Tue, 15 Aug 2017 13:54:12 GMT
 >
 > content：要搜索的内容。
 
-**示例**
+**成功示例**
 
 ```bash
 curl -i -H "Content-Type: application/json" -X POST -d '{"target":"Problem","content":"Binary Tree Inorder Traversal","type":"title"}' http://api.txdna.cn/search
@@ -326,5 +417,32 @@ Content-Length: 197
 Connection: keep-alive
 Access-Control-Allow-Origin: *
 
-[{"_sa_instance_state": null, "title": "Binary Tree Inorder Traversal", "submitted": 0, "level": 2, "tag": "Tree,Hash Table,Stack", "solution": null, "accepted": 0, "description": null, "id": 406}]
+{
+  "result": [
+    {
+      "accepted": 0, 
+      "id": "4RM", 
+      "level": 2, 
+      "submitted": 0, 
+      "tag": "Tree,Hash Table,Stack", 
+      "title": "Binary Tree Inorder Traversal"
+    }
+  ]
+}
+```
+
+**失败示例**
+
+```bash
+curl -i -H "Content-Type:application/json" -X POST -d '{"type":"title","target":"Problem","content":"xxxx"}' http://api.txdna.cn/search
+HTTP/1.0 200 OK
+Content-Type: application/json
+Access-Control-Allow-Origin: *
+Content-Length: 19
+Server: Werkzeug/0.12.2 Python/3.5.3
+Date: Thu, 17 Aug 2017 09:15:13 GMT
+
+{
+  "result": []
+}
 ```
