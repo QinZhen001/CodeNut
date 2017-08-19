@@ -335,10 +335,10 @@ async def update_problems_set_templates():
 if __name__ == '__main__':
     # write_problems_status()
     # run_download()
-    #pool = mysql_pool()
+    # pool = mysql_pool()
     # create_table()
     # run_insert_problems()
-    #run_update_solutions()
+    # run_update_solutions()
     # run_update_templates()
     # update_problems_set_solutions()
     # update_problems_set_templates()

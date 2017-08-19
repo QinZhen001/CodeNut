@@ -2,24 +2,29 @@
 
 ## RESTful API
 
-本 API 使用 RESTful API 风格编写，详情可以看看阮一峰的文章 [《RESTful API 设计指南》](http://www.ruanyifeng.com/blog/2014/05/restful_api.html)。
+本 API 使用 RESTful API 风格编写，可以了解阮一峰的文章 [《RESTful API 设计指南》](http://www.ruanyifeng.com/blog/2014/05/restful_api.html)，和 [《RESTful API 设计最佳实践》](https://www.oschina.net/translate/best-practices-for-a-pragmatic-restful-api)。
 
 网址：[api.txdna.cn](http://api.txdna.cn)
 
 以下示例均使用 Linux 下的 `curl` 命令
 
-**更新内容：**
+**更新内容**
 
 ```text
-登录时不允许使用 token
+1、登录时不再允许使用 token
+2、id 哈希（如 RMAsv 等短哈希值），防止真实 id 直接暴露
+3、/token 与 /login 成功的返回值一致，并且带有哈希后的用户 id
+4、原返回值 json 数组 如 GET请求 /problems, /users 更改为 json 对象 {"result": [ array { xx }, { xx } ]}
+5、删除无用返回值
+```
 
-id 哈希，防止真实 id 直接暴露（如 RMAsv 等短哈希值）
-
-/token 与 /login 成功的返回值一致，并且带有哈希后的用户 id
-
-原返回值 json 数组 如 GET请求 /problems, /users 更改为 json 对象 {"result": [ array { xx }, { xx } ]}
-
-删除无用返回值
+**更新计划**
+```text
+1、GET/POST /token -> PUT /tokens ： 获得更新的 tokens
+2、POST /login -> POST /tokens ： 用户登录
+3、增加 DELETE /tokens ： 用户注销，删除有效 toekn
+4、problems 下的详情获取，增加模版代码
+5、开发 web 端，实现自动或手动测试 RESTful API，并得到 PDF 版的使用手册
 ```
 
 ### 登录方法
