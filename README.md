@@ -8,7 +8,18 @@
 
 以下示例均使用 Linux 下的 `curl` 命令
 
-**更新内容**
+**2017.8.21 更新内容**
+
+```text
+1、GET/POST /token -> PUT /tokens ： 获得更新的 tokens
+2、POST /login -> POST /tokens ： 用户登录
+3、增加 DELETE /tokens ： 用户注销，服务端暂时无法删除有效 toekn（后续可能使用 redis 缓存，再考虑删除的问题），前端获取新的 token 就要覆盖旧的，注销也要记得清除 token
+4、problems 下的详情获取，增加模版代码
+5、token 有效时间缩短为1小时
+6、数据库换到阿里云（前端可忽略）
+```
+
+**2017.8.17 更新内容**
 
 ```text
 1、登录时不再允许使用 token
@@ -20,11 +31,10 @@
 
 **更新计划**
 ```text
-1、GET/POST /token -> PUT /tokens ： 获得更新的 tokens
-2、POST /login -> POST /tokens ： 用户登录
-3、增加 DELETE /tokens ： 用户注销，删除有效 toekn
-4、problems 下的详情获取，增加模版代码
-5、开发 web 端，实现自动或手动测试 RESTful API，并得到 PDF 版的使用手册
+1、分布式测试服务器代码编写
+2、上面写好后就会增加测试代码 API，不过是个大坑，估计一时半会是更新不了了
+3、WEB 前端代码会移到阿里云无虚拟机中，以此增加一个测试机
+4、开发 web 端，实现自动或手动测试 RESTful API，并得到 PDF 版的使用手册，目前在开坑……
 ```
 
 ### 登录方法
