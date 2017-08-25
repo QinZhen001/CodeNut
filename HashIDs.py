@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import re
+
 
 # hashids Python port
 # Written by Eric Martel - www.ericmartel.com

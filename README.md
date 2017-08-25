@@ -43,10 +43,11 @@
 
 | 请求  | 后缀  | 说明     | 请求 json 格式 |   成功返回值    |   失败返回值   |
 | :----:|:----:| :------:| :-------------:| :------------:| :------------:|
-| POST | /login | 登录 | {"username": "xx", "password": "xx"} | 用户哈希后 id， token 和存活时间 | 没有登录时的信息 |
-| GET/POST | /token | 更新 token | 无 | 同上 | 同上 |
+| POST | /tokens | 登录 | {"username": "xx", "password": "xx"} | 用户哈希后 id， token 和存活时间 | 没有登录时的信息 |
+| PUT | /tokens | 更新 token | 无 | 同上 | 同上 |
+| DELETE | /tokens | 删除 token（假删除） | 无 | {"msg": "ok"} | 无 |
 
-**login 示例**
+**登录示例**
 
 ```bash
 curl -i -H "Content-Type:application/json" -X POST -d '{"password":"admin","username":"admin"}' http://api.txdna.cn/login 
@@ -65,7 +66,7 @@ Access-Control-Allow-Origin: *
 }
 ```
 
-**token 示例**
+**获取 token 示例**
 
 ```bash
 curl -u eyJpYXQiOjE1MDI4OTY2MDUsImV4cCI6MTUwMjk4MzAwNSwiYWxnIjoiSFMyNTYifQ.eyJpZCI6MX0.htDV0-LdyQ7_kz7wekQLKbhnOJqdPXqUhRtZTuGRA1s -i http://api.txdna.cn/token
@@ -121,6 +122,7 @@ Date: Wed, 16 Aug 2017 05:45:20 GMT
 | tag   | varchar(128)  | 标签 |
 | accepted    | int(11) | 通过数 |
 | submitted | int(11) | 提交数 |
+| template     | text  | 模版代码 |
 | solution     | text  | 解决方法 |
 
 **请求方法**
