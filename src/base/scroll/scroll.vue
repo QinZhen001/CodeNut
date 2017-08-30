@@ -1,7 +1,7 @@
 <template>
   <div ref="wrapper">
-    <slot></slot>
-  </div>
+  <slot></slot>
+</div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -43,6 +43,10 @@
       direction: {
         type: String,
         default: DIRECTION_V
+      },
+      objectdata: {
+        type: Object,
+        default: null
       }
     },
     mounted() {
@@ -102,6 +106,11 @@
         setTimeout(() => {
           this.refresh()
         }, this.refreshDelay)
+      },
+      objectdata() {
+        setTimeout(() => {
+          this.refresh()
+        }, 20)
       }
     }
   }

@@ -33,15 +33,15 @@
                   <span class="text">难度系数:</span>
                   <star :score="item.level"></star>
                 </div>
-                <div class="tag-wrapper">
+                <div class="tag-wrapper" v-show="item.tag">
                   <span class="tag">{{item.tag}}</span>
                 </div>
               </div>
             </li>
-            <loading v-show="hasMore" title="加载中..."></loading>
+            <loading class="loading" v-show="hasMore" title="加载中..."></loading>
           </ul>
           <div v-show="!hasMore && !problems.length" class="no-result-wrapper">
-            <no-result title="抱歉，暂无搜索结果"></no-result>
+            <no-result title="抱歉，暂无结果"></no-result>
           </div>
         </div>
       </div>
@@ -59,6 +59,7 @@
   import { mapMutations } from 'vuex'
   import { sliderItems } from 'common/js/data'
   import NoResult from 'base/no-result/no-result'
+  import Star from 'base/star/star'
 
   const PER_PAGE = 10
 
@@ -104,16 +105,16 @@
       },
       selectItem(item) {
         this.$router.push({
-          path: `/problem/${item.id}`
+          path: `/recommend/${item.id}`
         })
         this.setProblem(item)
       },
       _getProblemList() {
         // 今天没有引入 vue-resourse 明天记得
-        let url = 'http://api.txdna.cn/problems?page=' + this.page + '&per_page=' + PER_PAGE
+        let url = 'https://api.txdna.cn/problems?page=' + this.page + '&per_page=' + PER_PAGE
         this.$http.get(url).then(response => {
           console.log(response.body)
-          this.problems = this.problems.concat(response.body)
+          this.problems = this.problems.concat(response.body.result)
         }, response => {
           console.log(response)
         })
@@ -134,13 +135,15 @@
       Slider,
       Loading,
       Scroll,
-      NoResult
+      NoResult,
+      Star
     }
   }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable"
+  @import "~common/stylus/mixin"
 
   .recommend
     position: fixed
@@ -164,8 +167,8 @@
           height: 100%
       .problem-list
         .list-title
-          height: 65px
-          line-height: 65px
+          height: 60px
+          line-height: 60px
           text-align: center
           font-size: $font-size-medium
           color: $color-theme
@@ -174,6 +177,10 @@
           display: flex
           align-items: center
           padding: 15px 0 15px 20px
+          &:first-child
+            padding: 0 0 15px 20px
+        .loading
+          margin-top 2px
       .content
         position relative
         width 100%
@@ -186,6 +193,7 @@
         margin 3px 0
         font-size: 0
         .text
+          margin-right 2px
           display: inline-block
           line-height: 18px
           font-size: 14px
@@ -204,6 +212,10 @@
         background: rgba(0, 0, 0, 0.2)
         text-align: center
         .tag
+          height: 24px
+          max-width 250px
+          no-wrap()
+          color rgb(255, 255, 255)
           font-size: 10px
       .no-result-wrapper
         position: absolute

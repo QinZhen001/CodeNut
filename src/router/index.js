@@ -27,6 +27,18 @@ const Search = (resolve) => {
   })
 }
 
+const Aboutme = (resolve) => {
+  import('components/aboutme/aboutme').then((module) => {
+    resolve(module)
+  })
+}
+
+const Register = (resolve) => {
+  import('components/register/register').then((module) => {
+    resolve(module)
+  })
+}
+
 const SingerDetail = (resolve) => {
   import('components/singer-detail/singer-detail').then((module) => {
     resolve(module)
@@ -100,6 +112,14 @@ export default new Router({
     {
       path: '/user',
       component: UserCenter
+    },
+    {
+      path: '/aboutme',
+      component: Aboutme
+    },
+    {
+      path: '/register',
+      component: Register
     }
   ]
 })

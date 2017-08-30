@@ -9,6 +9,9 @@ const PLAY_MAX_LEN = 200
 const FAVORITE_KEY = '__favorite__'
 const FAVORITE_MAX_LEN = 200
 
+const TOKEN_KEY = '__token__'
+const ID_KEY = '__id__'
+
 function insertArray(arr, val, compare, maxLen) {
   const index = arr.findIndex(compare)
   if (index === 0) {
@@ -92,3 +95,26 @@ export function loadFavorite() {
   return storage.get(FAVORITE_KEY, [])
 }
 
+export function saveToken (token) {
+  storage.set(TOKEN_KEY, token)
+}
+
+export function getToken () {
+  return storage.get(TOKEN_KEY, '')
+}
+
+export function clearToken () {
+  storage.remove(TOKEN_KEY)
+}
+
+export function saveUserId (id) {
+  storage.set(ID_KEY, id)
+}
+
+export function getUserId () {
+  return storage.get(ID_KEY, '')
+}
+
+export function clearUserId () {
+  storage.remove(ID_KEY)
+}

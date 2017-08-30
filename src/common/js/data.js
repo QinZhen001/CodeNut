@@ -1,5 +1,6 @@
 /**
  * Created by qinzhen on 2017/8/24.
+ * 由于有些数据不能很好的在后端拿到，所以在这里模拟了一些数据
  */
 export const sliderItems = [
   {
@@ -19,4 +20,7 @@ export const sliderItems = [
     'picUrl': 'static/sliderpic5.jpg'
   }
 ]
+
+export const hotKeys = ['Array', 'Search', 'Tree', 'String',
+  'Backtracking', 'Math', 'Dynamic Programming', 'Hash']
 

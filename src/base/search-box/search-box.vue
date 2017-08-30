@@ -13,7 +13,7 @@
     props: {
       placeholder: {
         type: String,
-        default: '搜索歌曲、歌手'
+        default: '搜索问题'
       }
     },
     data() {
@@ -33,6 +33,7 @@
       }
     },
     created() {
+      // debounce 防止多次点击触发过多的请求
       this.$watch('query', debounce((newQuery) => {
         this.$emit('query', newQuery)
       }, 200))

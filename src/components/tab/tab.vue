@@ -13,6 +13,9 @@
     <router-link tag="div" class="tab-item" to="/search">
       <span class="tab-link">搜索</span>
     </router-link>
+    <router-link tag="div" class="tab-item" to="/aboutme">
+      <span class="tab-link">我</span>
+    </router-link>
   </div>
 </template>
 

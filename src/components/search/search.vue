@@ -3,16 +3,16 @@
     <div class="search-box-wrapper">
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
+
+
     <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
-
-
       <scroll :refreshDelay="refreshDelay" ref="shortcut" class="shortcut" :data="shortcut">
         <div>
           <div class="hot-key">
             <h1 class="title">热门搜索</h1>
             <ul>
-              <li @click="addQuery(item.k)" class="item" v-for="item in hotKey">
-                <span>{{item.k}}</span>
+              <li @click="addQuery(item)" class="item" v-for="item in hotKey">
+                <span>{{item}}</span>
               </li>
             </ul>
           </div>
@@ -27,12 +27,13 @@
           </div>
         </div>
       </scroll>
-
-
     </div>
+
+
     <div class="search-result" v-show="query" ref="searchResult">
       <suggest @listScroll="blurInput" @select="saveSearch" ref="suggest" :query="query"></suggest>
     </div>
+
     <confirm ref="confirm" @confirm="clearSearchHistory" text="是否清空所有搜索历史" confirmBtnText="清空"></confirm>
     <router-view></router-view>
   </div>
@@ -44,10 +45,9 @@
   import Scroll from 'base/scroll/scroll'
   import Confirm from 'base/confirm/confirm'
   import Suggest from 'components/suggest/suggest'
-  import {getHotKey} from 'api/search'
-  import {ERR_OK} from 'api/config'
-  import {playlistMixin, searchMixin} from 'common/js/mixin'
-  import {mapActions} from 'vuex'
+  import { hotKeys } from 'common/js/data'
+  import { playlistMixin, searchMixin } from 'common/js/mixin'
+  import { mapActions } from 'vuex'
 
   export default {
     mixins: [playlistMixin, searchMixin],
@@ -78,11 +78,7 @@
         this.$refs.confirm.show()
       },
       _getHotKey() {
-        getHotKey().then((res) => {
-          if (res.code === ERR_OK) {
-            this.hotKey = res.data.hotkey.slice(0, 10)
-          }
-        })
+        this.hotKey = hotKeys
       },
       ...mapActions([
         'clearSearchHistory'
@@ -127,7 +123,7 @@
           .title
             margin-bottom: 20px
             font-size: $font-size-medium
-            color: $color-text-l
+            color: $color-theme
           .item
             display: inline-block
             padding: 5px 10px

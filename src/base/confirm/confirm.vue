@@ -1,19 +1,22 @@
 <template>
-  <transition name="confirm-fade">
-    <div class="confirm" v-show="showFlag" @click.stop>
-      <div class="confirm-wrapper">
-
-        <div class="confirm-content">
-          <p class="text">{{text}}</p>
-          <div class="operate">
-            <div @click="cancel" class="operate-btn left">{{cancelBtnText}}</div>
-            <div @click="confirm" class="operate-btn">{{confirmBtnText}}</div>
+  <div>
+    <transition name="confirm-fade">
+      <div class="confirm" v-show="showFlag" @click.stop>
+        <div class="confirm-wrapper">
+          <div class="confirm-content">
+            <p class="text">{{text}}</p>
+            <div class="operate">
+              <div @click="cancel" class="operate-btn">{{cancelBtnText}}</div>
+              <div @click="confirm" class="operate-btn right">{{confirmBtnText}}</div>
+            </div>
           </div>
         </div>
-
       </div>
-    </div>
-  </transition>
+    </transition>
+    <transition name="fade">
+      <div class="mask" v-show="showFlag"></div>
+    </transition>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -65,7 +68,7 @@
     right: 0
     top: 0
     bottom: 0
-    z-index: 998
+    z-index: 300
     background-color: $color-background-d
     &.confirm-fade-enter-active
       animation: confirm-fadein 0.3s
@@ -98,8 +101,25 @@
             padding: 10px 0
             border-top: 1px solid $color-background-d
             color: $color-text-d
-            &.left
-              border-right: 1px solid $color-background-d
+            &.right
+              border-left: 1px solid $color-background-d
+              color: $color-theme
+
+  .mask
+    position: fixed
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    z-index: 200
+    backdrop-filter: blur(10px)
+    opacity: 1
+    background: rgba(7, 17, 27, 0.6)
+    &.fade-enter-active, &.fade-leave-active
+      transition: all 0.5s
+    &.fade-enter, &.fade-leave-active
+      opacity: 0
+      background: rgba(7, 17, 27, 0)
 
   @keyframes confirm-fadein
     0%
