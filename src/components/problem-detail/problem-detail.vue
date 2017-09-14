@@ -7,19 +7,25 @@
           <div class="grid-content">
           </div>
         </el-col>
+
         <el-col :sm="24" :lg="20" :md="22" :xs="24">
-          <h3 align="left">{{problemDetail.title}}
-          </h3>
+          <div class="problem-header">
+            <h3 align="left">{{problemDetail.title}}</h3>
+            <img v-show="!hasCollect" width="56" height="56" src="static/nocollection.png" class="collection"
+                 @click="collection">
+            <img v-show="hasCollect" width="56" height="56" src="static/collection.png" class="collection"
+                 @click="collection">
+          </div>
           <div class="container">
-            <el-tabs v-model="tab" type="card" @tab-click="handleClick">
+            <el-tabs v-model="tab" type="card">
               <el-tab-pane label="Description" name="description">
                 <description :data="problemDetail"></description>
               </el-tab-pane>
               <el-tab-pane label="Solution" name="solution">
                 <solution :data="problemDetail"></solution>
               </el-tab-pane>
-              <el-tab-pane label="角色管理" name="third">
-                角色管理
+              <el-tab-pane label="Hints" name="third">
+                <hints></hints>
               </el-tab-pane>
               <el-tab-pane label="定时任务补偿" name="fourth">
                 定时任务补偿
@@ -32,7 +38,6 @@
           </div>
         </el-col>
       </el-row>
-      <myfooter></myfooter>
     </div>
   </transition>
 </template>
@@ -42,14 +47,15 @@
   import axios from 'axios'
   import Description from 'components/description/description'
   import Solution from 'components/solution/solution'
-  import Myfooter from 'components/myfooter/myfooter'
+  import Hints from 'components/hints/hints'
 
   export default {
     data() {
       return {
         loading: true,
         problemDetail: {},
-        tab: 'description'
+        tab: 'description',
+        hasCollect: false
       }
     },
     created() {
@@ -79,14 +85,26 @@
           setTimeout(() => { this.$router.back() }, 2000)
         })
       },
-      handleClick(tab, event) {
-        console.log(tab, event)
+      collection() {
+        this.hasCollect = !this.hasCollect
+        if (this.hasCollect) {
+          this.$notify({
+            title: '收藏成功',
+            message: `收藏题目:${this.problemDetail.title}`,
+            type: 'success'
+          })
+        } else {
+          this.$notify.info({
+            title: '取消成功',
+            message: `取消收藏题目:${this.problemDetail.title}`
+          })
+        }
       }
     },
     components: {
       Description,
       Solution,
-      Myfooter
+      Hints
     }
   }
 </script>
@@ -94,7 +112,11 @@
 <style lang="stylus" rel="stylesheet/stylus">
   .problem
     min-height 100%
-
+    .problem-header
+      .collection
+        float right
+        margin-top 5px
+        vertical-align bottom
 
   h3
     display: inline-block;
@@ -108,8 +130,8 @@
 
   .container
     margin-top: 32px;
-
-
+    .el-tabs__content
+      min-height 800px
 
   .grid-content
     border-radius: 4px

@@ -34,7 +34,7 @@
         dialogShow: false
       }
     },
-    created() {
+    mounted() {
       this.username = ''
       this.password = ''
     },

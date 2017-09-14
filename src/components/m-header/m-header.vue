@@ -5,7 +5,7 @@
       <el-menu theme="dark" class="menu" mode="horizontal" @select="handleSelect">
         <el-menu-item v-for="(item, idx) in headrs" :key="idx" :index=(item)>{{item}}
         </el-menu-item>
-        <el-dropdown trigger="click" @command="handleCommand" v-show="showUserItem">
+        <el-dropdown @command="handleCommand" trigger="hover" v-show="showUserItem">
                 <span class="el-dropdown-link">
                     <img class="user-logo" src="static/avatar.jpg">
                     <span class="user-name">{{user.username}}</span>
@@ -88,6 +88,12 @@
         })
       },
       handleCommand(command) {
+        console.log(command)
+        if (command === 'loginout') {
+          this.quitUser()
+        } else if (command === 'usercenter') {
+          this.$router.push('/home/usercenter')
+        }
       },
       ...mapMutations({
         setUser: 'SET_USER'
@@ -135,36 +141,30 @@
         margin-left: 1000px;
         max-height 60px
         min-width 350px
-        .userItem
-          margin-left 10px
-          .avatar
-          // box-sizing
-            margin auto 10px
-            border-radius 50%
-      .el-dropdown-link
-        position: relative;
-        display: inline-block;
-        width 80px
-        height 60px
-        padding-left: 20px;
-        color: #fff;
-        cursor: pointer;
-
-        .user-logo
-          position: absolute;
-          left: 0;
-          top 9px
-          width: 40px;
-          height: 40px;
-          border-radius: 50%;
-          border 1px solid #fff
-        .user-name
-          position: absolute;
+        .el-dropdown-link
+          position: relative;
           display: inline-block;
-          right: 0;
-          font-size: 16px;
-          color: whitesmoke
-          line-height 60px
+          width 80px
+          height 60px
+          padding-left: 20px;
+          color: #fff;
+          &:hover
+            cursor: pointer
+          .user-logo
+            position: absolute;
+            left: 0;
+            top 9px
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border 1px solid #fff
+          .user-name
+            position: absolute;
+            display: inline-block;
+            right: 0;
+            font-size: 16px;
+            color: whitesmoke
+            line-height 60px
         .el-dropdown-menu
           padding: 1px 0;
           .el-dropdown-menu__item

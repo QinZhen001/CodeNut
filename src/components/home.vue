@@ -30,7 +30,7 @@
         </el-col>
       </el-row>
     </div>
-    <myfooter></myfooter>
+    <!--<myfooter></myfooter>-->
   </div>
 </template>
 
@@ -40,7 +40,7 @@
   import Listview from 'components/listview/listview'
   import Myenergy from 'components/myenergy/myenergy'
   import Myinfo from 'components/myinfo/myinfo'
-  import Myfooter from 'components/myfooter/myfooter'
+  //  import Myfooter from 'components/myfooter/myfooter'
 
   export default {
     data() {
@@ -55,15 +55,14 @@
     },
     methods: {
       clicktable() {
-        this.$router.push('/problem')
+        this.$router.push('/home/problem')
       }
     },
     components: {
       mytable,
       Listview,
       Myenergy,
-      Myinfo,
-      Myfooter
+      Myinfo
     }
   }
 </script>

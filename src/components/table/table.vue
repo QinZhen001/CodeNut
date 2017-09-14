@@ -67,10 +67,10 @@
         })
       },
       _showErrorMessage() {
-        this.$notify.info({
-          title: '错误',
-          message: '无法正常加载数据,自动刷新页面'
-        })
+//        this.$notify.info({
+//          title: '错误',
+//          message: '无法正常加载数据,自动刷新页面'
+//        })
       },
       click(row, event, column) {
         console.log(row.id)

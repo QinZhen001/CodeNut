@@ -5,6 +5,7 @@
            @loginSuccess="loginSuccess" ref="login"></login>
     <register :dialogVisible="showRegisterDialog" @closeRegisterDialog="_closeRegisterDialog"></register>
     <router-view></router-view>
+    <myfooter></myfooter>
   </div>
 </template>
 
@@ -15,6 +16,7 @@
   import { getUserId } from 'common/js/cache'
   import { mapMutations } from 'vuex'
   import Register from 'components/register/register'
+  import Myfooter from 'components/myfooter/myfooter'
 
   export default {
     data() {
@@ -69,7 +71,8 @@
     components: {
       MHeader,
       Login,
-      Register
+      Register,
+      Myfooter
     }
   }
 </script>

@@ -2,12 +2,13 @@
   <div>
     <div class="description" v-html="data.description" v-if="data.description">
     </div>
-    <editor></editor>
+    <my-editor></my-editor>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import Editor from 'components/editor/vueeditor'
+  //  import Editor from 'components/editor/vueeditor'
+  import MyEditor from 'components/description/myeditor'
 
   export default {
     props: {
@@ -17,13 +18,14 @@
       }
     },
     components: {
-      Editor
+      MyEditor
     }
   }
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
   .description
+    border-bottom 1px solid #ddd
     p
       margin: 0 0 10px
       display: block;

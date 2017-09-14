@@ -1,5 +1,10 @@
 <template>
-  <div class="solution" v-if="data.solution" v-html="data.solution">
+  <div>
+    <div class="solution" v-if="data.solution" v-html="data.solution">
+    </div>
+    <div class="nodata" v-show="!data.solution || data.solution === {}">
+      No solution at the moment
+    </div>
   </div>
 </template>
 
@@ -90,4 +95,10 @@
         font-weight: bold;
       .o
         font-weight: bold;
+
+  .nodata
+    padding: 8rem 4rem;
+    text-align: center;
+    font-size: 1.5rem;
+    color: #dadada;
 </style>
