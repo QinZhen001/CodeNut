@@ -33,6 +33,7 @@
         margin-top: 0;
         margin-bottom: 10px;
       a
+        href '#'
         color: #08c;
         text-decoration: none;
     h2

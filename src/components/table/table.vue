@@ -3,9 +3,27 @@
     <div class="problems-title">
       <img src="static/classification.png" class="img-title"/>
       <h2 class="text-title">Category - All</h2>
+      <el-dropdown>
+        <el-input
+          class="search-input"
+          placeholder="请输入要搜索的题目"
+          icon="search"
+          v-model="mysearch"
+          spellcheck="false"
+          :on-icon-click="SearchClick"
+          @change="changeSearch">
+        </el-input>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item v-show="dropdownLoading">拼命加载中...</el-dropdown-item>
+          <el-dropdown-item v-for="(item,index) in searchResult" v-show="index <= 10 && !dropdownLoading"
+                            :key="index">{{item.title}}
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
     <el-table
-      v-loading="loading" element-loading-text="拼命加载中..." :data="tableData" stripe @row-click="click">
+      :highlight-current-row=true v-loading="tableLoading" element-loading-text="拼命加载中..." :data="tableData" stripe
+      @row-click="click">
       <el-table-column prop="id" label="id" width="100" align="left">
       </el-table-column>
       <el-table-column prop="title" label="题目" width="450" align="left">
@@ -47,7 +65,11 @@
     data() {
       return {
         tableData: [],
-        currentPage: 1
+        currentPage: 1,
+        mysearch: '',
+        searchResult: [],
+        tableLoading: false,
+        dropdownLoading: false
       }
     },
     created() {
@@ -55,11 +77,13 @@
     },
     methods: {
       _getProblems() {
+        this.tableLoading = true
         let url = 'https://api.txdna.cn/problems?page=' + this.currentPage + '&per_page=' + PER_PAGE
         axios.get(url).then(response => {
           console.log(response.data.result)
           this.tableData = response.data.result
           console.log(this.tableData)
+          this.tableLoading = false
         }, response => {
           console.log(response)
           this._showErrorMessage()
@@ -100,6 +124,56 @@
         console.log(val)
         this._getProblems()
       },
+      SearchClick() {
+        this.dropdownLoading = true
+        console.log('SearchClick')
+        let url = 'https://api.txdna.cn/search'
+        // 清空之前的结果
+        this.searchResult = []
+        axios.post(url, {
+          'target': 'Problem',
+          'content': this.mysearch,
+          'type': 'title'
+        }).then(response => {
+          console.log(response.data.result)
+          if (response.data.result.length === 0) {
+            this.searchResult = [{title: `无法查询到含有关键字:${this.mysearch}的题目`}]
+          } else {
+            this.searchResult = response.data.result
+          }
+          this.dropdownLoading = false
+        }, response => {
+          console.log(response)
+          this.SearchClick()
+        })
+      },
+      changeSearch() {
+        if (this.mysearch === '') {
+          this.searchResult = []
+          return
+        }
+        this.dropdownLoading = true
+        let url = 'https://api.txdna.cn/search'
+        // 清空之前的结果
+        this.searchResult = []
+        console.log(this.mysearch)
+        axios.post(url, {
+          'target': 'Problem',
+          'content': this.mysearch,
+          'type': 'title'
+        }).then(response => {
+          console.log(response.data.result)
+          if (response.data.result.length === 0) {
+            this.searchResult = [{title: `无法查询到含有关键字:${this.mysearch}的题目`}]
+          } else {
+            this.searchResult = response.data.result
+          }
+          this.dropdownLoading = false
+        }, response => {
+          console.log(response)
+          this.changeSearch()
+        })
+      },
       ...mapMutations({
         setProblem: 'SET_PROBLEM'
       })
@@ -116,7 +190,7 @@
   }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style scoped lang="stylus" rel="stylesheet/stylus">
 
   .problems-title
     .img-title
@@ -124,6 +198,18 @@
     .text-title
       vertical-align: middle
       display inline-block
+    .el-dropdown
+      float right
+      vertical-align bottom
+      .el-input
+        margin-top 3%
+        width 500px
+
+  .el-dropdown-menu
+    width 500px
+
+  .el-table
+    border-radius 5px
 
   .pagination
     padding 15px 0 15px 30px

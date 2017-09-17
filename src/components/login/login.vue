@@ -99,5 +99,6 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-
+  .el-dialog
+    max-width 600px
 </style>

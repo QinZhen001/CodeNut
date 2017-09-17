@@ -6,6 +6,7 @@ import router from './router'
 import store from './store'
 import ElementUI from 'element-ui'
 import VueCodeMirror from 'vue-codemirror'
+import mavonEditor from 'mavon-editor'
 
 import 'codemirror/lib/codemirror.css'    // css，必要
 import 'codemirror/lib/codemirror.js'
@@ -13,14 +14,20 @@ import 'codemirror/lib/codemirror.js'
 import 'element-ui/lib/theme-default/index.css'
 import 'common/stylus/base.styl'
 
+import 'mavon-editor/dist/css/index.css'
+
 Vue.config.productionTip = false
 
 Vue.use(ElementUI)
 Vue.use(VueCodeMirror)
+Vue.use(mavonEditor)
 
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  data() {
+    return {value: ''}
+  },
   router,
   store,
   template: '<App/>',

@@ -127,6 +127,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   .head
+    width 100%
     position relative
     margin-bottom: 8px;
     background-color #324157

@@ -14,7 +14,7 @@
 <style lang="stylus" rel="stylesheet/stylus">
   .hint-wrapper
     width 100%
-    min-height height 800px
+    height 615px
     .placeholder-text
       padding: 8rem 4rem;
       text-align: center;

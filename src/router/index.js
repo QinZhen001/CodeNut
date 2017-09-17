@@ -20,7 +20,8 @@ export default new Router({
     },
     {
       path: '/home/problem',
-      component: ProblemDetail
+      component: ProblemDetail,
+      meta: {scrollToTop: true}
     },
     {
       path: '/home/usercenter',
@@ -28,3 +29,4 @@ export default new Router({
     }
   ]
 })
+

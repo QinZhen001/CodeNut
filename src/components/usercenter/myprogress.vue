@@ -19,14 +19,21 @@
             <el-tag type="warning">0%</el-tag>
           </li>
         </ul>
+        <div class="progresschart-wrapper">
+          <progresschart></progresschart>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import Progresschart from 'common/js/progress'
+
   export default{
-    data() {}
+    components: {
+      Progresschart
+    }
   }
 </script>
 
@@ -47,6 +54,7 @@
       border-top-left-radius: 5px;
       border-top-right-radius: 5px;
       .panel-title
+        vertical-align bottom
         margin-top: 0;
         margin-bottom: 0;
         font-size: 16px;
@@ -71,10 +79,14 @@
           padding: 10px 15px;
           margin-bottom: -1px;
           background-color: #fff;
-          border: 1px solid #ddd;
+          border-width 1px 0
+          border-style solid
+          border-color #ddd
           .tag-img
             vertical-align bottom
             margin-right 8px
           .el-tag
             float: right
+      .progresschart-wrapper
+        margin 20px
 </style>

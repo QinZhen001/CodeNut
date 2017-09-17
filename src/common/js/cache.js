@@ -73,22 +73,22 @@ export function loadPlay() {
   return storage.get(PLAY_KEY, [])
 }
 
-export function saveFavorite(song) {
-  let songs = storage.get(FAVORITE_KEY, [])
-  insertArray(songs, song, (item) => {
-    return song.id === item.id
+export function saveFavorite(problem) {
+  let problems = storage.get(FAVORITE_KEY, [])
+  insertArray(problems, problem, (item) => {
+    return problem.id === item.id
   }, FAVORITE_MAX_LEN)
-  storage.set(FAVORITE_KEY, songs)
-  return songs
+  storage.set(FAVORITE_KEY, problems)
+  return problems
 }
 
-export function deleteFavorite(song) {
-  let songs = storage.get(FAVORITE_KEY, [])
-  deleteFromArray(songs, (item) => {
-    return item.id === song.id
+export function deleteFavorite(problem) {
+  let problems = storage.get(FAVORITE_KEY, [])
+  deleteFromArray(problems, (item) => {
+    return item.id === problem.id
   })
-  storage.set(FAVORITE_KEY, songs)
-  return songs
+  storage.set(FAVORITE_KEY, problems)
+  return problems
 }
 
 export function loadFavorite() {

@@ -29,6 +29,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   .energy-wrapper
+    width 100%
     margin-top 30px
     .energy-title
       .img-title

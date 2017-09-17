@@ -15,16 +15,16 @@
                   spellcheck="false" v-model.trim.lazy="email" ref="email"></el-input>
         <span class="prompt prompt-email" :class="showEmailPrompt">*邮箱格式错误</span>
       </el-form-item>
-      <el-form-item label="学校" :label-width="formLabelWidth">
-        <el-input class="input-item" placeholder="请输入学校"
-                  type="text" v-model.trim.lazy="school" ref="school"></el-input>
-        <span class="prompt prompt-school" :class="showSchoolPrompt">*请输入正确的学校名字</span>
-      </el-form-item>
-      <el-form-item label="职业" :label-width="formLabelWidth">
-        <el-input class="input-item" placeholder="请输入职业" type="text"
-                  v-model.trim.lazy="occupation" ref="occupation"></el-input>
-        <span class="prompt prompt-occupation" :class="showOccupationPrompt">*请输入正确的职业</span>
-      </el-form-item>
+      <!--<el-form-item label="学校" :label-width="formLabelWidth">-->
+        <!--<el-input class="input-item" placeholder="请输入学校"-->
+                  <!--type="text" v-model.trim.lazy="school" ref="school"></el-input>-->
+        <!--<span class="prompt prompt-school" :class="showSchoolPrompt">*请输入正确的学校名字</span>-->
+      <!--</el-form-item>-->
+      <!--<el-form-item label="职业" :label-width="formLabelWidth">-->
+        <!--<el-input class="input-item" placeholder="请输入职业" type="text"-->
+                  <!--v-model.trim.lazy="occupation" ref="occupation"></el-input>-->
+        <!--<span class="prompt prompt-occupation" :class="showOccupationPrompt">*请输入正确的职业</span>-->
+      <!--</el-form-item>-->
     </el-form>
     <div slot="footer" class="dialog-footer">
       <el-button @click="clickCancel">取 消</el-button>
@@ -53,8 +53,8 @@
         username: '',
         password: '',
         email: '',
-        school: '',
-        occupation: '',
+//        school: '',
+//        occupation: '',
         formLabelWidth: '50px',
         dialogShow: false
       }
@@ -71,9 +71,7 @@
         axios.post(url, {
           'username': this.username,
           'password': this.password,
-          'email': this.email,
-          'school': this.school,
-          'occupation': this.occupation
+          'email': this.email
         }).then(response => {
           console.log(response)
           if (response.data.msg === MSG_OK) {
@@ -113,8 +111,8 @@
         this.username = ''
         this.password = ''
         this.email = ''
-        this.school = ''
-        this.occupation = ''
+//        this.school = ''
+//        this.occupation = ''
       }
     },
     watch: {

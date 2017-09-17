@@ -166,15 +166,6 @@
         this.editorOptions.theme = command
         this.selectTheme = command
       }
-    },
-    computed: {
-      editor() {
-        return this.$refs.myEditor.editor
-      }
-    },
-    mounted() {
-      console.log('this is current editor object', this.editor)
-      // you can use this.editor to do something...
     }
   }
 </script>

@@ -4,7 +4,7 @@
     <login :dialogVisible="showLoginDialog" @closeLoginDialog="_closeLoginDialog" v-show="showLoginDialog"
            @loginSuccess="loginSuccess" ref="login"></login>
     <register :dialogVisible="showRegisterDialog" @closeRegisterDialog="_closeRegisterDialog"></register>
-    <router-view></router-view>
+      <router-view></router-view>
     <myfooter></myfooter>
   </div>
 </template>

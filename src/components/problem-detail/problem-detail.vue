@@ -11,9 +11,8 @@
         <el-col :sm="24" :lg="20" :md="22" :xs="24">
           <div class="problem-header">
             <h3 align="left">{{problemDetail.title}}</h3>
-            <img v-show="!hasCollect" width="56" height="56" src="static/nocollection.png" class="collection"
-                 @click="collection">
-            <img v-show="hasCollect" width="56" height="56" src="static/collection.png" class="collection"
+            <img width="56" height="56"
+                 class="collection" :src="getFavoriteSrc(problemDetail)"
                  @click="collection">
           </div>
           <div class="container">
@@ -27,8 +26,8 @@
               <el-tab-pane label="Hints" name="third">
                 <hints></hints>
               </el-tab-pane>
-              <el-tab-pane label="定时任务补偿" name="fourth">
-                定时任务补偿
+              <el-tab-pane label="Notes" name="fourth">
+                <notes :name="problem.title"></notes>
               </el-tab-pane>
             </el-tabs>
           </div>
@@ -43,28 +42,23 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
   import axios from 'axios'
   import Description from 'components/description/description'
   import Solution from 'components/solution/solution'
   import Hints from 'components/hints/hints'
+  import Notes from 'components/notes/notes'
 
   export default {
     data() {
       return {
         loading: true,
         problemDetail: {},
-        tab: 'description',
-        hasCollect: false
+        tab: 'description'
       }
     },
     created() {
       this._getProblemDetail()
-    },
-    computed: {
-      ...mapGetters([
-        'problem'
-      ])
     },
     methods: {
       _getProblemDetail() {
@@ -76,42 +70,73 @@
         console.log(this.problem.id)
         let url = 'https://api.txdna.cn/problems/' + `${this.problem.id}`
         axios.get(url).then(response => {
-          console.log(response.data)
+          console.log(response.code)
           this.problemDetail = response.data
           this.loading = false
         }, response => {
-          console.log(response)
-          this.$message.error('无法获取数据')
-          setTimeout(() => { this.$router.back() }, 2000)
+          this._getProblemDetail()
         })
       },
       collection() {
-        this.hasCollect = !this.hasCollect
-        if (this.hasCollect) {
+        if (!this.user.id) {
           this.$notify({
-            title: '收藏成功',
-            message: `收藏题目:${this.problemDetail.title}`,
-            type: 'success'
+            title: '无法收藏题目',
+            message: '请先登录',
+            type: 'error'
           })
         } else {
-          this.$notify.info({
-            title: '取消成功',
-            message: `取消收藏题目:${this.problemDetail.title}`
-          })
+          if (!this.hasCollect(this.problemDetail.id)) {
+            this.saveFavoriteList(this.problemDetail)
+            this.$notify({
+              title: '收藏成功',
+              message: `收藏题目:${this.problemDetail.title}`,
+              type: 'success'
+            })
+          } else {
+            this.deleteFavoriteList(this.problemDetail)
+            this.$notify.info({
+              title: '取消成功',
+              message: `取消收藏题目:${this.problemDetail.title}`
+            })
+          }
         }
-      }
+      },
+      hasCollect(id) {
+        const index = this.collectionList.findIndex((item) => {
+          return item.id === id
+        })
+        return index > -1
+      },
+      getFavoriteSrc(problemDetail) {
+        if (this.hasCollect(problemDetail.id)) {
+          return 'static/collection.png'
+        } else {
+          return 'static/nocollection.png'
+        }
+      },
+      ...mapActions([
+        'saveFavoriteList',
+        'deleteFavoriteList'
+      ])
+    },
+    computed: {
+      ...mapGetters([
+        'problem',
+        'collectionList',
+        'user'
+      ])
     },
     components: {
       Description,
       Solution,
-      Hints
+      Hints,
+      Notes
     }
   }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style scoped lang="stylus" rel="stylesheet/stylus">
   .problem
-    min-height 100%
     .problem-header
       .collection
         float right
