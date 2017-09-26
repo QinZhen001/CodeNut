@@ -1,6 +1,6 @@
 # CodeNut API
 
-doc: [api.txdna.cn](#https://api.txdna.cn)
+doc: https://api.txdna.cn
 
 ## 更新历史
 
