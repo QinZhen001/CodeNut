@@ -1,0 +1,14 @@
+
+app/__pycache__/
+
+\.idea/
+
+app/api_1_0/__pycache__/
+
+app/doc/__pycache__/
+
+test/__pycache__/
+
+tools/__pycache__/
+
+venv/

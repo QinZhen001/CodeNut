@@ -1,0 +1,8 @@
+site_name: CodeNut API
+
+pages:
+- Home: 'index.md'
+- Database: 'database.md'
+- About:
+  - 'Release Notes': 'about/release-notes.md'
+  - 'License': 'about/license.md'

@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="./img/favicon.ico">
+        <title>CodeNut API</title>
+        <link href="./css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="./css/font-awesome-4.5.0.css" rel="stylesheet">
+        <link href="./css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="./css/highlight.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+        <![endif]-->
+	
+	<script src="./js/jquery-1.10.2.min.js"></script>
+        <script src="./js/bootstrap-3.0.3.min.js"></script>
+        <script src="./js/highlight.pack.js"></script> 
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+
+        <!-- Collapsed navigation -->
+        <div class="navbar-header">
+            <!-- Expander button -->
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href=".">CodeNut API</a>
+        </div>
+
+        <!-- Expanded navigation -->
+        <div class="navbar-collapse collapse">
+                <!-- Main navigation -->
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href=".">Home</a>
+                    </li>
+                    <li >
+                        <a href="database/">Database</a>
+                    </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">About <b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+                            
+<li >
+    <a href="about/release-notes/">Release Notes</a>
+</li>
+                            
+<li >
+    <a href="about/license/">License</a>
+</li>
+                        </ul>
+                    </li>
+                </ul>
+
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                        <i class="fa fa-search"></i> Search
+                    </a>
+                </li>
+                    <li class="disabled">
+                        <a rel="next" >
+                            <i class="fa fa-arrow-left"></i> Previous
+                        </a>
+                    </li>
+                    <li >
+                        <a rel="prev" href="database/">
+                            Next <i class="fa fa-arrow-right"></i>
+                        </a>
+                    </li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#welcome-to-codenut-api">Welcome to CodeNut API</a></li>
+            <li><a href="#_1">用户</a></li>
+            <li><a href="#_2">题目</a></li>
+            <li><a href="#_3">比赛</a></li>
+            <li><a href="#_4">搜索</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="welcome-to-codenut-api"><center>Welcome to CodeNut API</center></h1>
+<hr />
+<p>本 API 使用 RESTful 风格编写， <a href="http://www.ruanyifeng.com/blog/2014/05/restful_api.html">《RESTful API 设计指南》</a>，<a href="https://www.oschina.net/translate/best-practices-for-a-pragmatic-restful-api">《RESTful API 设计最佳实践》</a>。</p>
+<p>网址：<a href="http://api.txdna.cn">api.txdna.cn</a></p>
+<p>返回格式注：</p>
+<pre><code class="json"># 所有成功格式都与下方类似，result 为数组形式
+{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+    ...
+    }
+  ]
+}
+
+# 失败
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;xx&quot;}
+</code></pre>
+
+<hr />
+<h2 id="_1">用户</h2>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#tokens">/tokens</a></td>
+<td>登录、注销</td>
+</tr>
+<tr>
+<td><a href="#users">/users</a></td>
+<td>用户操作</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>角色名称</th>
+<th>权限</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user（默认）</td>
+<td>编程 &amp; 评论 &amp; 写文章</td>
+</tr>
+<tr>
+<td>moderator</td>
+<td>编程 &amp; 评论 &amp; 写文章 &amp; 管理用户评论</td>
+</tr>
+<tr>
+<td>sponsor</td>
+<td>编程 &amp; 评论 &amp; 写文章 &amp; 举办比赛</td>
+</tr>
+<tr>
+<td>administrator</td>
+<td>全部</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="tokens">tokens</h3>
+<ol>
+<li>
+<p><a href="#登录">登录</a></p>
+</li>
+<li>
+<p><a href="#注销">注销</a></p>
+</li>
+</ol>
+<hr />
+<h5 id="post-tokens"><a href="#tokens"><font color=#FF0000 id="登录">登录</font> POST <code>/tokens</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>username</td>
+<td>json</td>
+<td>yes</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td>password</td>
+<td>json</td>
+<td>yes</td>
+<td>密码</td>
+</tr>
+<tr>
+<td>duration</td>
+<td>json</td>
+<td>no</td>
+<td>token有效期（默认5小时）</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>duration</td>
+<td>token有效期</td>
+</tr>
+<tr>
+<td>id</td>
+<td>哈希过的id（下同）</td>
+</tr>
+<tr>
+<td>token</td>
+<td>token</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+    &quot;duration&quot;: 18000,
+    &quot;id&quot;: &quot;GG&quot;, 
+    &quot;token&quot;: &quot;eyJleHAiOjE1MDYzNTQzNzIsImFsZyI6IkhTMjU2IiwiaWF0IjoxNTA2MzM2MzcyfQ.eyJpZCI6Mn0.J-JTOcN4LVtWfH9pq15h4lWp_bLxBGnK_CV6Ptxw7S8&quot;
+    }
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;login error&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="delete-tokens"><a href="#tokens"><font color=#FF0000 id="注销">注销</font> DELETE <code>/tokens</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<hr />
+<h3 id="users">users</h3>
+<ol>
+<li>
+<p><a href="#创建用户">创建用户</a></p>
+</li>
+<li>
+<p><a href="#修改用户资料">修改用户资料</a></p>
+</li>
+<li>
+<p><a href="#修改用户密码">修改用户密码</a></p>
+</li>
+<li>
+<p><a href="#修改用户角色">修改用户角色</a></p>
+</li>
+<li>
+<p><a href="#修改用户头像">修改用户头像</a> </p>
+</li>
+<li>
+<p><a href="#删除用户">删除用户</a></p>
+</li>
+<li>
+<p><a href="#得到所有用户信息">得到所有用户信息</a></p>
+</li>
+<li>
+<p><a href="#得到具体用户信息">得到具体用户信息</a></p>
+</li>
+<li>
+<p><a href="#得到用户参加的所有比赛">得到用户参加的所有比赛</a></p>
+</li>
+<li>
+<p><a href="#得到用户举办的所有比赛">得到用户举办的所有比赛</a></p>
+</li>
+<li>
+<p><a href="#得到用户提交的程序">得到用户提交的程序</a></p>
+</li>
+<li>
+<p><a href="#得到用户收藏的题目">得到用户收藏的题目</a></p>
+</li>
+</ol>
+<hr />
+<h5 id="post-users"><a href="#users"><font color=#FF0000 id="创建用户">创建用户</font> POST <code>/users</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>email</td>
+<td>json</td>
+<td>yes</td>
+<td>邮箱</td>
+</tr>
+<tr>
+<td>username</td>
+<td>json</td>
+<td>yes</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td>password</td>
+<td>json</td>
+<td>yes</td>
+<td>密码</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>duration</td>
+<td>token有效期</td>
+</tr>
+<tr>
+<td>id</td>
+<td>id</td>
+</tr>
+<tr>
+<td>token</td>
+<td>token</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+    &quot;duration&quot;: 18000,
+    &quot;id&quot;: &quot;GG&quot;, 
+    &quot;token&quot;: &quot;eyJleHAiOjE1MDYzNTQzNzIsImFsZyI6IkhTMjU2IiwiaWF0IjoxNTA2MzM2MzcyfQ.eyJpZCI6Mn0.J-JTOcN4LVtWfH9pq15h4lWp_bLxBGnK_CV6Ptxw7S8&quot;
+    }
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;missing arguments, require: email, username, password&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;email format wrong&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;username: xx is already existed&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;email: xx is already existed&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="put-usersinfo"><a href="#users"><font color=#FF0000 id="修改用户资料">修改用户资料</font> PUT <code>/users/info</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>realname</td>
+<td>json</td>
+<td>no</td>
+<td>真名</td>
+</tr>
+<tr>
+<td>profile</td>
+<td>json</td>
+<td>no</td>
+<td>头像存储地址</td>
+</tr>
+<tr>
+<td>school</td>
+<td>json</td>
+<td>no</td>
+<td>学校</td>
+</tr>
+<tr>
+<td>about_me</td>
+<td>json</td>
+<td>no</td>
+<td>关于我</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>json</td>
+<td>no</td>
+<td>用户标签</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<ul>
+<li>失败返回值（出现不同于上述请求的参数）</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;can not modify&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="put-userspassword"><a href="#users"><font color=#FF0000 id="修改用户密码">修改用户密码</font> PUT <code>/users/password</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>oldpassword</td>
+<td>json</td>
+<td>yes</td>
+<td>旧密码</td>
+</tr>
+<tr>
+<td>newpassword</td>
+<td>json</td>
+<td>yes</td>
+<td>新密码</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;can not modify&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;old password not correct&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="put-usersprofile"><a href="#users"><font color=#FF0000 id="修改用户头像">修改用户头像</font> PUT <code>/users/profile</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无（功能暂时无法使用）</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="put-usersidrole"><a href="#users"><font color=#FF0000 id="修改用户角色">修改用户角色</font> PUT <code>/users/&lt;id&gt;/role</code>（管理员权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>role</td>
+<td>json</td>
+<td>yes</td>
+<td>角色名称</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="delete-usersid"><a href="#users"><font color=#FF0000 id="删除用户">删除用户</font> DELETE <code>/users/&lt;id&gt;</code>（管理员权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-users"><a href="#users"><font color=#FF0000 id="得到所有用户信息">得到所有用户信息</font> GET <code>/users</code>（管理员权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>page</td>
+<td>string</td>
+<td>no</td>
+<td>页码（默认1）</td>
+</tr>
+<tr>
+<td>per_page</td>
+<td>string</td>
+<td>no</td>
+<td>每页限制（默认20）</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>about_me</td>
+<td>关于我</td>
+</tr>
+<tr>
+<td>accept_nums</td>
+<td>编程通过数</td>
+</tr>
+<tr>
+<td>create_time</td>
+<td>注册时间</td>
+</tr>
+<tr>
+<td>login_time</td>
+<td>登陆时间</td>
+</tr>
+<tr>
+<td>profile</td>
+<td>头像存储地址</td>
+</tr>
+<tr>
+<td>realname</td>
+<td>真实姓名</td>
+</tr>
+<tr>
+<td>school</td>
+<td>学校</td>
+</tr>
+<tr>
+<td>submit_nums</td>
+<td>编程提交数</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户id</td>
+</tr>
+<tr>
+<td>username</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>标签</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;about_me&quot;: null, 
+      &quot;accept_nums&quot;: 0, 
+      &quot;create_time&quot;: &quot;Mon, 25 Sep 2017 07:06:42 GMT&quot;, 
+      &quot;login_time&quot;: &quot;Mon, 25 Sep 2017 07:06:42 GMT&quot;, 
+      &quot;profile&quot;: null, 
+      &quot;realname&quot;: &quot;moderator&quot;, 
+      &quot;school&quot;: null, 
+      &quot;submit_nums&quot;: 0, 
+      &quot;user_id&quot;: &quot;aG&quot;, 
+      &quot;username&quot;: &quot;moderator&quot;,
+      &quot;tag&quot;: &quot;xx&quot;
+    }, 
+    ......
+  ]
+}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-usersid"><a href="#users"><font color=#FF0000 id="得到具体用户信息">得到具体用户信息</font> GET <code>/users/&lt;id&gt;</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;about_me&quot;: null, 
+      &quot;accept_nums&quot;: 2, 
+      &quot;create_time&quot;: &quot;Mon, 25 Sep 2017 07:06:42 GMT&quot;, 
+      &quot;login_time&quot;: &quot;Mon, 25 Sep 2017 07:06:42 GMT&quot;, 
+      &quot;profile&quot;: null, 
+      &quot;realname&quot;: &quot;user&quot;, 
+      &quot;school&quot;: null, 
+      &quot;submit_nums&quot;: 2, 
+      &quot;user_id&quot;: &quot;o6&quot;, 
+      &quot;username&quot;: &quot;user&quot;
+    }
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;user doesn't exist&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-usersidcontests_joined"><a href="#users"><font color=#FF0000 id="得到用户参加的所有比赛">得到用户参加的所有比赛</font> GET <code>/users/&lt;id&gt;/contests_joined</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;auto_approve&quot;: true, 
+      &quot;description&quot;: &quot;tYn6j78Mwap91HB3Of4IzkUSvRZLmhKAisruD0qlbWVXQPTcgx&quot;, 
+      &quot;end_time&quot;: &quot;Wed, 20 Sep 2017 06:02:18 GMT&quot;, 
+      &quot;id&quot;: &quot;6L&quot;, 
+      &quot;sponsor&quot;: &quot;administrator&quot;, 
+      &quot;start_time&quot;: &quot;Sun, 20 Aug 2017 06:02:18 GMT&quot;, 
+      &quot;title&quot;: &quot;w4Dp2o9U&quot;, 
+      &quot;user_nums&quot;: 0
+    }, 
+    ......
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;user doesn't exist&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-usersidcontests_sponsor"><a href="#users"><font color=#FF0000 id="得到用户举办的所有比赛">得到用户举办的所有比赛</font> GET <code>/users/&lt;id&gt;/contests_sponsor</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;auto_approve&quot;: true, 
+      &quot;description&quot;: &quot;KlPv1dCiVMSBwLjaZkFxpDcy7fEqQTW49sAXnbOgeU5h2oGHrY&quot;, 
+      &quot;end_time&quot;: &quot;Fri, 15 Sep 2017 06:02:18 GMT&quot;, 
+      &quot;id&quot;: &quot;Mb&quot;, 
+      &quot;sponsor&quot;: &quot;administrator&quot;, 
+      &quot;start_time&quot;: &quot;Tue, 15 Aug 2017 06:02:18 GMT&quot;, 
+      &quot;title&quot;: &quot;5ZuU6VN2&quot;, 
+      &quot;user_nums&quot;: 0
+    }, 
+    ......
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;user doesn't exist&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-usersidcodes_submitted"><a href="#users"><font color=#FF0000 id="得到用户提交的程序">得到用户提交的程序</font> GET <code>/users/&lt;id&gt;/codes_submitted</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;code_id&quot;: &quot;xs&quot;, 
+      &quot;create_time&quot;: &quot;Tue, 26 Sep 2017 01:39:03 GMT&quot;, 
+      &quot;language&quot;: &quot;Python3&quot;, 
+      &quot;memory_used&quot;: 45523.0, 
+      &quot;problem_id&quot;: &quot;nA&quot;, 
+      &quot;status&quot;: &quot;Accepted&quot;, 
+      &quot;time_used&quot;: 1000.0, 
+      &quot;update_time&quot;: null, 
+      &quot;user_id&quot;: &quot;o6&quot;
+    }, 
+    ......
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;user doesn't exist&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-usersidcollections"><a href="#users"><font color=#FF0000 id="得到用户收藏的题目">得到用户收藏的题目</font> GET <code>/users/&lt;id&gt;/collections</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;problem&quot;: &quot;title&quot;, 
+      &quot;problem_id&quot;: &quot;xj&quot;, 
+      &quot;user_id&quot;: &quot;o6&quot;, 
+      &quot;username&quot;: &quot;user&quot;
+    }, 
+    ......
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;user doesn't exist&quot;}
+</code></pre>
+
+<hr />
+<h2 id="_2">题目</h2>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#problems">/problems</a></td>
+<td>题目操作</td>
+</tr>
+<tr>
+<td><a href="#users_problems">/problems</a></td>
+<td>用户题目操作</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="problems">problems</h3>
+<ol>
+<li>
+<p><a href="#得到所有题目信息">得到所有题目信息</a></p>
+</li>
+<li>
+<p><a href="#得到题目信息">得到题目信息</a></p>
+</li>
+<li>
+<p><a href="#得到题目解决方法">得到题目解决方法</a></p>
+</li>
+<li>
+<p><a href="#修改题目解决方法">修改题目解决方法</a></p>
+</li>
+<li>
+<p><a href="#创建题目">创建题目</a></p>
+</li>
+<li>
+<p><a href="#修改题目">修改题目</a></p>
+</li>
+<li>
+<p><a href="#删除题目">删除题目</a></p>
+</li>
+<li>
+<p><a href="#得到程序模版">得到程序模版</a></p>
+</li>
+<li>
+<p><a href="#运行代码">运行代码</a></p>
+</li>
+<li>
+<p><a href="#提交代码">提交代码</a></p>
+</li>
+</ol>
+<hr />
+<h5 id="get-problems"><a href="#problems"><font color=#FF0000 id="得到所有题目信息">得到所有题目信息</font> GET <code>/problems</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>page</td>
+<td>string</td>
+<td>no</td>
+<td>页码（默认1）</td>
+</tr>
+<tr>
+<td>per_page</td>
+<td>string</td>
+<td>no</td>
+<td>每页限制（默认20）</td>
+</tr>
+<tr>
+<td>contest_id</td>
+<td>string</td>
+<td>no</td>
+<td>所属比赛id（默认None）</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>accepted</td>
+<td>通过该题人数</td>
+</tr>
+<tr>
+<td>submitted</td>
+<td>提交代码的人数</td>
+</tr>
+<tr>
+<td>id</td>
+<td>题目id</td>
+</tr>
+<tr>
+<td>level</td>
+<td>难度等级</td>
+</tr>
+<tr>
+<td>like_nums</td>
+<td>赞</td>
+</tr>
+<tr>
+<td>hate_nums</td>
+<td>倒</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>标签</td>
+</tr>
+<tr>
+<td>title</td>
+<td>标题</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;accepted&quot;: 0, 
+      &quot;hate_nums&quot;: 0, 
+      &quot;id&quot;: &quot;Meq&quot;, 
+      &quot;level&quot;: 3, 
+      &quot;like_nums&quot;: 0, 
+      &quot;submitted&quot;: 0, 
+      &quot;tag&quot;: &quot;YwTo&quot;, 
+      &quot;title&quot;: &quot;W8CpyiJq&quot;
+    }, 
+    ......
+  ]
+}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-problemsid"><a href="#problems"><font color=#FF0000 id="得到题目信息">得到题目信息</font> GET <code>/problems/&lt;id&gt;</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;accepted&quot;: 0, 
+      &quot;description&quot;: &quot;sjXmTEM4kYG17Qq69K0VgLISChadlDpniP2boRcNtZAxJf85BF&quot;, 
+      &quot;hate_nums&quot;: 0, 
+      &quot;id&quot;: &quot;Meq&quot;, 
+      &quot;level&quot;: 3, 
+      &quot;like_nums&quot;: 0, 
+      &quot;submitted&quot;: 0, 
+      &quot;tag&quot;: &quot;YwTo&quot;, 
+      &quot;title&quot;: &quot;W8CpyiJq&quot;
+    }
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;problem doesn't exist&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-problemsidsolutions"><a href="#problems"><font color=#FF0000 id="得到题目解决方法">得到题目解决方法</font> GET <code>/problems/&lt;id&gt;/solutions</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>solution</td>
+<td>解决方法</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+    &quot;solution&quot;: &quot;K2O8eZMo7GgrbJTQN5H4wyDax6tCzmjdVnf19iB3UALvIq0Slp&quot;
+    }
+  ]
+}
+</code></pre>
+
+<p><br /></p>
+<h5 id="put-problemsidsolutions"><a href="#problems"><font color=#FF0000 id="修改题目解决方法">修改题目解决方法</font> PUT <code>/problems/&lt;id&gt;/solutions</code>（题目所有者）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>solution</td>
+<td>json</td>
+<td>yes</td>
+<td>解决办法</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;do not modify other sponsor's solution&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="post-problemsidsolutions"><a href="#problems"><font color=#FF0000 id="创建题目">创建题目</font> POST <code>/problems/&lt;id&gt;/solutions</code>（举办比赛权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td>json</td>
+<td>yes</td>
+<td>标题</td>
+</tr>
+<tr>
+<td>description</td>
+<td>json</td>
+<td>yes</td>
+<td>描述</td>
+</tr>
+<tr>
+<td>level</td>
+<td>json</td>
+<td>yes</td>
+<td>难度</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>json</td>
+<td>yes</td>
+<td>标签</td>
+</tr>
+<tr>
+<td>code</td>
+<td>json</td>
+<td>yes</td>
+<td>程序模板</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>id</td>
+<td>题目id</td>
+</tr>
+<tr>
+<td>title</td>
+<td>标题</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;id&quot;: &quot;zaa&quot;, 
+      &quot;title&quot;: &quot;test&quot;
+    }
+  ]
+}
+</code></pre>
+
+<p><br /></p>
+<h5 id="put-problemsid"><a href="#problems"><font color=#FF0000 id="修改题目">修改题目</font> PUT <code>/problems/&lt;id&gt;</code>（题目所有者）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td>json</td>
+<td>no</td>
+<td>标题</td>
+</tr>
+<tr>
+<td>description</td>
+<td>json</td>
+<td>no</td>
+<td>描述</td>
+</tr>
+<tr>
+<td>level</td>
+<td>json</td>
+<td>no</td>
+<td>难度</td>
+</tr>
+<tr>
+<td>tag</td>
+<td>json</td>
+<td>no</td>
+<td>标签</td>
+</tr>
+<tr>
+<td>code</td>
+<td>json</td>
+<td>no</td>
+<td>程序模板</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;do not modify other sponsor's problem&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;update error&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;title: xx is already existed&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="delete-problemsid"><a href="#problems"><font color=#FF0000 id="删除题目">删除题目</font> DELETE <code>/problems/&lt;id&gt;</code>（题目所有者）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;do not delete other sponsor's problem&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;problem doesn't exist&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-problemsidcodes"><a href="#problems"><font color=#FF0000 id="得到程序模版">得到程序模版</font> GET <code>/problems/&lt;id&gt;/codes</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>code</td>
+<td>程序模版</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;code&quot;: &quot;h2O7F0utCVLfbM8pUy3P&quot;
+    }
+  ]
+}
+</code></pre>
+
+<p><br /></p>
+<h5 id="patch-problemsidcodes"><a href="#problems"><font color=#FF0000 id="运行代码">运行代码</font> PATCH <code>/problems/&lt;id&gt;/codes</code>（编程权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>language</td>
+<td>json</td>
+<td>yes</td>
+<td>编程语言</td>
+</tr>
+<tr>
+<td>code</td>
+<td>json</td>
+<td>yes</td>
+<td>代码</td>
+</tr>
+<tr>
+<td>custom_input</td>
+<td>json</td>
+<td>no</td>
+<td>用户自定义输入</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>memory_used</td>
+<td>耗费内存</td>
+</tr>
+<tr>
+<td>output</td>
+<td>程序输出</td>
+</tr>
+<tr>
+<td>status</td>
+<td>运行状态</td>
+</tr>
+<tr>
+<td>time_used</td>
+<td>耗费时间</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;memory_used&quot;: 0.7620915240518614, 
+      &quot;output&quot;: &quot;test&quot;, 
+      &quot;status&quot;: &quot;Memory Limit Exceeded&quot;, 
+      &quot;time_used&quot;: 0.7325701808735701
+    }
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;just require: language code custom_input&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="post-problemsidcodes"><a href="#problems"><font color=#FF0000 id="提交代码">提交代码</font> POST <code>/problems/&lt;id&gt;/codes</code>（编程权限）</a></h5>
+<pre><code class="json">与运行代码一致
+</code></pre>
+
+<blockquote>
+<p>目前沙箱还没完成，运行代码和提交代码的接口都是随机产生的值</p>
+</blockquote>
+<h3 id="users_problems">users_problems</h3>
+<ol>
+<li>
+<p><a href="#用户记笔记">用户记笔记</a></p>
+</li>
+<li>
+<p><a href="#得到用户笔记">得到用户笔记</a></p>
+</li>
+<li>
+<p><a href="#用户收藏题目">用户收藏题目</a></p>
+</li>
+<li>
+<p><a href="#用户取消收藏">用户取消收藏</a></p>
+</li>
+<li>
+<p><a href="#用户点赞">用户点赞</a></p>
+</li>
+</ol>
+<hr />
+<h5 id="put-problemsidnotes"><a href="#users_problems"><font color=#FF0000 id="用户记笔记">用户记笔记</font> PUT <code>/problems/&lt;id&gt;/notes</code>（编程权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>text</td>
+<td>json</td>
+<td>yes</td>
+<td>笔记（需要检查不为空）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-problemsidnotes"><a href="#users_problems"><font color=#FF0000 id="得到用户笔记">得到用户笔记</font> GET <code>/problems/&lt;id&gt;/notes</code>（编程权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;text&quot;: &quot;xx&quot;
+    }
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;note doesn't exist&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="post-problemsidcollections"><a href="#users_problems"><font color=#FF0000 id="用户收藏题目">用户收藏题目</font> POST <code>/problems/&lt;id&gt;/collections</code>（编程权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="delete-problemsidcollections"><a href="#users_problems"><font color=#FF0000 id="用户取消收藏">用户取消收藏</font> DELETE <code>/problems/&lt;id&gt;/collections</code>（编程权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="put-problemsidlikes"><a href="#users_problems"><font color=#FF0000 id="用户点赞">用户点赞/倒/无感</font> PUT <code>/problems/&lt;id&gt;/likes</code>（编程权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>true_or_false_or_none</td>
+<td>string</td>
+<td>yes</td>
+<td>true: like, false: hate, none: no feel</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<h2 id="_3">比赛</h2>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#contests">/contests</a></td>
+<td>比赛操作</td>
+</tr>
+<tr>
+<td><a href="#users_contests">/contests</a></td>
+<td>用户比赛操作</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="contests">contests</h3>
+<ol>
+<li>
+<p><a href="#创建比赛">创建比赛</a></p>
+</li>
+<li>
+<p><a href="#更新比赛信息">更新比赛信息</a></p>
+</li>
+<li>
+<p><a href="#删除比赛">删除比赛</a></p>
+</li>
+<li>
+<p><a href="#得到所有比赛信息">得到所有比赛信息</a></p>
+</li>
+<li>
+<p><a href="#得到具体比赛信息">得到具体比赛信息</a></p>
+</li>
+<li>
+<p><a href="#得到所以参赛者">得到所以参赛者</a></p>
+</li>
+<li>
+<p><a href="#批准参赛">批准参赛</a></p>
+</li>
+</ol>
+<hr />
+<h5 id="post-contests"><a href="#contests"><font color=#FF0000 id="创建比赛">创建比赛</font> POST <code>/contests</code>（举办比赛权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td>json</td>
+<td>yes</td>
+<td>标题</td>
+</tr>
+<tr>
+<td>description</td>
+<td>json</td>
+<td>yes</td>
+<td>描述</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>json</td>
+<td>yes</td>
+<td>开始时间</td>
+</tr>
+<tr>
+<td>end_time</td>
+<td>json</td>
+<td>yes</td>
+<td>结束时间</td>
+</tr>
+<tr>
+<td>auto_approve</td>
+<td>json</td>
+<td>no</td>
+<td>自动批准用户加入（默认自动）</td>
+</tr>
+<tr>
+<td>password</td>
+<td>json</td>
+<td>no</td>
+<td>比赛密码（默认为空）</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>auto_approve</td>
+<td>自动批准用户加入</td>
+</tr>
+<tr>
+<td>description</td>
+<td>描述</td>
+</tr>
+<tr>
+<td>end_time</td>
+<td>开始时间</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>结束时间</td>
+</tr>
+<tr>
+<td>id</td>
+<td>比赛id</td>
+</tr>
+<tr>
+<td>sponsor</td>
+<td>举办方名字</td>
+</tr>
+<tr>
+<td>title</td>
+<td>标题</td>
+</tr>
+<tr>
+<td>user_nums</td>
+<td>参加者人数</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;auto_approve&quot;: true, 
+      &quot;description&quot;: &quot;test&quot;, 
+      &quot;end_time&quot;: &quot;2017-11-25 07:24:41&quot;, 
+      &quot;id&quot;: &quot;dx&quot;, 
+      &quot;sponsor&quot;: &quot;administrator&quot;, 
+      &quot;start_time&quot;: &quot;2017-09-25 07:24:41&quot;, 
+      &quot;title&quot;: &quot;test&quot;, 
+      &quot;user_nums&quot;: 0
+    }
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;just require: title description start_time end_time auto_approve password&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="put-contestsid"><a href="#contests"><font color=#FF0000 id="更新比赛信息">更新比赛信息</font> PUT <code>/contests/&lt;id&gt;</code>（比赛所有者）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>title</td>
+<td>json</td>
+<td>no</td>
+<td>标题</td>
+</tr>
+<tr>
+<td>description</td>
+<td>json</td>
+<td>no</td>
+<td>描述</td>
+</tr>
+<tr>
+<td>start_time</td>
+<td>json</td>
+<td>no</td>
+<td>开始时间</td>
+</tr>
+<tr>
+<td>end_time</td>
+<td>json</td>
+<td>no</td>
+<td>结束时间</td>
+</tr>
+<tr>
+<td>auto_approve</td>
+<td>json</td>
+<td>no</td>
+<td>自动批准用户加入（默认自动）</td>
+</tr>
+<tr>
+<td>password</td>
+<td>json</td>
+<td>no</td>
+<td>比赛密码（默认为空）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;do not modify other sponsor's contest&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;just require: title description start_time end_time auto_approve password&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;update error&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="delete-contestsid"><a href="#contests"><font color=#FF0000 id="删除比赛">删除比赛</font> DELETE <code>/contests/&lt;id&gt;</code>（比赛所有者）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;do not delete other sponsor's contest&quot;}
+{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;contest doesn't exist&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-contests"><a href="#contests"><font color=#FF0000 id="得到所有比赛信息">得到所有比赛信息</font> GET <code>/contests</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>page</td>
+<td>string</td>
+<td>no</td>
+<td>页码（默认1）</td>
+</tr>
+<tr>
+<td>per_page</td>
+<td>string</td>
+<td>no</td>
+<td>每页限制（默认20）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;auto_approve&quot;: true, 
+      &quot;description&quot;: &quot;UsHG0FxwqrLofj5OhvBN3KDdAc7ETnm9pWSZMCX8RiQPytJuek&quot;, 
+      &quot;end_time&quot;: &quot;Fri, 22 Sep 2017 06:02:18 GMT&quot;, 
+      &quot;id&quot;: &quot;GG&quot;, 
+      &quot;sponsor&quot;: &quot;administrator&quot;, 
+      &quot;start_time&quot;: &quot;Tue, 12 Sep 2017 06:02:18 GMT&quot;, 
+      &quot;title&quot;: &quot;dQIFUpcl&quot;, 
+      &quot;user_nums&quot;: 0
+    }, 
+    ......
+  ]
+}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-contestsid"><a href="#contests"><font color=#FF0000 id="得到具体比赛信息">得到具体比赛信息</font> GET <code>/contests/&lt;id&gt;</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>is_join</td>
+<td>用户是否已加入比赛（null: 没加入，true: 已加入，false: 拒绝加入）</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;auto_approve&quot;: true, 
+      &quot;description&quot;: &quot;DUKw58N620axWsvonMSbJipIRBjOdCtAeY3kL9VuXf4zZGQmFy&quot;, 
+      &quot;end_time&quot;: &quot;Thu, 21 Sep 2017 06:02:18 GMT&quot;, 
+      &quot;id&quot;: &quot;o6&quot;, 
+      &quot;is_join&quot;: null,
+      &quot;sponsor&quot;: &quot;administrator&quot;, 
+      &quot;start_time&quot;: &quot;Mon, 11 Sep 2017 06:02:18 GMT&quot;, 
+      &quot;title&quot;: &quot;AnDSxRib&quot;, 
+      &quot;user_nums&quot;: 0
+    }
+  ]
+}
+</code></pre>
+
+<p><br /></p>
+<h5 id="get-contestsidusers"><a href="#contests"><font color=#FF0000 id="得到所以参赛者">得到所以参赛者</font> GET <code>/contests/&lt;id&gt;/users</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>page</td>
+<td>string</td>
+<td>no</td>
+<td>页码（默认1）</td>
+</tr>
+<tr>
+<td>per_page</td>
+<td>string</td>
+<td>no</td>
+<td>每页限制（默认20）</td>
+</tr>
+<tr>
+<td>is_join</td>
+<td>string</td>
+<td>no</td>
+<td>批准参赛（默认True）</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>is_join</td>
+<td>批准参赛</td>
+</tr>
+<tr>
+<td>user</td>
+<td>用户名</td>
+</tr>
+<tr>
+<td>user_id</td>
+<td>用户id</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;is_join&quot;: true, 
+      &quot;user&quot;: &quot;administrator&quot;, 
+      &quot;user_id&quot;: &quot;GG&quot;
+    },
+    ......
+  ]
+}
+</code></pre>
+
+<p><br /></p>
+<h5 id="put-contestsidusers"><a href="#contests"><font color=#FF0000 id="批准参赛">批准参赛</font> PUT <code>/contests/&lt;id&gt;/users</code>（比赛所有者）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>user_id</td>
+<td>json</td>
+<td>yes</td>
+<td>用户id</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>is_join</td>
+<td>目前参赛情况</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;is_join&quot;: true, 
+    }
+  ]
+}
+</code></pre>
+
+<hr />
+<h3 id="users_contests">users_contests</h3>
+<ol>
+<li>
+<p><a href="#加入比赛">加入比赛</a></p>
+</li>
+<li>
+<p><a href="#退出比赛">退出比赛</a></p>
+</li>
+</ol>
+<hr />
+<h5 id="post-contestsidusers"><a href="#users_contests"><font color=#FF0000 id="加入比赛">加入比赛</font> POST <code>/contests/&lt;id&gt;/users</code>（编程权限）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>password</td>
+<td>json</td>
+<td>yes</td>
+<td>比赛密码（为空时也要发null）</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>返回值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>is_join</td>
+<td>是否成功参赛</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      &quot;is_join&quot;: true, 
+    }
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;password wrong&quot;}
+</code></pre>
+
+<p><br /></p>
+<h5 id="delete-contestsidusers"><a href="#users_contests"><font color=#FF0000 id="退出比赛">退出比赛</font> DELETE <code>/contests/&lt;id&gt;/users</code>（已加入比赛者）</a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>无</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;ok&quot;}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;out contest wrong&quot;}
+</code></pre>
+
+<h2 id="_4">搜索</h2>
+<p>暂无</p></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="http://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>var base_url = '.';</script>
+        <script data-main="./mkdocs/js/search.js" src="./mkdocs/js/require.js"></script>
+        <script src="./js/base.js"></script><div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 0.16.3
+Build Date UTC : 2017-09-26 14:54:26
+-->
