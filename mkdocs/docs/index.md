@@ -328,7 +328,9 @@
       "school": null, 
       "submit_nums": 2, 
       "user_id": "o6", 
-      "username": "user"
+      "username": "user",
+	  "tag": "aa,bb",
+	  "role": "user"
     }
   ]
 }
