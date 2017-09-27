@@ -644,6 +644,10 @@
 <td>tag</td>
 <td>标签</td>
 </tr>
+<tr>
+<td>role</td>
+<td>角色名称</td>
+</tr>
 </tbody>
 </table>
 <ul>
@@ -663,7 +667,8 @@
       &quot;submit_nums&quot;: 0, 
       &quot;user_id&quot;: &quot;aG&quot;, 
       &quot;username&quot;: &quot;moderator&quot;,
-      &quot;tag&quot;: &quot;xx&quot;
+      &quot;tag&quot;: &quot;aa,bb&quot;,
+      &quot;role&quot;: &quot;moderator&quot;
     }, 
     ......
   ]
@@ -2215,7 +2220,65 @@
 </code></pre>
 
 <h2 id="_4">搜索</h2>
-<p>暂无</p></div>
+<table>
+<thead>
+<tr>
+<th>资源</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#search">/search</a></td>
+<td>搜索操作</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="search">search</h3>
+<h5 id="post-search"><a href="#search"><font color=#FF0000 id="搜索">搜索</font> POST <code>/search</code></a></h5>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>target</td>
+<td>json</td>
+<td>yes</td>
+<td>查询对象（User，Problem等，对应数据库模型）</td>
+</tr>
+<tr>
+<td>type</td>
+<td>json</td>
+<td>yes</td>
+<td>模型属性（usrname，title等）</td>
+</tr>
+<tr>
+<td>content</td>
+<td>json</td>
+<td>yes</td>
+<td>查询内容</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;, 
+  &quot;result&quot;: [
+    {
+      ......
+    }
+  ]
+}
+</code></pre></div>
         </div>
 
         <footer class="col-md-12">
@@ -2254,5 +2317,5 @@
 
 <!--
 MkDocs version : 0.16.3
-Build Date UTC : 2017-09-26 14:54:26
+Build Date UTC : 2017-09-27 05:25:57
 -->
