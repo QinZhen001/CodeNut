@@ -240,7 +240,15 @@ class Test:
         jdict = json.loads(json.dumps(response.json()))
         assert jdict['msg'] == 'no'
 
+    def search(self):
+        resource = '/search'
+        self.tokens()
+
+        data = {'target': 'Problem', 'type': 'id', 'content': '12'}
+        response = requests.post(self.url + resource, json=data, headers=self.headers)
+        print(response.text)
+
 
 if __name__ == '__main__':
     insert_run()
-    Test().users()
+    Test().search()

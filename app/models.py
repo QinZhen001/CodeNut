@@ -47,8 +47,7 @@ class Problem(db.Model):
         return json
 
     def solution_to_json(self):
-        solution = self.solution if self.solution is not None else 'null'
-        json = {'solution': solution}
+        json = {'solution': self.solution}
         return json
 
     def __repr__(self):
@@ -232,6 +231,7 @@ class UserInfo(db.Model):
         json = {
             'user_id': generate_id(self.user_id),
             'username': self.user.username,
+            'role': self.user.role.name,
             'realname': self.realname,
             'profile': self.profile,
             'school': self.school,

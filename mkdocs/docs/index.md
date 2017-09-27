@@ -276,6 +276,7 @@
 |   user_id      |        用户id          |
 |   username     |        用户名          |
 |   tag          |        标签           |
+|   role         |        角色名称        |
 
 
 * 成功返回值
@@ -295,7 +296,8 @@
       "submit_nums": 0, 
       "user_id": "aG", 
       "username": "moderator",
-	  "tag": "xx"
+	  "tag": "aa,bb",
+	  "role": "moderator"
     }, 
     ......
   ]
@@ -1181,4 +1183,31 @@
 
 ## 搜索
 
-暂无
+|          资源                   |          说明          |
+|---------------------------------|-----------------------|
+|   [/search](#search)            |       搜索操作         |
+
+---
+
+### search
+
+##### [<font color=#FF0000 id="搜索">搜索</font> POST `/search`](#search)
+
+|  请求参数      |        格式     |     必选    |                     说明                      |
+|---------------|-----------------|------------|-----------------------------------------------|
+|   target      |       json      |     yes    |       查询对象（User，Problem等，对应数据库模型）|
+|   type        |       json      |     yes    |       模型属性（usrname，title等）             |
+|   content     |       json      |     yes    |       查询内容                                 |
+
+* 成功返回值
+
+```json
+{
+  "msg": "ok", 
+  "result": [
+    {
+      ......
+    }
+  ]
+}
+```

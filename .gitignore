@@ -12,3 +12,5 @@ test/__pycache__/
 tools/__pycache__/
 
 venv/
+
+__pycache__/
