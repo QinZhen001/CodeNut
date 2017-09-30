@@ -1,5 +1,5 @@
 <template>
-  <div class="footer">
+  <div class="myfooter">
     <div class="footer-wrapper">
       <span class="footer-text-up">Copyright © 2017 CodeNut</span>
       <div class="line-wrapper">
@@ -15,13 +15,14 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  .footer
+  .myfooter
+    z-index -1
+    flex: 0 0 auto;
     margin-top 20px
     width 100%
     height 100px
     background-color #202020
     vertical-align: middle;
-    z-index 100
     .footer-wrapper
       height 80px
       width 500px

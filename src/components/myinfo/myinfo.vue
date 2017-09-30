@@ -14,20 +14,16 @@
             <el-collapse>
               <el-collapse-item title="我的信息" name="1">
                 <div class="item-wrapper">
-                  <span class="text">邮箱</span>
-                  <span class="value" v-show="user.email">{{user.email}}</span>
+                  <span class="text">真实姓名</span>
+                  <span class="value" v-show="user.realname">{{user.realname}}</span>
                 </div>
                 <div class="item-wrapper">
                   <span class="text">学校</span>
                   <span class="value" v-show="user.school">{{user.school}}</span>
                 </div>
                 <div class="item-wrapper">
-                  <span class="text">职业</span>
-                  <span class="value" v-show="user.occupation">{{user.occupation}}</span>
-                </div>
-                <div class="item-wrapper">
-                  <span class="text">公司</span>
-                  <span class="value" v-show="user.company">{{user.company}}</span>
+                  <span class="text">角色</span>
+                  <span class="value" v-show="user.role">{{user.role}}</span>
                 </div>
               </el-collapse-item>
             </el-collapse>
@@ -64,7 +60,7 @@
   }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style scoped lang="stylus" rel="stylesheet/stylus">
   .myinfo
     width 100%
     .info-title
@@ -108,31 +104,35 @@
           color: #999;
         .el-collapse
           border: none
-          .el-collapse-item__header
-            padding-left 0
-            border-bottom none
-          .el-collapse-item__wrap
-            border: none
-            background-color: #fff
-          .el-collapse-item__content
-            padding 0
           .el-collapse-item
-            padding 0 5px
-            .item-wrapper
-              width 100%
-              height 30px
-              border-bottom 1px solid #ddd
-              .text
-                margin-left 8px
-                display inline-block
-                position: relative;
-                top: 50%;
-                transform: translateY(-50%);
-              .value
-                display inline-block
-                position: relative;
-                top: 50%;
-                float right
-                margin-right 5px
-                transform: translateY(-50%);
+            .el-collapse-item__header
+              padding-left 0
+              border-bottom none
+            .el-collapse-item__wrap
+              border: none
+              background-color white
+              padding 0 0
+              .el-collapse-item__content
+                background-color white
+                padding 0 0
+                .item-wrapper
+                  width 100%
+                  height 30px
+                  border-bottom 1px solid #ddd
+                  &:last-child
+                    border-bottom none
+                  .text
+                    margin-left 8px
+                    display inline-block
+                    position: relative;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    color #6F6F6F
+                  .value
+                    display inline-block
+                    position: relative;
+                    top: 50%;
+                    float right
+                    margin-right 5px
+                    transform: translateY(-50%);
 </style>

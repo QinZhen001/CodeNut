@@ -1,0 +1,225 @@
+<template>
+  <div class="myhead">
+    <div class="meun-wrapper">
+      <img class="logo" width="146" height="38" src="static/logo.png" @click="clickLogo">
+      <el-menu theme="dark" class="menu" mode="horizontal" @select="handleSelect">
+        <el-menu-item v-for="(item, index) in headrs" :key="index" :index=item>{{item}}
+        </el-menu-item>
+        <transition name="el-fade-in-linear">
+          <el-dropdown @command="handleCommand" trigger="hover" v-show="showUserItem">
+                <span class="el-dropdown-link">
+                    <img class="user-logo" src="static/avatar.jpg">
+                    <span class="user-name">{{user.username}}</span>
+                </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item command="usercenter">用户中心</el-dropdown-item>
+              <el-dropdown-item command="loginout">退出</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </transition>
+      </el-menu>
+    </div>
+  </div>
+</template>
+
+<script type="text/ecmascript-6">
+  import { clearToken } from 'common/js/cache'
+  import axios from 'axios'
+  import { mapMutations, mapGetters } from 'vuex'
+  import { baseUrl, MSG_OK } from 'common/js/data'
+  import User from 'common/js/user'
+
+  export default {
+    props: {
+      datas: {
+        type: Array,
+        default: ['注册', '用户登录', '管理员登录']
+      }
+    },
+    data() {
+      return {
+        headrs: this.datas,
+        user: {}
+      }
+    },
+    methods: {
+      handleSelect(key, keyPath) {
+        console.log(key)
+        if (key === '注册') {
+          // 注册
+          this.$emit('register')
+        } else if (key === '用户登录') {
+          // 登录
+          this.$emit('login')
+        } else if (key === '退出登录') {
+          this.quitUser()
+        } else if (key === '管理员登录') {
+          this.mangerLogin()
+        }
+      },
+      quitUser() {
+        this.$confirm('是否要退出登录?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          //注销用户
+          this._logoff()
+          // 修改header的内容
+          this.headrs = ['注册', '用户登录', '管理员登录']
+          this.$notify({
+            title: '退出登录',
+            message: '注销用户成功!',
+            type: 'success'
+          })
+          //修改vuex 中的 user 数据
+          this.setUser(new User({}))
+          console.log('成功退出')
+          console.log(this.getUser())
+        }).catch(() => {
+        })
+      },
+      _logoff() {
+        let url = `${baseUrl}/tokens`
+        axios.delete(url).then(response => {
+          if (response.data.msg === MSG_OK) {
+            // 清空相关的 localstorage
+            clearToken()
+            //注销用户成功 修改 axios的 拦截器
+            this._changeAxiosInterceptor()
+          }
+        }, response => {
+          this._logoff()
+        })
+      },
+      _changeAxiosInterceptor() {
+        console.log('_changeAxiosInterceptor')
+        axios.interceptors.request.use(
+          config => {
+            config.headers.token = ''
+            config.auth = {}
+            return config
+          },
+          err => {
+            return Promise.reject(err)
+          })
+      },
+      handleCommand(command) {
+        console.log(command)
+        if (command === 'loginout') {
+          this.quitUser()
+        } else if (command === 'usercenter') {
+          this.$router.push('/home/usercenter')
+        }
+      },
+      clickLogo() {
+        this.$router.push('/home')
+      },
+      mangerLogin() {
+        this.$router.push('/home/managerlogin')
+      },
+      ...mapMutations({
+        setUser: 'SET_USER'
+      }),
+      ...mapGetters({
+        getUser: 'user'
+      })
+    },
+    watch: {
+      datas(newVal) {
+        this.headrs = newVal
+      }
+    },
+    computed: {
+      showUserItem() {
+        if (this.headrs.indexOf('退出登录') !== -1) {
+          // 证明已经登录 那么显示用户
+          this.user = this.getUser()
+          console.log(this.user)
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+  }
+</script>
+
+<style scoped lang="stylus" rel="stylesheet/stylus">
+  .myhead
+    flex: 0 0 60px;
+    margin-bottom: 8px;
+    background-color #324157
+    .meun-wrapper
+      position relative
+      width 100%
+      height 60px
+      .logo
+        position absolute
+        top 10px
+        left 200px
+        display inline-block
+        vertical-align: sub
+        &:hover
+          cursor pointer
+      .menu
+        margin-left 1100px
+        max-height 60px
+        min-width 350px
+        .el-dropdown-link
+          position: relative;
+          display: inline-block;
+          width 80px
+          height 60px
+          padding-left: 20px;
+          color: #fff;
+          &:hover
+            cursor: pointer
+          .user-logo
+            position: absolute;
+            left: 0;
+            top 9px
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border 1px solid #fff
+          .user-name
+            position: absolute;
+            display: inline-block;
+            right: 0;
+            font-size: 16px;
+            color: whitesmoke
+            line-height 60px
+        .el-dropdown-menu
+          padding: 1px 0;
+          .el-dropdown-menu__item
+            text-align: center;
+
+  @media screen and (max-width: 1330px)
+    .el-menu
+      position relative
+      transform: translateX(-180px);
+
+  @media screen and (max-width: 1150px)
+    .el-menu
+      position relative
+      transform: translateX(-300px);
+
+  @media screen and (max-width: 1050px)
+    .el-menu
+      position relative
+      transform: translateX(-450px);
+
+  @media screen and (max-width: 890px)
+    .el-menu
+      position relative
+      transform: translateX(-600px);
+
+    @media screen and (max-width: 800px)
+      .logo
+        display none
+
+      .menu
+        padding-left: 0
+
+</style>

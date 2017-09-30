@@ -21,3 +21,21 @@ export function formatDate (date, fmt) {
 function padLeftZero (str) {
   return ('00' + str).substr(str.length)
 }
+
+export function getAbsPosition (element) {
+  let abs = {x: 0, y: 0}// 如果浏览器兼容此方法
+  if (document.documentElement.getBoundingClientRect) {
+    // 注意，getBoundingClientRect()是jQuery对象的方法
+    // 如果不用jQuery对象，可以使用else分支。
+    abs.x = element.getBoundingClientRect().left
+    abs.y = element.getBoundingClientRect().top
+  } else {
+    // 如果浏览器不兼容此方法
+    while (element !== document.body) {
+      abs.x += element.offsetLeft
+      abs.y += element.offsetTop
+      element = element.offsetParent
+    }
+  }
+  return abs
+}

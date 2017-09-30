@@ -3,7 +3,7 @@
     <el-form>
       <el-form-item label="账号:" :label-width="formLabelWidth">
         <el-input v-model.trim.lazy="username" placeholder="请输入用户名" ref="username"
-                  spellcheck="false" @change="onUsernameChange"></el-input>
+                  spellcheck="false"></el-input>
         <span class="prompt prompt-username" :class="showUserPrompt">*用户名过短</span>
       </el-form-item>
       <el-form-item label="密码:" :label-width="formLabelWidth">
@@ -16,14 +16,14 @@
         <span class="prompt prompt-email" :class="showEmailPrompt">*邮箱格式错误</span>
       </el-form-item>
       <!--<el-form-item label="学校" :label-width="formLabelWidth">-->
-        <!--<el-input class="input-item" placeholder="请输入学校"-->
-                  <!--type="text" v-model.trim.lazy="school" ref="school"></el-input>-->
-        <!--<span class="prompt prompt-school" :class="showSchoolPrompt">*请输入正确的学校名字</span>-->
+      <!--<el-input class="input-item" placeholder="请输入学校"-->
+      <!--type="text" v-model.trim.lazy="school" ref="school"></el-input>-->
+      <!--<span class="prompt prompt-school" :class="showSchoolPrompt">*请输入正确的学校名字</span>-->
       <!--</el-form-item>-->
       <!--<el-form-item label="职业" :label-width="formLabelWidth">-->
-        <!--<el-input class="input-item" placeholder="请输入职业" type="text"-->
-                  <!--v-model.trim.lazy="occupation" ref="occupation"></el-input>-->
-        <!--<span class="prompt prompt-occupation" :class="showOccupationPrompt">*请输入正确的职业</span>-->
+      <!--<el-input class="input-item" placeholder="请输入职业" type="text"-->
+      <!--v-model.trim.lazy="occupation" ref="occupation"></el-input>-->
+      <!--<span class="prompt prompt-occupation" :class="showOccupationPrompt">*请输入正确的职业</span>-->
       <!--</el-form-item>-->
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -36,9 +36,7 @@
 <script type="text/ecmascript-6">
   import ElFormItem from '../../../node_modules/element-ui/packages/form/src/form-item'
   import axios from 'axios'
-
-  const MSG_OK = 'ok'
-  const MSG_NO = 'no'
+  import { MSG_OK, MSG_NO, baseUrl } from 'common/js/data'
 
   export default {
     components: {ElFormItem},
@@ -59,13 +57,18 @@
         dialogShow: false
       }
     },
+    created() {
+      this.username = ''
+      this.password = ''
+      this.email = ''
+    },
     methods: {
       clickCancel() {
         this.$emit('closeRegisterDialog')
         this._clearData()
       },
       clickConfirm() {
-        let url = 'https://api.txdna.cn/users'
+        let url = `${baseUrl}/users`
         console.log(this.school)
         console.log(this.occupation)
         axios.post(url, {
@@ -73,8 +76,8 @@
           'password': this.password,
           'email': this.email
         }).then(response => {
-          console.log(response)
           if (response.data.msg === MSG_OK) {
+            console.log(response)
             this.$notify({
               title: '成功',
               message: '注册成功!',
@@ -87,7 +90,7 @@
             // 该用户已存在
             this.$notify({
               title: '警告',
-              message: '用户名或邮箱已被使用!',
+              message: response.data.error,
               type: 'warning'
             })
           }
@@ -96,16 +99,13 @@
           // 注册失败
           this.$notify.error({
             title: '错误',
-            message: '注册失败!'
+            message: '注册失败,请重试!'
           })
         })
       },
       handleBeforeClose(done) {
         this.$emit('closeRegisterDialog')
         this._clearData()
-      },
-      onUsernameChange() {
-        console.log(this.username)
       },
       _clearData() {
         this.username = ''
@@ -114,6 +114,14 @@
 //        this.school = ''
 //        this.occupation = ''
       }
+//      _setUserRole(userId) {
+//        console.log('_setUserRole')
+//        console.log(userId)
+//        let url = `${baseUrl}/users/${userId}`
+//        axios.put(url, {'role': 0}).then(response => {}, response => {
+//          this._setUserRole(userId)
+//        })
+//      }
     },
     watch: {
       dialogVisible(newVal) {
@@ -161,16 +169,13 @@
   }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style scoped lang="stylus" rel="stylesheet/stylus">
+  .el-form-item
+    margin-bottom 0
+
   .prompt
     margin-left 10px
     color #FF4949
-
-  .el-form-item
-    margin-bottom 10px
-
-  .el-form-item__content
-    line-height 22px
 
   .prompt-username
     &.show-username
@@ -188,18 +193,6 @@
     &.show-email
       visibility visible
     &.hide-email
-      visibility hidden
-
-  .prompt-school
-    &.show-school
-      visibility visible
-    &.hide-school
-      visibility hidden
-
-  .prompt-occupation
-    &.show-occupation
-      visibility visible
-    &.hide-occupation
       visibility hidden
 
 </style>

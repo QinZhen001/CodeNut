@@ -1,13 +1,11 @@
 <template>
   <transition name="el-fade-in-linear">
     <div class="problem">
-      <el-row v-loading="loading"
-              element-loading-text="拼命加载中...">
+      <el-row>
         <el-col :sm="0" :lg="2" :md="1" :xs="0">
           <div class="grid-content">
           </div>
         </el-col>
-
         <el-col :sm="24" :lg="20" :md="22" :xs="24">
           <div class="problem-header">
             <h3 align="left">{{problemDetail.title}}</h3>
@@ -21,7 +19,7 @@
                 <description :data="problemDetail"></description>
               </el-tab-pane>
               <el-tab-pane label="Solution" name="solution">
-                <solution :data="problemDetail"></solution>
+                <solution></solution>
               </el-tab-pane>
               <el-tab-pane label="Hints" name="third">
                 <hints></hints>
@@ -48,6 +46,8 @@
   import Solution from 'components/solution/solution'
   import Hints from 'components/hints/hints'
   import Notes from 'components/notes/notes'
+  import Problem from 'common/js/problem'
+  import { baseUrl, MSG_OK } from 'common/js/data'
 
   export default {
     data() {
@@ -68,11 +68,14 @@
         }
         console.log('problem detail id')
         console.log(this.problem.id)
-        let url = 'https://api.txdna.cn/problems/' + `${this.problem.id}`
+        let url = `${baseUrl}/problems/${this.problem.id}`
         axios.get(url).then(response => {
-          console.log(response.code)
-          this.problemDetail = response.data
-          this.loading = false
+          if (response.data.msg === MSG_OK) {
+            console.log(response.data.result)
+            this.problemDetail = response.data.result[0]
+            console.log(this.problemDetail.id)
+            this.loading = false
+          }
         }, response => {
           this._getProblemDetail()
         })
@@ -86,14 +89,28 @@
           })
         } else {
           if (!this.hasCollect(this.problemDetail.id)) {
-            this.saveFavoriteList(this.problemDetail)
+            this.saveFavoriteList(new Problem({
+              id: this.problemDetail.id,
+              title: this.problemDetail.title,
+              tag: this.problemDetail.tag,
+              level: this.problemDetail.level,
+              accepted: this.problemDetail.accepted,
+              submitted: this.problemDetail.submitted
+            }))
             this.$notify({
               title: '收藏成功',
               message: `收藏题目:${this.problemDetail.title}`,
               type: 'success'
             })
           } else {
-            this.deleteFavoriteList(this.problemDetail)
+            this.deleteFavoriteList(new Problem({
+              id: this.problemDetail.id,
+              title: this.problemDetail.title,
+              tag: this.problemDetail.tag,
+              level: this.problemDetail.level,
+              accepted: this.problemDetail.accepted,
+              submitted: this.problemDetail.submitted
+            }))
             this.$notify.info({
               title: '取消成功',
               message: `取消收藏题目:${this.problemDetail.title}`
@@ -137,21 +154,18 @@
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .problem
+    flex: 1 0 auto;
     .problem-header
       .collection
         float right
         margin-top 5px
         vertical-align bottom
-
-  h3
-    display: inline-block;
-    margin-bottom: 10px;
-    margin-right: .5em;
-    font-family: inherit;
-    font-weight: 500;
-    line-height: 1.1;
-    font-size: 24px;
-    color: inherit;
+      h3
+        display: inline-block;
+        margin-bottom: 10px;
+        font-weight: 500;
+        line-height: 1.0;
+        font-size: 24px;
 
   .container
     margin-top: 32px;

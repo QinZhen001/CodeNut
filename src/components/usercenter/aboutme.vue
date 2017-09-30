@@ -29,6 +29,7 @@
 <script type="text/ecmascript-6">
   import { mapGetters, mapMutations } from 'vuex'
   import axios from 'axios'
+  import { baseUrl, MSG_OK } from 'common/js/data'
 
   export default{
     data() {
@@ -43,11 +44,11 @@
       },
       saveAboutMe() {
         // 保存用户信息about_me 到服务器
-        let url = `https://api.txdna.cn/users/${this.user.id}`
+        let url = `${baseUrl}/users/info`
         axios.put(url, {
           'about_me': this.aboutMe
         }).then(response => {
-          if (response.data.msg === 'ok') {
+          if (response.data.msg === MSG_OK) {
             // 保存用户信息到 vuex
             this.saveUserToVuex()
             // 关闭dialog
@@ -62,15 +63,16 @@
       },
       saveUserToVuex() {
         let user = {}
-        user.id = this.user.id
+        user.user_id = this.user.user_id
         user.username = this.user.username
         user.realname = this.user.realname
         user.profile = this.user.profile
-        user.email = this.user.email
         user.school = this.user.school
-        user.occupation = this.user.occupation
-        user.company = this.user.company
         user.about_me = this.aboutMe
+        user.role = this.user.role
+        user.accept_nums = this.user.accept_nums
+        user.submit_nums = this.user.submit_nums
+        user.tag = this.user.tag
         this.setUser(user)
       },
       ...mapMutations({
@@ -114,6 +116,8 @@
         vertical-align bottom
         float right
         position: relative
+        &:hover
+          cursor pointer
         &:before
           content: ''
           position: absolute

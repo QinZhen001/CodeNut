@@ -5,7 +5,7 @@
         <el-input v-model.trim.lazy="username" placeholder="请输入账号" ref="username" spellcheck="false"></el-input>
       </el-form-item>
       <el-form-item label="密码:" :label-width="formLabelWidth">
-        <el-input v-model.trim.lazy="password" type="password" placeholder="请输入密码" ></el-input>
+        <el-input v-model.trim.lazy="password" type="password" placeholder="请输入密码"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer" class="dialog-footer">
@@ -17,7 +17,8 @@
 
 <script type="text/ecmascript-6">
   import axios from 'axios'
-  import { saveToken, saveUserId, getToken } from 'common/js/cache'
+  import { saveToken, getToken } from 'common/js/cache'
+  import { baseUrl } from 'common/js/data'
 
   export default {
     props: {
@@ -46,27 +47,16 @@
         this.password = ''
       },
       clickConfirm() {
-        let url = 'https://api.txdna.cn/tokens'
+        let url = `${baseUrl}/tokens`
         axios.post(url, {'username': this.username, 'password': this.password}).then(response => {
           console.log(response)
-          // 登录成功保存 token 和 id 到localStorage
-          saveToken(response.data.token)
-          saveUserId(response.data.id)
+          // 登录成功保存token到localStorage
+          saveToken(response.data.result[0].token)
+          console.log(response.data.result[0].token)
           // 登录后 修改axios的拦截器
-          axios.interceptors.request.use(
-            config => {
-              config.headers.token = getToken()
-              config.auth = {
-                username: this.username,
-                password: this.password
-              }
-              return config
-            },
-            err => {
-              return Promise.reject(err)
-            })
+          this._changeAxiosInterceptor()
           this.$emit('closeLoginDialog')
-          this.$emit('loginSuccess')
+          this.$emit('loginSuccess', response.data.result[0].id)
           this.$notify({
             title: '成功',
             message: '登录成功',
@@ -88,6 +78,20 @@
         this.$emit('closeLoginDialog')
         this.username = ''
         this.password = ''
+      },
+      _changeAxiosInterceptor() {
+        axios.interceptors.request.use(
+          config => {
+            config.headers.token = getToken()
+            config.auth = {
+              username: this.username,
+              password: this.password
+            }
+            return config
+          },
+          err => {
+            return Promise.reject(err)
+          })
       }
     },
     watch: {

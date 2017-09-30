@@ -2,22 +2,16 @@
   <div>
     <el-dialog title="修改信息" :visible.sync="dialogFormVisible" @open="openDialog">
       <el-form>
-        <el-form-item label="邮箱:" label-width="80px">
-          <el-input v-model.trim.lazy="email" auto-complete="off" spellcheck="false"></el-input>
+        <el-form-item label="真实姓名:" label-width="80px">
+          <el-input v-model.trim.lazy="realname" auto-complete="off" spellcheck="false"></el-input>
         </el-form-item>
-        <el-form-item label="职业:" label-width="80px">
-          <el-input v-model.trim.lazy="occupation" auto-complete="off" spellcheck="false"></el-input>
-        </el-form-item>
-        <el-form-item label="公司:" label-width="80px">
-          <el-input v-model.trim.lazy="company" auto-complete="off" spellcheck="false"></el-input>
-        </el-form-item>
-        <el-form-item label="毕业学校:" label-width="80px">
+        <el-form-item label="所在学校:" label-width="80px">
           <el-input v-model.trim.lazy="school" auto-complete="off" spellcheck="false"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="saveUserInfo">保 存</el-button>
+        <el-button type="primary" @click="saveUserInfoToServer">保 存</el-button>
       </div>
     </el-dialog>
     <div class="panel">
@@ -27,18 +21,16 @@
       </div>
       <div class="panel-body">
         <img width="77" height="77" src="static/avatar.jpg" class="avatar">
-        <h4 class="username">{{user.username}}</h4>
-        <p class="email">邮箱: {{user.email}}</p>
-        <p class="occupation">职业: {{user.occupation}}</p>
+        <P class="username">{{user.username}}</P>
+        <p class="realname">真实姓名: {{user.realname}}</p>
+        <p class="school">毕业学校: {{user.school}}</p>
         <div class="panel-body-left">
-          <p class="company">公司: {{user.company}}</p>
-          <p class="school">毕业学校: {{user.school}}</p>
           <el-rate v-model="score" :disabled=true disabled-void-color="#ddd">
           </el-rate>
           <el-tag type="warning" v-text="calcGrade"></el-tag>
         </div>
         <div class="panel-body-bottom">
-          <el-tag :key="tag" v-for="(tag,index) in dynamicTags" :closable="true" @close="handleCloseTag(tag)"
+          <el-tag :key="tag" v-for="(tag,index) in dynamicTags" :closable="true" @close="closeTag(tag)"
                   :hit=true :type="calcType(index)">{{tag}}
           </el-tag>
           <el-input
@@ -47,8 +39,8 @@
             v-model="inputValue"
             ref="saveTagInput"
             size="mini"
-            @keyup.enter.native="handleInputConfirm"
-            @blur="handleInputConfirm">
+            @keyup.enter.native="inputConfirm"
+            @blur="inputConfirm">
           </el-input>
           <el-button v-else class="button-tag" size="small" @click="showInput">+ 标签</el-button>
         </div>
@@ -60,29 +52,37 @@
 <script type="text/ecmascript-6">
   import { mapGetters, mapMutations } from 'vuex'
   import axios from 'axios'
+  import { baseUrl, MSG_OK } from 'common/js/data'
+  import User from 'common/js/user'
 
   export default {
     data() {
       return {
         score: 3,
         inputValue: '',
-        dynamicTags: ['阳光', '帅气', '完美主义者', '自信'],
+        //dynamicTags: ['阳光', '帅气', '完美主义者', '自信'],
+        dynamicTags: [],
         inputVisible: false,
         dialogFormVisible: false,
-        email: '',
-        occupation: '',
-        company: '',
-        school: ''
+        school: '',
+        realname: ''
       }
     },
+    created() {
+      this.dynamicTags = this.StringToArray(this.user.tag)
+    },
     methods: {
-      handleCloseTag(tag) {
+      closeTag(tag) {
         this.dynamicTags.splice(this.dynamicTags.indexOf(tag), 1)
+        // 保存到服务器
+        this._saveUserTagToServer()
       },
-      handleInputConfirm() {
+      inputConfirm() {
         let inputValue = this.inputValue
         if (inputValue) {
           this.dynamicTags.push(inputValue)
+          // 保存到服务器
+          this._saveUserTagToServer()
         }
         this.inputVisible = false
         this.inputValue = ''
@@ -106,45 +106,76 @@
         this.dialogFormVisible = true
       },
       openDialog() {
-        this.email = this.user.email
-        this.occupation = this.user.occupation
-        this.company = this.user.company
+        this.realname = this.user.realname
         this.school = this.user.school
       },
-      saveUserInfo() {
+      saveUserInfoToServer() {
         // 保存用户信息到服务器
-        let url = `https://api.txdna.cn/users/${this.user.id}`
+        let url = `${baseUrl}/users/info`
         axios.put(url, {
-          'email': this.email,
-          'occupation': this.occupation,
-          'company': this.company,
+          'realname': this.realname,
           'school': this.school
         }).then(response => {
-          if (response.data.msg === 'ok') {
+          if (response.data.msg === MSG_OK) {
             // 成功
             console.log(response)
-            // 保存用户信息到 vuex
-            this.saveUserToVuex()
+            // 同时保存用户信息到 vuex
+            this._saveUserToVuex()
             // 关闭dialog
             this.dialogFormVisible = false
           }
         }, response => {
-          this.saveUserInfo()
+          this.saveUserInfoToServer()
         })
       },
-      saveUserToVuex() {
-        let user = {}
-        user.id = this.user.id
-        user.username = this.user.username
-        user.realname = this.user.realname
-        user.about_me = this.user.about_me
-        user.profile = this.user.profile
-
-        user.email = this.email
-        user.school = this.school
-        user.occupation = this.occupation
-        user.company = this.company
+      _saveUserTagToServer() {
+        // 保存用户标签到服务器
+        let url = `${baseUrl}/users/info`
+        axios.put(url, {
+          'tag': this._arrayToString(this.dynamicTags)
+        }).then(response => {
+          if (response.data.msg === MSG_OK) {
+            // 成功
+            console.log(response)
+            // 同时用户信息到 vuex
+            this._saveUserToVuex()
+            // 关闭dialog
+            this.dialogFormVisible = false
+          }
+        }, response => {
+          this._saveUserTagToServer()
+        })
+      },
+      _saveUserToVuex() {
+        let user = new User({
+          realname: this.realname,
+          school: this.school,
+          tag: this._arrayToString(this.dynamicTags),
+          user_id: this.user.user_id,
+          username: this.user.username,
+          profile: this.user.profile,
+          about_me: this.user.about_me,
+          role: this.user.role,
+          accept_nums: this.user.accept_nums,
+          submit_nums: this.user.submit_nums
+        })
         this.setUser(user)
+      },
+      _arrayToString(arr) {
+        let str = ''
+        for (let item of arr) {
+          console.log(item)
+          str = str + item + ','
+        }//结果：1,2,234,sdf,-2 遍历了数组arr的值
+        str = str.substring(0, str.length - 1)
+        console.log(str)
+        return str
+      },
+      StringToArray(str) {
+        let arr = []
+        arr = str.split(',')
+        // 在每个逗号(,)处进行分解。
+        return arr
       },
       ...mapMutations({
         setUser: 'SET_USER'
@@ -157,6 +188,13 @@
       ...mapGetters([
         'user'
       ])
+    },
+    watch: {
+      user: function (newUser) {
+        if (newUser.user_id == null) {
+          this.$router.push('/home')
+        }
+      }
     }
   }
 </script>
@@ -190,6 +228,8 @@
         vertical-align bottom
         float right
         position: relative
+        &:hover
+          cursor pointer
         &:before
           content: ''
           position: absolute
@@ -207,33 +247,27 @@
         margin-top: 5px;
         border-radius: 6px;
       .username
+        margin 0 0
         max-width: 240px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
         vertical-align: middle;
-        font-size: 20px;
-        margin-bottom: 5px;
+        font-size: 22px;
         font-family: inherit;
         font-weight: 500;
-        line-height: 1.1;
+        line-height: 1.2;
         color: inherit;
-      .email occupation
+      .realname school
+        margin: 0 0 10px;
+        vertical-align: middle;
         max-width: 240px;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        vertical-align: middle;
-        margin: 0 0 10px;
+        font-weight: 500;
       .panel-body-left
-        padding-left 90px
-        .company school
-          max-width: 240px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          vertical-align: middle;
-          margin: 0 0 10px;
+        padding-left 50px
         .el-rate
           display inline-block
       .panel-body-bottom

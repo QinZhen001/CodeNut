@@ -3,24 +3,24 @@
  */
 export const slides = [
   {
-    'linkUrl': '',
-    'picUrl': 'static/slide_1.png'
+    linkProblemId: '8B9',
+    picUrl: 'static/slides/slide_1.png'
   },
   {
-    'linkUrl': '',
-    'picUrl': 'static/slide_2.png'
+    linkProblemId: 'oX4',
+    picUrl: 'static/slides/slide_2.png'
   },
   {
-    'linkUrl': '',
-    'picUrl': 'static/slide_3.png'
+    linkProblemId: 'jMK',
+    picUrl: 'static/slides/slide_3.png'
   },
   {
-    'linkUrl': '',
-    'picUrl': 'static/slide_4.png'
+    linkProblemId: 'KeK',
+    picUrl: 'static/slides/slide_4.png'
   },
   {
-    'linkUrl': '',
-    'picUrl': 'static/slide_5.png'
+    linkProblemId: 'jL9',
+    picUrl: 'static/slides/slide_5.png'
   }
 ]
 
@@ -44,3 +44,10 @@ export const templateCodes = [
   'class Solution {\n    func findMaximumXOR(_ nums: [Int]) -> Int {\n\n    }\n}',
   'func findMaximumXOR(nums []int) int {\n\n}'
 ]
+
+export const baseUrl = 'https://api.txdna.cn'
+
+// export const baseUrl = '0.0.0.0:5000'
+export const MSG_OK = 'ok'
+export const MSG_NO = 'no'
+

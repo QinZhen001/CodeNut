@@ -5,23 +5,24 @@
         <el-col :span="0" :sm="24" :lg="24" :md="24" :xs="24">
           <el-carousel :interval="4000" type="card" height="288px">
             <el-carousel-item v-for="(item,index) in slideItems" :key="index">
-              <img :src="item.picUrl" width="100%" height="100%">
+              <img :src="item.picUrl" width="100%" height="100%" @click="clickCarouselItem(index)">
             </el-carousel-item>
           </el-carousel>
         </el-col>
       </el-row>
 
       <el-row :gutter="20">
-        <el-col :span="1" :sm="0" :lg="2" :md="0" :xs="0">
+        <el-col :span="1" :sm="0" :lg="3" :md="0" :xs="0">
           <div class="grid-content">
           </div>
         </el-col>
-        <el-col :span="15" :sm="24" :lg="14" :md="16" :xs="24">
-          <mytable @clickrow="clicktable"></mytable>
+        <el-col :span="15" :sm="24" :lg="13" :md="24" :xs="24">
+          <mytable></mytable>
         </el-col>
-        <el-col :span="7" :sm="24" :lg="5" :md="7" :xs="24">
+        <el-col :span="7" :sm="24" :lg="5" :md="24" :xs="24">
           <myinfo></myinfo>
           <myenergy></myenergy>
+          <breakthrough-entry></breakthrough-entry>
           <listview></listview>
         </el-col>
         <el-col :span="0" :sm="0" :lg="3" :md="0" :xs="0">
@@ -40,7 +41,9 @@
   import Listview from 'components/listview/listview'
   import Myenergy from 'components/myenergy/myenergy'
   import Myinfo from 'components/myinfo/myinfo'
-  //  import Myfooter from 'components/myfooter/myfooter'
+  import { mapMutations } from 'vuex'
+  import Problem from 'common/js/problem'
+  import BreakthroughEntry from 'components/breakthrough/breakthrough-entry'
 
   export default {
     data() {
@@ -54,15 +57,20 @@
       this.slideItems = slides
     },
     methods: {
-      clicktable() {
+      clickCarouselItem(index) {
+        this.setProblem(new Problem({id: this.slideItems[index].linkProblemId}))
         this.$router.push('/home/problem')
-      }
+      },
+      ...mapMutations({
+        setProblem: 'SET_PROBLEM'
+      })
     },
     components: {
       mytable,
       Listview,
       Myenergy,
-      Myinfo
+      Myinfo,
+      BreakthroughEntry
     }
   }
 </script>
@@ -71,11 +79,13 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
 
   .home
+    flex: 1 0 auto;
+    width: 100%;
     .body
       min-height 100%
       margin-top 4px
       .el-carousel
-        margin-bottom 5px
+         margin-bottom 6px
         .el-carousel__item h3
           color: #475669;
           font-size: 14px;

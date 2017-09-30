@@ -1,10 +1,13 @@
 <template>
-  <div>
-    <div class="description" v-html="data.description" v-if="data.description">
+  <transition name="el-fade-in">
+    <div>
+      <div class="description" v-html="data.description" v-if="data.description">
+      </div>
+      <my-editor></my-editor>
     </div>
-    <my-editor></my-editor>
-  </div>
+  </transition>
 </template>
+
 
 <script type="text/ecmascript-6">
   //  import Editor from 'components/editor/vueeditor'
@@ -48,6 +51,16 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+      .nf
+        color: #900;
+        font-weight: bold;
+      .na
+        color: teal;
+      .kt
+        color: #458;
+        font-weight: bold;
+      .o
+        font-weight: bold;
     code
       padding: 2px 4px;
       font-size: 90%;
