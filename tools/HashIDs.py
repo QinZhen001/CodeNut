@@ -236,5 +236,7 @@ def generate_id(id):
 
 
 def verify_id(id):
-    id = HashIDs().decrypt(id)
-    return id[0] if len(id) == 1 else -1
+    if id:
+        id = HashIDs().decrypt(id)
+        return id[0] if len(id) == 1 else -1
+    return -1
