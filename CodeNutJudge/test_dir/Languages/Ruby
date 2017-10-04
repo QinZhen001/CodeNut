@@ -1,0 +1,6 @@
+def hello(a)
+	@a=a
+    puts "hello #@a" 
+end
+
+hello(ARGV[0])

@@ -1,0 +1,6 @@
+from sys import argv
+class Solution:
+    def xx(self, n):
+        print('hello {}'.format(n), end='')
+
+Solution().xx(argv[1])

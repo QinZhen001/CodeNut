@@ -1,0 +1,8 @@
+using System;
+public class Solution
+{
+  static void Main(string[] args)
+  {
+     Console.Write("hello {0}", args[0]);
+  }
+}
