@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# java
+apt-get install openjdk-8-jdk
+
+# ruby
+apt-get install ruby-full
+
+# mono
 PREFIX=$@
 if [ -z $PREFIX  ]; then
       PREFIX="/usr/local"
@@ -18,3 +25,9 @@ if [ -z $PREFIX  ]; then
   ./autogen.sh --prefix=$PREFIX
   make
   make install
+
+# go
+# https://www.golangtc.com/download
+nohup wget https://www.golangtc.com/static/go/1.9/go1.9.linux-amd64.tar.gz && 
+tar -C /usr/local/share/ -xzf go1.9.linux-amd64.tar.gz && 
+ln -s /usr/local/share/go/bin/go /usr/bin/go &
