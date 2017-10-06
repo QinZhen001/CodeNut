@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # java
-apt-get install openjdk-8-jdk
+apt-get install -y openjdk-7-jdk
 
 # ruby
-apt-get install ruby-full
+apt-get install -y ruby-full
 
 # mono
 PREFIX=$@
@@ -13,11 +13,11 @@ if [ -z $PREFIX  ]; then
   fi
 
   # Ensure you have write permissions to PREFIX
-  sudo mkdir $PREFIX
-  sudo chown -R `whoami` $PREFIX
+  mkdir $PREFIX
+  chown -R `whoami` $PREFIX
 
   # Ensure that all required packages are installed.
-  sudo apt-get install git autoconf libtool automake build-essential mono-devel gettext cmake
+  apt-get install -y wget git autoconf libtool automake build-essential mono-devel gettext cmake
 
   PATH=$PREFIX/bin:$PATH
   git clone https://github.com/mono/mono.git
