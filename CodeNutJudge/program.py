@@ -19,7 +19,7 @@ logging.basicConfig(level=logging.WARNING,
 
 class Config:
     program = {
-        'work_dir': 'work_dir',
+        'work_dir': 'test_dir',
         'answer_dir': 'answer_dir',
     }
 
@@ -93,7 +93,7 @@ class Program:
             return True
         else:
             return False
- 
+
     def __get_program_argv(self, dir):
         command = {
             'C': '{}/Solution'.format(dir),
