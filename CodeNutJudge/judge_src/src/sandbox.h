@@ -47,6 +47,7 @@ typedef struct KillerArgs {
 } KillerArgs;
 
 int load_c_cpp_syscall_list(const RunConfig *run_config) {
+	int i = 0;
 	int syscalls_whitelist[] = {SCMP_SYS(read),  SCMP_SYS(readlink),
 				            SCMP_SYS(close), SCMP_SYS(mprotect),
 				            SCMP_SYS(write), SCMP_SYS(arch_prctl),
@@ -67,7 +68,7 @@ int load_c_cpp_syscall_list(const RunConfig *run_config) {
 		return -1;
 	}
 	
-	for (int i = 0; i < syscalls_whitelist_length; i++) {
+	for (i = 0; i < syscalls_whitelist_length; i++) {
 		if (seccomp_rule_add(ctx, SCMP_ACT_ALLOW, syscalls_whitelist[i], 0) != 0) {
 			REPORTER("Add system call failed");
 			return -1;
@@ -100,6 +101,7 @@ int load_c_cpp_syscall_list(const RunConfig *run_config) {
 
 int load_general_syscall_list(const RunConfig *run_config) {
 	REPORTER(run_config -> language);
+	int i = 0;
 	// linux use 'strace' to print all program sys call
 	int syscalls_blacklist[] = {SCMP_SYS(fork), SCMP_SYS(vfork)};
 
@@ -114,7 +116,7 @@ int load_general_syscall_list(const RunConfig *run_config) {
 		return -1;
 	}
 
-	for (int i = 0; i < syscalls_blacklist_length; i++) {
+	for (i = 0; i < syscalls_blacklist_length; i++) {
 		if (seccomp_rule_add(ctx, SCMP_ACT_KILL, syscalls_blacklist[i], 0) != 0) {
 			REPORTER("Add system call failed");
 			return -1;

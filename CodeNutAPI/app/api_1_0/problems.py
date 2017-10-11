@@ -9,7 +9,7 @@ import time
 from dispatcher import tasks
 from dispatcher.task import ProblemTask
 import msgpack
-
+import random, string
 
 @decorators.composed(decorators.route('/problems/<id>/codes', methods=['PATCH']), decorators.json_required, decorators.permission_required(Permission.PROGRAM))
 def run_code(id):
@@ -17,6 +17,7 @@ def run_code(id):
     if not set(request.json.keys()).issubset(keyword):
         return jsonify({'msg': 'no', 'error': 'just require: {}'.format(keyword)})
 
+    """
     problem = ProblemTask(id=verify_id(id), user_id=str(g.current_user.id),
                         language=request.json.get('language'),
                         code=request.json.get('code'),
@@ -25,6 +26,23 @@ def run_code(id):
     while not r.ready():
         time.sleep(0.1)
     result = r.result
+    """
+    # for test
+    result = {}
+    result['output'] = ''.join(random.sample(string.ascii_lowercase + string.digits, 20))
+    result['status'] = random.choice(['System Error',
+                                     'Accepted',
+                                     'Wrong Answer',
+                                     'Dangerous System Call',
+                                     'Runtime Error',
+                                     'Compile Error',
+                                     'Time Limit Exceed',
+                                     'Memory Limit Exceed',
+                                     'Output Limit Exceed',
+                                     'Run Successfully'])
+    result['time_used'] = random.uniform(0, 1)
+    result['memory_used'] = random.uniform(1, 6000)
+
     return jsonify({'msg': 'ok', 'result': [{'output': result['output'], 'status': result['status'],
                                             'time_used': result['time_used'], 'memory_used': result['memory_used']}]})
 
@@ -35,6 +53,7 @@ def submit_code(id):
     if not set(request.json.keys()).issubset(keyword):
         return jsonify({'msg': 'no', 'error': 'just require: {}'.format(keyword)})
 
+    """
     problem = ProblemTask(id=verify_id(id), user_id=str(g.current_user.id),
                         language=request.json.get('language'),
                         code=request.json.get('code'),
@@ -53,6 +72,23 @@ def submit_code(id):
         submit = UserSubmitCode(user_id=problem.user_id, problem_id=problem.id, code=request.json.get('code'), status=result['status'],
                                 language=problem.language, time_used=result['time_used'], memory_used=result['memory_used'])
         db.session.add(submit)
+    """
+
+    result = {}
+    result['output'] = ''.join(random.sample(string.ascii_lowercase + string.digits, 20))
+    result['status'] = random.choice(['System Error',
+                                     'Accepted',
+                                     'Wrong Answer',
+                                     'Dangerous System Call',
+                                     'Runtime Error',
+                                     'Compile Error',
+                                     'Time Limit Exceed',
+                                     'Memory Limit Exceed',
+                                     'Output Limit Exceed',
+                                     'Run Successfully'])
+    result['time_used'] = random.uniform(0, 1)
+    result['memory_used'] = random.uniform(1, 6000)
+
     return jsonify({'msg': 'ok', 'result': [{'output': result['output'], 'status': result['status'],
                                             'time_used': result['time_used'], 'memory_used': result['memory_used']}]})
 

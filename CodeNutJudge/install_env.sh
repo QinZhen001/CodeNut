@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # java
-apt-get install openjdk-8-jdk
+apt-get install openjdk-8-jdk -y
 
 # ruby
-apt-get install ruby-full
+apt-get install ruby-full -y
 
 # mono
 PREFIX=$@
