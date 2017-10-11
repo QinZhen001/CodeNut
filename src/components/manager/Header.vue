@@ -24,12 +24,12 @@
       handleCommand(command) {
         if (command === 'loginout') {
           let myuser = new User({})
-          this.setProblem(myuser)
+          this.setUser(myuser)
           this.$router.push('/home')
         }
       },
       ...mapMutations({
-        setProblem: 'SET_PROBLEM'
+        setUser: 'SET_USER'
       })
     },
     computed: {

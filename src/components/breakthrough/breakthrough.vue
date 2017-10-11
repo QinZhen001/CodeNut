@@ -1,51 +1,51 @@
 <template>
   <div class="breakthrough">
     <canvas id="canvas" class="canvas"></canvas>
-    <img src="static/breakthrough/people.png" @click="clickItem($refs.people)" ref="people" class="people"
+    <img class="people" src="static/breakthrough/people.png" @click="clickItem($refs.people)" ref="people"
          width="48" height="48">
     <div class="planet-wrapper planet-simple-1-wrapper">
       <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetSimple1)" ref="planetSimple1"
            class="planet-simple-1"
-           width="120" height="120">
+           width="140" height="120">
       <span class="planet-text">简单难度</span>
     </div>
     <div class="planet-wrapper planet-simple-2-wrapper">
       <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetSimple2)" ref="planetSimple2"
            class="planet-simple-2"
-           width="120" height="120">
+           width="140" height="120">
       <span class="planet-text">简单难度</span>
     </div>
 
     <div class="planet-wrapper planet-middle-1-wrapper">
       <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetMiddle1)" ref="planetMiddle1"
            class="planet-middle-1"
-           width="120" height="120">
+           width="140" height="120">
       <span class="planet-text">冒险难度</span>
     </div>
     <div class="planet-wrapper planet-middle-2-wrapper">
       <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetMiddle2)" ref="planetMiddle2"
            class="planet-middle-2"
-           width="120" height="120">
+           width="140" height="120">
       <span class="planet-text">冒险难度</span>
     </div>
 
     <div class="planet-wrapper planet-hard-1-wrapper">
       <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetHard1)" ref="planetHard1"
            class="planet-hard-1"
-           width="120" height="120">
+           width="140" height="120">
       <span class="planet-text">地狱难度</span>
     </div>
     <div class="planet-wrapper planet-hard-2-wrapper">
       <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetHard2)" ref="planetHard2"
            class="planet-hard-2"
-           width="120" height="120">
+           width="140" height="120">
       <span class="planet-text">地狱难度</span>
     </div>
 
     <div class="planet-wrapper planet-boss">
       <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetBoss)" ref="planetBoss"
            class="planetBoss"
-           width="120" height="120">
+           width="140" height="120">
       <span class="planet-text">BOSS</span>
     </div>
 
@@ -54,13 +54,25 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { getAbsPosition } from 'common/js/util'
+  // import { getAbsPosition } from 'common/js/util'
   import Stars from 'common/js/Star'
   import Moon from 'common/js/Moon'
   import Meteor from 'common/js/Meteor'
-  import Path from 'common/js/Path'
+  //import { getChallengeInfo } from 'common/js/cache'
+  import { mapMutations } from 'vuex'
+  import { slides } from 'common/js/data'
+  import Problem from 'common/js/problem'
 
   export default{
+    data(){
+      return {
+        challenges: [],
+        problems: []
+      }
+    },
+    created(){
+      this.problems = slides
+    },
     mounted() {
       let canvas = document.getElementById('canvas'),
         ctx = canvas.getContext('2d'),
@@ -69,7 +81,7 @@
         // 实例化月亮和星星。流星是随机时间生成，所以只初始化数组
         stars = new Stars(ctx, width, height, 200),
         moon = new Moon(ctx, width, height),
-        path = new Path(ctx, 144.1875, 760, 450, 653),
+        // path = new Path(ctx, 144.1875, 760, 450, 653),
         meteors = [],
         count = 0
       canvas.width = width
@@ -89,7 +101,7 @@
         count % 10 === 0 && stars.blink()
         moon.draw()
         stars.draw()
-        path.draw()
+        //path.draw()
         meteors.forEach((meteor, index, arr) => {
           // 如果流星离开视野之内，销毁流星实例，回收内存
           if (meteor.flow()) {
@@ -102,12 +114,26 @@
       }
       meteorGenerator()
       frame()
+      //this.challenges = getChallengeInfo()
     },
     methods: {
       clickItem(ele) {
-        let position = getAbsPosition(ele)
-        console.log(position)
-      }
+        // let position = getAbsPosition(ele)
+//        if (ele.className.includes('simple') && this.challenges[0] === false) {
+//          console.log(ele.className)
+//        } else if (ele.className.includes('middle')) {
+//          if (this.challenges[1] === false && this.challenges[0] === true) {
+//            //通过了简单难度 还没有通过冒险难度
+//          } else {
+//          }
+//        } else if (ele.className.includes('hard')) {}
+        let index = parseInt(Math.random() * 5)
+        this.setProblem(new Problem({id: this.problems[index].linkProblemId}))
+        this.$router.push('/home/problem')
+      },
+      ...mapMutations({
+        setProblem: 'SET_PROBLEM'
+      })
     }
   }
 </script>
@@ -119,43 +145,44 @@
     top 0
     bottom 0
     right 0
-    width 100%
-    height 100%
     z-index 10
     babackground: rgba(7, 17, 27, 0.95);
     .canvas
       z-index: -1;
       position: fixed
     .people
-      position relative
-      top 80%
+      position absolute
+      top 10%
       left 10%
       z-index 1
-      animation: myfirst 5s linear;
     .planet-wrapper
-      position absolute
+      position relative
       width 128px
+      animation: shake_up_down 3s ease-in-out;
+      animation-iteration-count: infinite;
+      &:hover
+        cursor pointer
     .planet-simple-1-wrapper
-      top 400px
-      left 220px
+      top 10%
+      left 20%
     .planet-simple-2-wrapper
-      bottom 150px
-      left 450px
+      top 16%
+      left 26%
     .planet-middle-1-wrapper
-      bottom 590px
-      left 479px
+      top 20%
+      left 40%
     .planet-middle-2-wrapper
-      bottom 253px
-      left 754px
+      top -30%
+      left 40%
     .planet-hard-1-wrapper
-      top 50px
-      left 879px
+      top 0
+      left 62%
     .planet-hard-2-wrapper
-      bottom 353px
-      right 560px
+      top -66%
+      left 60%
     .planet-boss
-      top 100px
-      right 100px
+      top -66%
+      left 80%
 
   .city
     width: 100%;
@@ -172,11 +199,13 @@
     color #ffcd32
     display block
 
-  @keyframes myfirst
-    from
-      margin-top: 10px
-    to
-      margin-bottom: 10px
+  @keyframes shake_up_down
+    0%
+      margin-bottom 0
+    50%
+      margin-bottom: 5px
+    100%
+      margin-bottom 0
 
 
 </style>

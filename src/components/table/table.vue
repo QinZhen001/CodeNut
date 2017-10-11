@@ -1,38 +1,22 @@
 <template>
   <div>
     <div class="problems-head">
-      <img src="static/classification.png" class="img-title"/>
+      <img class="img-title" src="static/classification.png"/>
       <h2 class="text-title">Category - All</h2>
-      <el-dropdown @command="handleCommandDropdown">
-        <el-input
-          class="search-input"
-          placeholder="请输入要搜索的题目"
-          icon="search"
-          v-model.trim="mysearch"
-          spellcheck="false"
-          :on-icon-click="SearchClick"
-          @change="changeSearch">
-        </el-input>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item v-show="dropdownLoading">拼命加载中...</el-dropdown-item>
-          <el-dropdown-item v-for="(item,index) in searchResult" v-show="index <= 10 && !dropdownLoading"
-                            :key="index" :command="item.id">
-            <span class="problem-item-title">{{item.title}}</span>
-            <img width="16" height="16 " src="static/problem.png" class="problem-item-img">
-          </el-dropdown-item>
-        </el-dropdown-menu>
-      </el-dropdown>
+      <div class="serach-warpper">
+        <search></search>
+      </div>
     </div>
     <el-table
       :highlight-current-row=true v-loading="tableLoading" element-loading-text="拼命加载中..." :data="tableData" stripe
-      @row-click="click">
-      <el-table-column prop="id" label="id" width="100" align="left">
+      @row-click="_rowclick">
+      <el-table-column prop="id" label="id" width="100" align="left" sortable>
       </el-table-column>
-      <el-table-column prop="title" label="题目" width="420" align="left">
+      <el-table-column prop="title" label="题目" width="420" align="left" sortable>
       </el-table-column>
-      <el-table-column prop="tag" label="标签" width="300" align="left" :formatter="calcTag">
+      <el-table-column prop="tag" label="标签" width="300" align="left" :formatter="calcTag" sortable>
       </el-table-column>
-      <el-table-column prop="level" label="难度" width="110" align="left">
+      <el-table-column prop="level" label="难度" width="110" align="left" sortable>
         <template scope="scope">
           <el-tag
             :type=calcDifficultyTag(scope.row.level)>
@@ -62,6 +46,7 @@
   import { mapMutations } from 'vuex'
   import Problem from 'common/js/problem'
   import { baseUrl } from 'common/js/data'
+  import Search from 'components/search/search'
 
   const PER_PAGE = 30
 
@@ -70,10 +55,8 @@
       return {
         tableData: [],
         currentPage: 1,
-        mysearch: '',
         searchResult: [],
-        tableLoading: false,
-        dropdownLoading: false
+        tableLoading: false
       }
     },
     created() {
@@ -93,7 +76,7 @@
           this._getProblems()
         })
       },
-      click(row, event, column) {
+      _rowclick(row, event, column) {
         console.log(row)
         this.setProblem(new Problem({
           id: row.id,
@@ -129,61 +112,6 @@
         console.log(val)
         this._getProblems()
       },
-      SearchClick() {
-        this.dropdownLoading = true
-        console.log('SearchClick')
-        let url = `${baseUrl}/search`
-        // 清空之前的结果
-        this.searchResult = []
-        axios.post(url, {
-          'target': 'Problem',
-          'content': this.mysearch,
-          'type': 'title'
-        }).then(response => {
-          if (response.data.result.length === 0) {
-            this.searchResult = [{title: `无法查询到含有关键字:${this.mysearch}的题目`}]
-          } else {
-            this.searchResult = response.data.result
-          }
-          this.dropdownLoading = false
-        }, response => {
-          console.log(response)
-          this.SearchClick()
-        })
-      },
-      changeSearch() {
-        if (this.mysearch === '') {
-          this.searchResult = []
-          return
-        }
-        this.dropdownLoading = true
-        let url = `${baseUrl}/search`
-        // 清空之前的结果
-        this.searchResult = []
-        console.log(this.mysearch)
-        axios.post(url, {
-          'target': 'Problem',
-          'content': this.mysearch,
-          'type': 'title'
-        }).then(response => {
-          console.log(response.data.result)
-          if (response.data.result.length === 0) {
-            this.searchResult = [{title: `无法查询到含有关键字:${this.mysearch}的题目`}]
-          } else {
-            this.searchResult = response.data.result
-          }
-          this.dropdownLoading = false
-        }, response => {
-          console.log(response)
-          this.changeSearch()
-        })
-      },
-      handleCommandDropdown(command) {
-        this.setProblem(new Problem({
-          id: command
-        }))
-        this.$router.push('/home/problem')
-      },
       calcTag(row, column, cellValue) {
         if (cellValue === '') {
           return 'Nothing'
@@ -202,6 +130,9 @@
           return false
         }
       }
+    },
+    components: {
+      Search
     }
   }
 </script>
@@ -213,23 +144,10 @@
     .text-title
       vertical-align: middle
       display inline-block
-    .el-dropdown
+    .serach-warpper
       float right
-      vertical-align bottom
-      .el-input
-        margin-top 3%
-        width 500px
-
-  .el-dropdown-menu__item
-    width auto
-    .problem-item-title
+      margin-top 16px;
       display inline-block
-    .problem-item-img
-      float right
-      margin-top 10px
-
-  .el-dropdown-menu
-    width 500px
 
   .el-table
     border-radius 5px

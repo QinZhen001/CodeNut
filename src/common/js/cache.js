@@ -12,7 +12,9 @@ const FAVORITE_MAX_LEN = 200
 const TOKEN_KEY = '__token__'
 const ID_KEY = '__id__'
 
-function insertArray(arr, val, compare, maxLen) {
+const CHALLENGE_KEY = '__CHALLENGE__'
+
+function insertArray (arr, val, compare, maxLen) {
   const index = arr.findIndex(compare)
   if (index === 0) {
     return
@@ -26,14 +28,14 @@ function insertArray(arr, val, compare, maxLen) {
   }
 }
 
-function deleteFromArray(arr, compare) {
+function deleteFromArray (arr, compare) {
   const index = arr.findIndex(compare)
   if (index > -1) {
     arr.splice(index, 1)
   }
 }
 
-export function saveSearch(query) {
+export function saveSearch (query) {
   let searches = storage.get(SEARCH_KEY, [])
   insertArray(searches, query, (item) => {
     return item === query
@@ -42,7 +44,7 @@ export function saveSearch(query) {
   return searches
 }
 
-export function deleteSearch(query) {
+export function deleteSearch (query) {
   let searches = storage.get(SEARCH_KEY, [])
   deleteFromArray(searches, (item) => {
     return item === query
@@ -51,16 +53,16 @@ export function deleteSearch(query) {
   return searches
 }
 
-export function clearSearch() {
+export function clearSearch () {
   storage.remove(SEARCH_KEY)
   return []
 }
 
-export function loadSearch() {
+export function loadSearch () {
   return storage.get(SEARCH_KEY, [])
 }
 
-export function savePlay(song) {
+export function savePlay (song) {
   let songs = storage.get(PLAY_KEY, [])
   insertArray(songs, song, (item) => {
     return song.id === item.id
@@ -69,11 +71,11 @@ export function savePlay(song) {
   return songs
 }
 
-export function loadPlay() {
+export function loadPlay () {
   return storage.get(PLAY_KEY, [])
 }
 
-export function saveFavorite(problem) {
+export function saveFavorite (problem) {
   let problems = storage.get(FAVORITE_KEY, [])
   insertArray(problems, problem, (item) => {
     return problem.id === item.id
@@ -82,7 +84,7 @@ export function saveFavorite(problem) {
   return problems
 }
 
-export function deleteFavorite(problem) {
+export function deleteFavorite (problem) {
   let problems = storage.get(FAVORITE_KEY, [])
   deleteFromArray(problems, (item) => {
     return item.id === problem.id
@@ -91,7 +93,7 @@ export function deleteFavorite(problem) {
   return problems
 }
 
-export function loadFavorite() {
+export function loadFavorite () {
   return storage.get(FAVORITE_KEY, [])
 }
 
@@ -109,6 +111,18 @@ export function clearToken () {
 
 export function saveUserId (id) {
   storage.set(ID_KEY, id)
+}
+
+export function getChallengeInfo () {
+  return storage.get(CHALLENGE_KEY, [])
+}
+
+export function clearChallengeInfo () {
+  storage.remove(CHALLENGE_KEY)
+}
+
+export function saveChallengeInfo (challengeInfo) {
+  storage.set(CHALLENGE_KEY, challengeInfo)
 }
 
 export function getUserId () {

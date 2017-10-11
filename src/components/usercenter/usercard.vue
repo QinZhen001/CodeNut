@@ -68,7 +68,7 @@
         realname: ''
       }
     },
-    created() {
+    mounted() {
       this.dynamicTags = this.StringToArray(this.user.tag)
     },
     methods: {
@@ -188,13 +188,6 @@
       ...mapGetters([
         'user'
       ])
-    },
-    watch: {
-      user: function (newUser) {
-        if (newUser.user_id == null) {
-          this.$router.push('/home')
-        }
-      }
     }
   }
 </script>

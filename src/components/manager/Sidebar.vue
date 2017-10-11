@@ -29,17 +29,7 @@
           {
             icon: 'el-icon-date',
             index: 'managecontests',
-            title: '创建比赛'
-          },
-          {
-            icon: 'el-icon-upload2',
-            index: '',
-            title: '上传题目'
-          },
-          {
-            icon: 'el-icon-arrow-left',
-            index: '',
-            title: '上传题目'
+            title: '比赛管理'
           }
         ]
       }

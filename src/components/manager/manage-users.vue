@@ -2,7 +2,7 @@
   <div class="manage-users-table">
     <div class="crumbs">
       <el-breadcrumb separator="/">
-        <el-breadcrumb-item><i class="el-icon-menu"></i>  用户管理</el-breadcrumb-item>
+        <el-breadcrumb-item><i class="el-icon-menu"></i> 用户管理</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
     <el-table :data="userDatas" border style="width: 100%" ref="multipleTable"
@@ -109,7 +109,19 @@
         this.$message('编辑第' + (index + 1) + '行')
       },
       handleDelete(index, row) {
-        this.$message.error('删除第' + (index + 1) + '行')
+        console.log(row.user_id)
+        let url = `${baseUrl}/users/${row.user_id}`
+        axios.delete(url).then(response => {
+          if (response.data.msg === 'ok') {
+            this.getData(this.cur_page)
+            this.$message({
+              message: `成功删除用户:${row.username}`,
+              type: 'success'
+            })
+          }
+        }, response => {
+          this.$message.error(`无法删除用户${row.username}`)
+        })
       },
       delAll(){
         const self = this,

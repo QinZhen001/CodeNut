@@ -18,12 +18,17 @@
             align="right">
           </el-date-picker>
         </div>
+        <el-form-item label="比赛密码" prop="password">
+          <el-input v-model="form.password" spellcheck="false"></el-input>
+        </el-form-item>
+        <el-checkbox v-model="auto_checked">自动批准用户加入</el-checkbox>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="setupContest">确 定</el-button>
       </div>
     </el-dialog>
+
     <div class="handle-box">
       <el-button type="primary" icon="edit" @click="showSetupContestDialog">创建比赛</el-button>
     </div>
@@ -68,14 +73,17 @@
 <script type="text/ecmascript-6">
   import { baseUrl, MSG_OK } from 'common/js/data'
   import axios from 'axios'
+  import ElFormItem from '../../../node_modules/element-ui/packages/form/src/form-item'
 
   export default{
+    components: {ElFormItem},
     data(){
       return {
         dialogFormVisible: false,
         form: {
           title: '',
-          description: ''
+          description: '',
+          password: ''
         },
         contestDatas: [],
         cur_page: 1,
@@ -121,7 +129,8 @@
             }
           }]
         },
-        date: ''
+        date: '',
+        auto_checked: true
       }
     },
     created(){
@@ -155,7 +164,19 @@
         this.$message('编辑第' + (index + 1) + '行')
       },
       handleDelete(index, row){
-        this.$message.error('删除第' + (index + 1) + '行')
+        //this.$message.error('删除第' + (index + 1) + '行')
+        let url = `${baseUrl}/contests/${row.id}`
+        axios.delete(url).then(response => {
+          if (response.data.msg === 'ok') {
+            this.getData(this.cur_page)
+            this.$message({
+              message: `成功删除比赛:${row.title}`,
+              type: 'success'
+            })
+          }
+        }, response => {
+          this.$message.error(`无法删除比赛${row.title}`)
+        })
       },
       delAll(){
         const self = this,
@@ -229,4 +250,9 @@
       .block
         .el-date-editor
           width 100%
+    .handle-box
+      margin-bottom 15px
+    .pagination
+      margin: 20px 0;
+      text-align: right;
 </style>

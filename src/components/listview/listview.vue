@@ -36,9 +36,9 @@
       .imgTag
         vertical-align middle
       .title1
-        margin-left 2px
-        display inline-block
+        margin-left 3px
         vertical-align: middle
+        display inline-block
         font-size: 20px;
         font-weight: 300;
 
