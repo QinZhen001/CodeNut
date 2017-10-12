@@ -1,10 +1,17 @@
 #!/bin/bash
 
 # java
+<<<<<<< HEAD
 apt-get install -y openjdk-7-jdk
 
 # ruby
 apt-get install -y ruby-full
+=======
+apt-get install openjdk-8-jdk -y
+
+# ruby
+apt-get install ruby-full -y
+>>>>>>> refs/remotes/origin/all
 
 # mono
 PREFIX=$@
