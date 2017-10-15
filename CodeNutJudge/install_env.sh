@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function java() {
-  apt-get install openjdk-8-jdk -y
+  apt-get install openjdk-8-jdk -y || apt-get install -y openjdk-7-jdk
 }
 
 function ruby() {
@@ -11,22 +11,22 @@ function ruby() {
 function mono() {
   PREFIX=$@
   if [ -z $PREFIX  ]; then
-        PREFIX="/usr/local"
-    fi
+    PREFIX="/usr/local"
+  fi
 
-    # Ensure you have write permissions to PREFIX
-    sudo mkdir $PREFIX
-    sudo chown -R `whoami` $PREFIX
+  # Ensure you have write permissions to PREFIX
+  sudo mkdir $PREFIX
+  sudo chown -R `whoami` $PREFIX
 
-    # Ensure that all required packages are installed.
-    sudo apt-get install git autoconf libtool automake build-essential mono-devel gettext cmake
+  # Ensure that all required packages are installed.
+  sudo apt-get install git autoconf libtool automake build-essential mono-devel gettext cmake
 
-    PATH=$PREFIX/bin:$PATH
-    git clone https://github.com/mono/mono.git
-    cd mono
-    ./autogen.sh --prefix=$PREFIX
-    make
-    make install
+  PATH=$PREFIX/bin:$PATH
+  git clone https://github.com/mono/mono.git
+  cd mono
+  ./autogen.sh --prefix=$PREFIX
+  make
+  make install
 }
 
 function go() {
