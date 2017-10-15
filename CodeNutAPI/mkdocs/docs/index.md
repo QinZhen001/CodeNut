@@ -32,9 +32,9 @@
 [/tokens](#tokens) | 登录、注销
 [/users](#users)   | 用户操作
 
-角色名称          | 权限
+角色名称       | 权限
 ------------- | ----------------------
-user（默认）      | 编程 & 评论 & 写文章
+user（默认）   | 编程 & 评论 & 写文章
 moderator     | 编程 & 评论 & 写文章 & 管理用户评论
 sponsor       | 编程 & 评论 & 写文章 & 举办比赛
 administrator | 全部
@@ -49,11 +49,7 @@ administrator | 全部
 
 --------------------------------------------------------------------------------
 
-#### [
-
-<font color="#FF0000" id="登录">登录</font>
-
-POST `/tokens`](#tokens)
+#### [<font color="#FF0000" id="登录">登录</font> POST `/tokens`](#tokens)
 
 请求参数     | 格式   | 必选  | 说明
 -------- | ---- | --- | ---------------
@@ -90,11 +86,7 @@ token    | token
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="注销">注销</font>
-
-DELETE `/tokens`](#tokens)
+#### [<font color="#FF0000" id="注销">注销</font> DELETE `/tokens`](#tokens)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -136,11 +128,7 @@ DELETE `/tokens`](#tokens)
 
 --------------------------------------------------------------------------------
 
-#### [
-
-<font color="#FF0000" id="创建用户">创建用户</font>
-
-POST `/users`](#users)
+#### [<font color="#FF0000" id="创建用户">创建用户</font> POST `/users`](#users)
 
 请求参数     | 格式   | 必选  | 说明
 -------- | ---- | --- | ---
@@ -180,11 +168,7 @@ token    | token
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="修改用户资料">修改用户资料</font>
-
-PUT `/users/info`](#users)
+#### [<font color="#FF0000" id="修改用户资料">修改用户资料</font> PUT `/users/info`](#users)
 
 请求参数     | 格式   | 必选 | 说明
 -------- | ---- | -- | ------
@@ -208,11 +192,7 @@ tag      | json | no | 用户标签
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="修改用户密码">修改用户密码</font>
-
-PUT `/users/password`](#users)
+#### [<font color="#FF0000" id="修改用户密码">修改用户密码</font> PUT `/users/password`](#users)
 
 请求参数        | 格式   | 必选  | 说明
 ----------- | ---- | --- | ---
@@ -234,11 +214,7 @@ newpassword | json | yes | 新密码
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="修改用户头像">修改用户头像</font>
-
-PUT `/users/profile`](#users)
+#### [<font color="#FF0000" id="修改用户头像">修改用户头像</font> PUT `/users/profile`](#users)
 
 请求参数    | 格式   | 必选  | 说明
 ------- | ---- | --- | --------
@@ -260,11 +236,7 @@ profile | json | yes | 头像base64
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="修改用户角色">修改用户角色</font>
-
-PUT `/users/<id>/role`（管理员权限）](#users)
+#### [<font color="#FF0000" id="修改用户角色">修改用户角色</font> PUT `/users/<id>/role`（管理员权限）](#users)
 
 请求参数 | 格式   | 必选  | 说明
 ---- | ---- | --- | ----
@@ -278,11 +250,7 @@ role | json | yes | 角色名称
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="删除用户">删除用户</font>
-
-DELETE `/users/<id>`（管理员权限）](#users)
+#### [<font color="#FF0000" id="删除用户">删除用户</font> DELETE `/users/<id>`（管理员权限）](#users)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -296,11 +264,7 @@ DELETE `/users/<id>`（管理员权限）](#users)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到所有用户信息">得到所有用户信息</font>
-
-GET `/users`（管理员权限）](#users)
+#### [<font color="#FF0000" id="得到所有用户信息">得到所有用户信息</font> GET `/users`（管理员权限）](#users)
 
 请求参数     | 格式     | 必选 | 说明
 -------- | ------ | -- | ----------
@@ -349,11 +313,7 @@ role        | 角色名称
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到具体用户信息">得到具体用户信息</font>
-
-GET `/users/<id>`](#users)
+#### [<font color="#FF0000" id="得到具体用户信息">得到具体用户信息</font> GET `/users/<id>`](#users)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -391,11 +351,7 @@ GET `/users/<id>`](#users)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到用户参加的所有比赛">得到用户参加的所有比赛</font>
-
-GET `/users/<id>/contests_joined`](#users)
+#### [<font color="#FF0000" id="得到用户参加的所有比赛">得到用户参加的所有比赛</font> GET `/users/<id>/contests_joined`](#users)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -430,11 +386,7 @@ GET `/users/<id>/contests_joined`](#users)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到用户举办的所有比赛">得到用户举办的所有比赛</font>
-
-GET `/users/<id>/contests_sponsor`](#users)
+#### [<font color="#FF0000" id="得到用户举办的所有比赛">得到用户举办的所有比赛</font> GET `/users/<id>/contests_sponsor`](#users)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -469,11 +421,7 @@ GET `/users/<id>/contests_sponsor`](#users)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到用户提交的程序">得到用户提交的程序</font>
-
-GET `/users/<id>/codes_submitted`](#users)
+#### [<font color="#FF0000" id="得到用户提交的程序">得到用户提交的程序</font> GET `/users/<id>/codes_submitted`](#users)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -509,11 +457,7 @@ GET `/users/<id>/codes_submitted`](#users)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到用户收藏的题目">得到用户收藏的题目</font>
-
-GET `/users/<id>/collections`](#users)
+#### [<font color="#FF0000" id="得到用户收藏的题目">得到用户收藏的题目</font> GET `/users/<id>/collections`](#users)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -577,11 +521,7 @@ GET `/users/<id>/collections`](#users)
 
 --------------------------------------------------------------------------------
 
-#### [
-
-<font color="#FF0000" id="得到所有题目信息">得到所有题目信息</font>
-
-GET `/problems`](#problems)
+#### [<font color="#FF0000" id="得到所有题目信息">得到所有题目信息</font> GET `/problems`](#problems)
 
 请求参数       | 格式     | 必选 | 说明
 ---------- | ------ | -- | --------------
@@ -623,11 +563,7 @@ title     | 标题
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到题目信息">得到题目信息</font>
-
-GET `/problems/<id>`](#problems)
+#### [<font color="#FF0000" id="得到题目信息">得到题目信息</font> GET `/problems/<id>`](#problems)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -662,11 +598,7 @@ GET `/problems/<id>`](#problems)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到题目解决方法">得到题目解决方法</font>
-
-GET `/problems/<id>/solutions`](#problems)
+#### [<font color="#FF0000" id="得到题目解决方法">得到题目解决方法</font> GET `/problems/<id>/solutions`](#problems)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -691,11 +623,7 @@ solution | 解决方法
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="修改题目解决方法">修改题目解决方法</font>
-
-PUT `/problems/<id>/solutions`（题目所有者）](#problems)
+#### [<font color="#FF0000" id="修改题目解决方法">修改题目解决方法</font> PUT `/problems/<id>/solutions`（题目所有者）](#problems)
 
 请求参数     | 格式   | 必选  | 说明
 -------- | ---- | --- | ----
@@ -715,11 +643,7 @@ solution | json | yes | 解决办法
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="创建题目">创建题目</font>
-
-POST `/problems/<id>/solutions`（举办比赛权限）](#problems)
+#### [<font color="#FF0000" id="创建题目">创建题目</font> POST `/problems/<id>/solutions`（举办比赛权限）](#problems)
 
 请求参数        | 格式   | 必选  | 说明
 ----------- | ---- | --- | ------
@@ -783,11 +707,7 @@ title | 标题
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="修改题目">修改题目</font>
-
-PUT `/problems/<id>`（题目所有者）](#problems)
+#### [<font color="#FF0000" id="修改题目">修改题目</font> PUT `/problems/<id>`（题目所有者）](#problems)
 
 请求参数        | 格式   | 必选  | 说明
 ----------- | ---- | --- | ------
@@ -816,11 +736,7 @@ program     | json | yes | 官方程序代码
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="删除题目">删除题目</font>
-
-DELETE `/problems/<id>`（题目所有者）](#problems)
+#### [<font color="#FF0000" id="删除题目">删除题目</font> DELETE `/problems/<id>`（题目所有者）](#problems)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -841,11 +757,7 @@ DELETE `/problems/<id>`（题目所有者）](#problems)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到程序模版">得到程序模版</font>
-
-GET `/problems/<id>/codes`](#problems)
+#### [<font color="#FF0000" id="得到程序模版">得到程序模版</font> GET `/problems/<id>/codes`](#problems)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -870,11 +782,7 @@ code | 程序模版
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="运行代码">运行代码</font>
-
-PATCH `/problems/<id>/codes`（编程权限）](#problems)
+#### [<font color="#FF0000" id="运行代码">运行代码</font> PATCH `/problems/<id>/codes`（编程权限）](#problems)
 
 请求参数         | 格式   | 必选  | 说明
 ------------ | ---- | --- | -------
@@ -913,11 +821,7 @@ time_used   | 耗费时间
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="提交代码">提交代码</font>
-
-POST `/problems/<id>/codes`（编程权限）](#problems)
+#### [<font color="#FF0000" id="提交代码">提交代码</font> POST `/problems/<id>/codes`（编程权限）](#problems)
 
 ```json
 与运行代码一致
@@ -939,11 +843,7 @@ POST `/problems/<id>/codes`（编程权限）](#problems)
 
 --------------------------------------------------------------------------------
 
-#### [
-
-<font color="#FF0000" id="用户记笔记">用户记笔记</font>
-
-PUT `/problems/<id>/notes`（编程权限）](#users_problems)
+#### [<font color="#FF0000" id="用户记笔记">用户记笔记</font> PUT `/problems/<id>/notes`（编程权限）](#users_problems)
 
 请求参数 | 格式   | 必选  | 说明
 ---- | ---- | --- | -----------
@@ -957,11 +857,7 @@ text | json | yes | 笔记（需要检查不为空）
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到用户笔记">得到用户笔记</font>
-
-GET `/problems/<id>/notes`（编程权限）](#users_problems)
+#### [<font color="#FF0000" id="得到用户笔记">得到用户笔记</font> GET `/problems/<id>/notes`（编程权限）](#users_problems)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -988,11 +884,7 @@ GET `/problems/<id>/notes`（编程权限）](#users_problems)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="用户收藏题目">用户收藏题目</font>
-
-POST `/problems/<id>/collections`（编程权限）](#users_problems)
+#### [<font color="#FF0000" id="用户收藏题目">用户收藏题目</font> POST `/problems/<id>/collections`（编程权限）](#users_problems)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -1006,11 +898,7 @@ POST `/problems/<id>/collections`（编程权限）](#users_problems)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="用户取消收藏">用户取消收藏</font>
-
-DELETE `/problems/<id>/collections`（编程权限）](#users_problems)
+#### [<font color="#FF0000" id="用户取消收藏">用户取消收藏</font> DELETE `/problems/<id>/collections`（编程权限）](#users_problems)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -1024,11 +912,7 @@ DELETE `/problems/<id>/collections`（编程权限）](#users_problems)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="用户点赞">用户点赞/倒/无感</font>
-
-PUT `/problems/<id>/likes`（编程权限）](#users_problems)
+#### [<font color="#FF0000" id="用户点赞">用户点赞/倒/无感</font> PUT `/problems/<id>/likes`（编程权限）](#users_problems)
 
 请求参数                  | 格式     | 必选  | 说明
 --------------------- | ------ | --- | --------------------------------------
@@ -1067,11 +951,7 @@ true_or_false_or_none | string | yes | true: like, false: hate, none: no feel
 
 --------------------------------------------------------------------------------
 
-#### [
-
-<font color="#FF0000" id="创建比赛">创建比赛</font>
-
-POST `/contests`（举办比赛权限）](#contests)
+#### [<font color="#FF0000" id="创建比赛">创建比赛</font> POST `/contests`（举办比赛权限）](#contests)
 
 请求参数         | 格式   | 必选  | 说明
 ------------ | ---- | --- | --------------
@@ -1121,11 +1001,7 @@ user_nums    | 参加者人数
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="更新比赛信息">更新比赛信息</font>
-
-PUT `/contests/<id>`（比赛所有者）](#contests)
+#### [<font color="#FF0000" id="更新比赛信息">更新比赛信息</font> PUT `/contests/<id>`（比赛所有者）](#contests)
 
 请求参数         | 格式   | 必选 | 说明
 ------------ | ---- | -- | --------------
@@ -1152,11 +1028,7 @@ password     | json | no | 比赛密码（默认为空）
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="删除比赛">删除比赛</font>
-
-DELETE `/contests/<id>`（比赛所有者）](#contests)
+#### [<font color="#FF0000" id="删除比赛">删除比赛</font> DELETE `/contests/<id>`（比赛所有者）](#contests)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -1177,11 +1049,7 @@ DELETE `/contests/<id>`（比赛所有者）](#contests)
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到所有比赛信息">得到所有比赛信息</font>
-
-GET `/contests`](#contests)
+#### [<font color="#FF0000" id="得到所有比赛信息">得到所有比赛信息</font> GET `/contests`](#contests)
 
 请求参数     | 格式     | 必选 | 说明
 -------- | ------ | -- | ----------
@@ -1211,11 +1079,7 @@ per_page | string | no | 每页限制（默认20）
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到具体比赛信息">得到具体比赛信息</font>
-
-GET `/contests/<id>`](#contests)
+#### [<font color="#FF0000" id="得到具体比赛信息">得到具体比赛信息</font> GET `/contests/<id>`](#contests)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -1248,11 +1112,7 @@ is_join | 用户是否已加入比赛（null: 没加入，true: 已加入，fals
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="得到所以参赛者">得到所以参赛者</font>
-
-GET `/contests/<id>/users`](#contests)
+#### [<font color="#FF0000" id="得到所以参赛者">得到所以参赛者</font> GET `/contests/<id>/users`](#contests)
 
 请求参数     | 格式     | 必选 | 说明
 -------- | ------ | -- | ------------
@@ -1284,11 +1144,7 @@ user_id | 用户id
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="批准参赛">批准参赛</font>
-
-PUT `/contests/<id>/users`（比赛所有者）](#contests)
+#### [<font color="#FF0000" id="批准参赛">批准参赛</font> PUT `/contests/<id>/users`（比赛所有者）](#contests)
 
 请求参数    | 格式   | 必选  | 说明
 ------- | ---- | --- | ----
@@ -1321,13 +1177,9 @@ is_join | 目前参赛情况
 
 --------------------------------------------------------------------------------
 
-#### [
+#### [<font color="#FF0000" id="加入比赛">加入比赛</font> POST `/contests/<id>/users`（编程权限）](#users_contests)
 
-<font color="#FF0000" id="加入比赛">加入比赛</font>
-
-POST `/contests/<id>/users`（编程权限）](#users_contests)
-
-请求参数     | 格式   | 必选  | 说明
+请求参数 | 格式  | 必选 | 说明
 -------- | ---- | --- | ----------------
 password | json | yes | 比赛密码（为空时也要发null）
 
@@ -1356,11 +1208,7 @@ is_join | 是否成功参赛
 
 <br>
 
-#### [
-
-<font color="#FF0000" id="退出比赛">退出比赛</font>
-
-DELETE `/contests/<id>/users`（已加入比赛者）](#users_contests)
+#### [<font color="#FF0000" id="退出比赛">退出比赛</font> DELETE `/contests/<id>/users`（已加入比赛者）](#users_contests)
 
 请求参数 | 格式 | 必选 | 说明
 ---- | -- | -- | --
@@ -1380,7 +1228,7 @@ DELETE `/contests/<id>/users`（已加入比赛者）](#users_contests)
 
 ## 搜索
 
-资源                 | 说明
+资源                | 说明
 ------------------ | ----
 [/search](#search) | 搜索操作
 
@@ -1388,13 +1236,9 @@ DELETE `/contests/<id>/users`（已加入比赛者）](#users_contests)
 
 ### search
 
-#### [
+#### [<font color="#FF0000" id="搜索">搜索</font> POST `/search`](#search)
 
-<font color="#FF0000" id="搜索">搜索</font>
-
-POST `/search`](#search)
-
-请求参数    | 格式   | 必选  | 说明
+请求参数 | 格式 | 必选 | 说明
 ------- | ---- | --- | ---------------------------
 target  | json | yes | 查询对象（User，Problem等，对应数据库模型）
 type    | json | yes | 模型属性（usrname，title等）
