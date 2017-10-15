@@ -1193,7 +1193,7 @@
 </code></pre>
 
 <p><br></p>
-<h4 id="post-problemsidsolutions"><a href="#problems"><font color="#FF0000" id="创建题目">创建题目</font> POST <code>/problems/&lt;id&gt;/solutions</code>（举办比赛权限）</a></h4>
+<h4 id="post-problems"><a href="#problems"><font color="#FF0000" id="创建题目">创建题目</font> POST <code>/problems</code>（举办比赛权限）</a></h4>
 <table>
 <thead>
 <tr>
@@ -1547,12 +1547,9 @@ int main(int argc, char* argv[]) {
 
 <p><br></p>
 <h4 id="post-problemsidcodes"><a href="#problems"><font color="#FF0000" id="提交代码">提交代码</font> POST <code>/problems/&lt;id&gt;/codes</code>（编程权限）</a></h4>
-<pre><code class="json">与运行代码一致
+<pre><code class="json">与运行代码一致，但是会记录在数据库
 </code></pre>
 
-<blockquote>
-<p>目前沙箱还没完成，运行代码和提交代码的接口都是随机产生的值</p>
-</blockquote>
 <h3 id="users_problems">users_problems</h3>
 <ol>
 <li>
@@ -2385,5 +2382,5 @@ int main(int argc, char* argv[]) {
 
 <!--
 MkDocs version : 0.16.3
-Build Date UTC : 2017-10-15 07:39:28
+Build Date UTC : 2017-10-15 12:26:11
 -->

@@ -643,9 +643,9 @@ solution | json | yes | 解决办法
 
 <br>
 
-#### [<font color="#FF0000" id="创建题目">创建题目</font> POST `/problems/<id>/solutions`（举办比赛权限）](#problems)
+#### [<font color="#FF0000" id="创建题目">创建题目</font> POST `/problems`（举办比赛权限）](#problems)
 
-请求参数        | 格式   | 必选  | 说明
+请求参数     | 格式   | 必选  | 说明
 ----------- | ---- | --- | ------
 title       | json | yes | 标题
 description | json | yes | 描述
@@ -824,10 +824,8 @@ time_used   | 耗费时间
 #### [<font color="#FF0000" id="提交代码">提交代码</font> POST `/problems/<id>/codes`（编程权限）](#problems)
 
 ```json
-与运行代码一致
+与运行代码一致，但是会记录在数据库
 ```
-
-> 目前沙箱还没完成，运行代码和提交代码的接口都是随机产生的值
 
 ### users_problems
 

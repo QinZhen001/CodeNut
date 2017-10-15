@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------
 
-## License (MPL 2.0)
+### License (MPL 2.0)
 
 Copyright © 2017, Zoctan. All rights reserved.
 
