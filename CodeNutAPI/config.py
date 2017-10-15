@@ -8,6 +8,7 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or \
                  'the quick brown fox jumps over the lazy dog'
     SQLALCHEMY_TRACK_MODIFICATIONS = True
+
     # SQLALCHEMY_ECHO = True
 
     @staticmethod

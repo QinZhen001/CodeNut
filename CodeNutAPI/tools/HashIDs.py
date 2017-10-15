@@ -20,7 +20,8 @@ class HashIDs:
 
         if alphabet is not None and isinstance(alphabet, str) and len(alphabet) > 0:
             if len(alphabet) < 4:
-                raise ValueError('The alphabet should contain at least 4 unique symbols')
+                raise ValueError(
+                    'The alphabet should contain at least 4 unique symbols')
 
             # Make sure the user created alphabet only contains unique values
             self.__alphabet = ''.join(set(alphabet))
@@ -82,7 +83,8 @@ class HashIDs:
 
                 alphabet = lotteryChar + alphabet.replace(lotteryChar, '')
 
-            alphabet = self.__shuffle(alphabet, str((ord(lotteryChar) & 12345)) + salt)
+            alphabet = self.__shuffle(alphabet, str(
+                (ord(lotteryChar) & 12345)) + salt)
             ret += self.__hash(val, alphabet)
 
             if idx + 1 < len(values):
@@ -108,7 +110,8 @@ class HashIDs:
             padList = [str(ord(alphabet[1])), str(ord(alphabet[0]))]
 
             padLeft = self.__encode(padList, alphabet, salt, min_hash_length)
-            padRight = self.__encode(padList, alphabet, ''.join(padList), min_hash_length)
+            padRight = self.__encode(
+                padList, alphabet, ''.join(padList), min_hash_length)
 
             ret = padLeft + ret + padRight
             excess = len(ret) - min_hash_length
@@ -136,7 +139,8 @@ class HashIDs:
 
             hashed_id = hashExplode[i]
 
-            hashed_id = re.sub('[{}]'.format(''.join(self.__seps)), ' ', hashed_id)
+            hashed_id = re.sub('[{}]'.format(
+                ''.join(self.__seps)), ' ', hashed_id)
             hashArray = hashed_id.split(' ')
 
             alphabet = ''
@@ -147,9 +151,11 @@ class HashIDs:
                     if not idx:
                         lotteryChar = hashed_id[0]
                         subHash = subHash[1:]
-                        alphabet = lotteryChar + self.__alphabet.replace(lotteryChar, '')
+                        alphabet = lotteryChar + \
+                            self.__alphabet.replace(lotteryChar, '')
 
-                    alphabet = self.__shuffle(alphabet, str(ord(lotteryChar) & 12345) + self.__salt)
+                    alphabet = self.__shuffle(alphabet, str(
+                        ord(lotteryChar) & 12345) + self.__salt)
                     number = self.__dehash(subHash, alphabet)
                     ret.append(number)
 

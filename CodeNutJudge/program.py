@@ -12,15 +12,18 @@ import linecache
 
 
 logging.basicConfig(level=logging.WARNING,
-                    filename='program.log',
                     format='%(asctime)s %(levelname)s: [line:%(lineno)d] %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
 
 
 class Config:
-    program = {
+    testing = {
         'work_dir': 'work_dir',
         'answer_dir': 'answer_dir',
+    }
+    development = {
+        'work_dir': '../work_dir',
+        'answer_dir': '../answer_dir',
     }
 
 
@@ -36,15 +39,18 @@ class ResultStatus:
     PE = 'Presentation Error'
 
 
-class Program:
+config = Config.testing
 
+
+class Program:
     def __init__(self, problem):
         self.problem = problem
         self.result = ResultTask(user_id=self.problem['user_id'])
-        self.user_dir = os.path.join(Config.program['work_dir'], self.problem['user_id'])
+        self.user_dir = os.path.join(
+            config['work_dir'], self.problem['user_id'])
         # make a directory for user
         if not os.path.exists(self.user_dir):
-            os.mkdir(self.user_dir)
+            os.makedirs(self.user_dir)
         self.__store()
 
     def __store(self):
@@ -58,7 +64,8 @@ class Program:
             'Ruby': 'Solution.rb',
             'JavaScript': 'Solution.js',
         }
-        file_path = os.path.join(self.user_dir, file_name[self.problem['language']])
+        file_path = os.path.join(
+            self.user_dir, file_name[self.problem['language']])
         with codecs.open(file_path, 'w+', 'utf-8') as f:
             f.write(self.problem['code'])
 
@@ -89,11 +96,11 @@ class Program:
 
         if sub.returncode == 0:  # compile success
             logging.info('problem: {}-{} __compiled by user: {}'.format(self.problem['id'],
-                         self.problem['language'], self.problem['user_id']))
+                                                                        self.problem['language'], self.problem['user_id']))
             return True
         else:
             return False
- 
+
     def __get_program_argv(self, dir):
         command = {
             'C': '{}/Solution'.format(dir),
@@ -132,28 +139,34 @@ class Program:
             official_out_path = os.path.join(self.user_dir, 'official_out')
             with codecs.open(in_path, 'w+', 'utf-8') as f:  # write before read
                 f.write(self.problem['custom_input'])
-            official_program, _, _ = self.__get_program_argv(os.path.join(Config.program['answer_dir'], str(self.problem.id)))
+            official_program, _, _ = self.__get_program_argv(
+                os.path.join(config['answer_dir'], str(self.problem.id)))
         else:
             # official input
-            in_path = os.path.join(Config.program['answer_dir'], str(self.problem['id']), 'in')
-            official_out_path = os.path.join(Config.program['answer_dir'], str(self.problem['id']), 'out')
+            in_path = os.path.join(
+                config['answer_dir'], str(self.problem['id']), 'in')
+            official_out_path = os.path.join(
+                config['answer_dir'], str(self.problem['id']), 'out')
 
         in_list = linecache.getlines(in_path)
 
         user_out_path = os.path.join(self.user_dir, 'out')
         # run program
-        user_program, time_limit, memory_limit = self.__get_program_argv(self.user_dir)
+        user_program, time_limit, memory_limit = self.__get_program_argv(
+            self.user_dir)
         count = 1 if choice == 'one' else len(in_list)
         time_used, memory_used = 0.0, 0.0
         for i in range(count):
             input = in_list[i].replace('\r', '').rstrip().split()
-            result = self.__run_program(user_program + input, user_out_path, time_limit, memory_limit)
+            result = self.__run_program(
+                user_program + input, user_out_path, time_limit, memory_limit)
             self.result.status = result['status']
             if self.result.status != ResultStatus.RS:
                 break
             # run official program
             if self.problem['custom_input']:
-                self.__run_program(official_program + input, official_out_path, time_limit, memory_limit)
+                self.__run_program(official_program + input,
+                                   official_out_path, time_limit, memory_limit)
 
             time_used += result['time_used']
             memory_used += result['memory_used']
@@ -185,7 +198,8 @@ class Program:
         return ResultStatus.AC
 
     def run(self, choice='many'):
-        if self.__compile() is False:
+        # can not compile them
+        if self.problem['language'] not in ['JavaScript', 'Ruby'] and self.__compile() is False:
             self.result.status = ResultStatus.CE
             return self.result
         return self.__judge(choice)

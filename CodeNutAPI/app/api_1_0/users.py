@@ -14,7 +14,8 @@ from tools import Verify
 def get_all_users():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
-    paginate = UserInfo.query.order_by(UserInfo.id.desc()).paginate(page, per_page=per_page, error_out=False)
+    paginate = UserInfo.query.order_by(UserInfo.id.desc()).paginate(
+        page, per_page=per_page, error_out=False)
     return jsonify({'msg': 'ok', 'result': [item.to_json() for item in paginate.items]})
 
 
@@ -93,7 +94,7 @@ def create_user():
     g.current_user = User(email=email, username=username)
     g.current_user.password = password
     db.session.add(g.current_user)
-    db.session.flush()  # id is None if do not flush database cache
+    db.session.flush()  # id is None if not flush database cache
     user_info = UserInfo(user_id=g.current_user.id)
     db.session.add(user_info)
     return get_token(duration)
@@ -103,7 +104,7 @@ def create_user():
 def update_user_info():
     user_info = UserInfo.query.filter_by(user_id=g.current_user.id).first()
     # just only modify these attribution
-    keyword = {'realname', 'profile', 'school', 'about_me', 'tag'}
+    keyword = {'realname', 'school', 'about_me', 'tag'}
     if not set(request.json.keys()).issubset(keyword):
         return jsonify({'msg': 'no', 'error': 'can not modify'})
     for key in request.json:
@@ -115,7 +116,9 @@ def update_user_info():
 @decorators.composed(decorators.route('/users/profile', methods=['PUT']), decorators.json_required)
 def update_user_profile():
     user_info = UserInfo.query.filter_by(user_id=g.current_user.id).first()
-    # !!
+    if not request.json.get('profile'):
+        return jsonify({'msg': 'no', 'error': 'null'})
+    user_info.profile = request.json.get('profile')
     return jsonify({'msg': 'ok'})
 
 
@@ -132,7 +135,8 @@ def update_user_password():
     return jsonify({'msg': 'ok'})
 
 
-@decorators.composed(decorators.route('/users/<id>/role', methods=['PUT']), decorators.json_required, decorators.permission_required(Permission.ADMINISTER))
+@decorators.composed(decorators.route('/users/<id>/role', methods=['PUT']), decorators.json_required,
+                     decorators.permission_required(Permission.ADMINISTER))
 def update_user_role(id):
     user = User.query.get(verify_id(id))
     role = UserRole.query.filter_by(name=request.json.get('role')).first()
@@ -140,7 +144,8 @@ def update_user_role(id):
     return jsonify({'msg': 'ok'})
 
 
-@decorators.composed(decorators.route('/users/<id>', methods=['DELETE']), decorators.permission_required(Permission.ADMINISTER))
+@decorators.composed(decorators.route('/users/<id>', methods=['DELETE']),
+                     decorators.permission_required(Permission.ADMINISTER))
 def delete_user(id):
     user = User.query.get(verify_id(id))
     if not user:

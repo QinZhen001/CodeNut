@@ -10,6 +10,9 @@ class ProblemTask:
         self.code = kwargs.get('code')
         self.custom_input = kwargs.get('custom_input')
 
+    def __getitem__(self, key):
+        return self.__dict__[key]
+
     def to_json(self):
         return self.__dict__
 
@@ -22,5 +25,5 @@ class ResultTask:
         self.time_used = kwargs.get('time_used', 'N/A')
         self.memory_used = kwargs.get('memory_used', 'N/A')
 
-    def to_json(self):
-        return self.__dict__
+    def __getitem__(self, key):
+        return self.__dict__[key]

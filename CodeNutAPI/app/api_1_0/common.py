@@ -15,7 +15,8 @@ def search():
     content = request.json.get('content')
     cls = eval(target)
     attr = eval(target + '.' + type)
-    query = db.session.query(cls).filter(attr.like('%{}%'.format(content))).all()
+    query = db.session.query(cls).filter(
+        attr.like('%{}%'.format(content))).all()
     tmp_list = []
     for i in query:
         tmp_dict = {}

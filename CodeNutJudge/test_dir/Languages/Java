@@ -1,6 +1,6 @@
 public class Solution {
-    public static void main(String[] args) {
+public static void main(String[] args) {
         String problem=args[0];
         System.out.print("hello " + problem);
-    }
+}
 }

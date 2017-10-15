@@ -20,9 +20,11 @@ def route(rule, **options):
                 return jsonify({'msg': 'no', 'error': str(e)})
             finally:
                 db.session.remove()
+
         endpoint = options.pop('endpoint', None)
         api.add_url_rule(rule, endpoint, decorated_function, **options)
         return decorated_function
+
     return decorator
 
 
@@ -32,6 +34,7 @@ def composed(*decorators):
         for dec in reversed(decorators):
             func = dec(func)
         return func
+
     return decorator
 
 
@@ -42,7 +45,9 @@ def permission_required(permission):
             if not g.current_user.operation(permission):
                 return jsonify({'msg': 'no', 'error': 'insufficient permissions'})
             return func(*args, **kwargs)
+
         return decorated_function
+
     return decorator
 
 
@@ -52,4 +57,5 @@ def json_required(func):
         if not request.json:
             return jsonify({'msg': 'no', 'error': 'required json'})
         return func(*args, **kwargs)
+
     return decorated_function

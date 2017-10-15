@@ -30,7 +30,8 @@ def verify_password(token_or_email_or_username, password):
         user = User.query.filter_by(email=token_or_email_or_username).first()
         if not user:
             # try to authenticate with username/password
-            user = User.query.filter_by(username=token_or_email_or_username).first()
+            user = User.query.filter_by(
+                username=token_or_email_or_username).first()
             if not user:
                 return False
         flag = user.verify_password(password)
@@ -46,4 +47,6 @@ def before_request():
 
 def get_token(duration=18000):
     token = g.current_user.generate_auth_token(duration)
-    return jsonify({'msg': 'ok', 'result': [{'id': generate_id(g.current_user.id), 'token': token.decode('ascii'), 'duration': duration}]})
+    return jsonify({'msg': 'ok', 'result': [{'id': generate_id(g.current_user.id),
+                                             'token': token.decode('ascii'),
+                                             'duration': duration}]})
