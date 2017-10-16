@@ -36,6 +36,9 @@
     >
     </codemirror>
     <div class="myeditor-footer">
+      <el-button type="success" class="custom-button" @click="onClickCustom">
+        Custom<i class="el-icon-upload el-icon--right"></i>
+      </el-button>
       <el-button type="success" class="submit-button" @click="onClickSubmit">
         Submit<i class="el-icon-upload el-icon--right"></i>
       </el-button>
@@ -51,17 +54,18 @@
         <el-tag type="warning" v-show="item.mytitle === 'RunResult'">{{item.mytitle}}</el-tag>
       </div>
       <span class="result-item">
-        <span class="result-text">程序输出</span> {{item.output}}
+        <span class="result-item-text">程序输出</span> {{item.output}}
       </span>
       <span class="result-item">
-        <span class="result-text">耗费内存</span> {{item.memory_used}}
+        <span class="result-item-text">耗费内存</span> {{item.memory_used}}
       </span>
       <span class="result-item">
-        <span class="result-text">耗费时间</span> {{item.time_used}}
+        <span class="result-item-text">耗费时间</span> {{item.time_used}}
       </span>
       <span class="result-item">
-        <span class="result-text">运行状态</span> {{item.status}}
+        <span class="result-item-text">运行状态</span> {{item.status}}
       </span>
+      <img class="result-item-img" src="static/target.png" width="32" height="32" v-show="index === (result.length-1)">
     </div>
   </div>
 </template>
@@ -116,8 +120,9 @@
   // 语法高亮，自行替换为你需要的语言
   import 'codemirror/mode/javascript/javascript'
   import 'codemirror/mode/go/go'
-  import 'codemirror/mode/groovy/groovy'
   import 'codemirror/mode/python/python'
+  import 'codemirror/mode/ruby/ruby'
+  import 'codemirror/mode/clike/clike'
 
   // Theme
   import 'codemirror/theme/ambiance.css'
@@ -164,13 +169,28 @@
         fullscreenLoading: false
       }
     },
+    created(){
+      this._getTempletCode(this.selectLanguage)
+    },
     methods: {
       handleCommandLangage(command) {
         // 这里的command 是 index
         console.log('xuan ' + command)
         this.editorOptions.mode = this.editorModes[command]
         this.selectLanguage = this.Languages[command]
-        this.code = this.templateCodes[command]
+        this._getTempletCode(this.selectLanguage)
+      },
+      _getTempletCode(selectLanguage){
+        let url = `${baseUrl}/problems/${this.problem.id}/codes`
+        axios.get(url).then(response => {
+          let result = JSON.parse(response.data.result[0].code)
+          let templet = result.find((item) => item.text === selectLanguage)
+          if (templet) {
+            this.code = templet.defaultCode
+          } else {
+            this.code = ''
+          }
+        }, response => {})
       },
       handleCommandKeyMap(command) {
         this.editorOptions.keyMap = command
@@ -183,7 +203,9 @@
         this.selectTheme = command
       },
       onClickSubmit(){
-        this._checkLogin()
+        if (!this._checkLogin()) {
+          return
+        }
         let url = `${baseUrl}/problems/${this.problem.id}/codes`
         axios.post(url, {
           language: this.selectLanguage,
@@ -208,7 +230,10 @@
         }, response => {})
       },
       onClickRun(){
-        this._checkLogin()
+        if (!this._checkLogin()) {
+          return
+        }
+        console.log(this.code)
         let url = `${baseUrl}/problems/${this.problem.id}/codes`
         axios.patch(url, {
           language: this.selectLanguage,
@@ -232,14 +257,25 @@
           }
         }, response => {})
       },
+      onClickCustom(){
+        let url = `${baseUrl}/problems/${this.problem.id}/codes`
+        axios.get(url).then(response => {
+          if (response.data.msg === MSG_OK) {
+            let str = JSON.parse(response.data.result[0].code)
+            console.log(str)
+          }
+        }, response => {})
+      },
       _checkLogin(){
-        if (this.user.user_id == null) {
+        if (this.user.user_id == null || this.user.user_id === '') {
           this.$notify({
             title: '警告',
             message: '请先登录！',
             type: 'warning'
           })
-          return
+          return false
+        } else {
+          return true
         }
       },
       _showLoading() {
@@ -277,6 +313,10 @@
       padding 20px 0 0 0
       height 100px
       width 100%
+      .custom-button
+        float left
+        margin-right 10px
+        width 150px
       .run-button
         float right
         margin-right 10px
@@ -298,11 +338,12 @@
           font-size: 18px;
       .result-item
         flex 1 1 auto
-        .result-text
+        .result-item-text
           font-size 18px
           font-weight 600
           margin 0 5px
           line-height 30px
           color: #9E9E9E
-
+      .result-item-img
+        vertical-align middle
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div class="list-wrapper">
-    <div class="listHead">
-      <img src="static/fire.png" class="imgTag">
-      <p class="title1">Top Hits</p>
+    <div class="list-head">
+      <img class="list-head-img" src="static/fire.png">
+      <p class="list-head-text">Top Hits</p>
     </div>
     <div class="container">
       <ul class="list">
@@ -29,13 +29,12 @@
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .list-wrapper
-    margin-top 30px
-    .listHead
-      margin-bottom 0
-      height: 55px
-      .imgTag
+    margin-top 10px
+    .list-head
+      height 65px
+      .list-head-img
         vertical-align middle
-      .title1
+      .list-head-text
         margin-left 3px
         vertical-align: middle
         display inline-block

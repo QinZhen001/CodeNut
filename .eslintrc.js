@@ -30,6 +30,7 @@ module.exports = {
     'one-var': 0,
     'spaced-comment': 0,
     'no-tabs': 0,
-    'space-before-blocks': 0
+    'space-before-blocks': 0,
+    'eqeqeq': 0
   }
 }

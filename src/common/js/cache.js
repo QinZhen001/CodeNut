@@ -10,9 +10,13 @@ const FAVORITE_KEY = '__favorite__'
 const FAVORITE_MAX_LEN = 200
 
 const TOKEN_KEY = '__token__'
-const ID_KEY = '__id__'
+//const ID_KEY = '__id__'
 
 const CHALLENGE_KEY = '__CHALLENGE__'
+
+const PROBLEM_KEY = '__PROBLEM_KEY__'
+
+const USER_KEY = '__USER_KEY__'
 
 function insertArray (arr, val, compare, maxLen) {
   const index = arr.findIndex(compare)
@@ -97,6 +101,29 @@ export function loadFavorite () {
   return storage.get(FAVORITE_KEY, [])
 }
 
+export function saveProblem (problem) {
+  storage.set(PROBLEM_KEY, problem)
+  return problem
+}
+
+export function loadProblem () {
+  return storage.get(PROBLEM_KEY, {})
+}
+
+export function saveUser (user) {
+  storage.set(USER_KEY, user)
+  return user
+}
+
+export function loadUser () {
+  return storage.get(USER_KEY, {})
+}
+
+export function clearUser () {
+  storage.remove(USER_KEY)
+  return {}
+}
+
 export function saveToken (token) {
   storage.set(TOKEN_KEY, token)
 }
@@ -109,10 +136,6 @@ export function clearToken () {
   storage.remove(TOKEN_KEY)
 }
 
-export function saveUserId (id) {
-  storage.set(ID_KEY, id)
-}
-
 export function getChallengeInfo () {
   return storage.get(CHALLENGE_KEY, [])
 }
@@ -123,12 +146,4 @@ export function clearChallengeInfo () {
 
 export function saveChallengeInfo (challengeInfo) {
   storage.set(CHALLENGE_KEY, challengeInfo)
-}
-
-export function getUserId () {
-  return storage.get(ID_KEY, '')
-}
-
-export function clearUserId () {
-  storage.remove(ID_KEY)
 }

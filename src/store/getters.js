@@ -6,3 +6,5 @@ export const problem = state => state.problem
 export const user = state => state.user
 
 export const collectionList = state => state.collectionList
+
+export const templets = state => state.templets

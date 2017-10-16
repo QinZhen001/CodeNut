@@ -7,7 +7,8 @@
       v-model.trim="mysearch"
       spellcheck="false"
       :on-icon-click="_onSearch"
-      @change="_onSearch">
+      @change="_onSearch"
+      @focus="_onSearch">
     </el-input>
     <el-dropdown-menu slot="dropdown">
       <el-dropdown-item v-show="dropdownLoading">拼命加载中...</el-dropdown-item>
@@ -24,6 +25,7 @@
   import Problem from 'common/js/problem'
   import axios from 'axios'
   import { baseUrl } from 'common/js/data'
+  import { mapMutations } from 'vuex'
 
   export default{
     data() {
@@ -65,7 +67,10 @@
           id: command
         }))
         this.$router.push('/home/problem')
-      }
+      },
+      ...mapMutations({
+        setProblem: 'SET_PROBLEM'
+      })
     }
   }
 </script>

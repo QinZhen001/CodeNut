@@ -1,8 +1,10 @@
 <template>
   <div>
     <div class="problems-head">
-      <img class="img-title" src="static/classification.png"/>
-      <h2 class="text-title">Category - All</h2>
+      <div class="title-wrapper">
+        <img class="img-title" src="static/classification.png"/>
+        <span class="text-title">Category - All</span>
+      </div>
       <div class="serach-warpper">
         <search></search>
       </div>
@@ -13,6 +15,9 @@
       <el-table-column prop="id" label="id" width="100" align="left" sortable>
       </el-table-column>
       <el-table-column prop="title" label="题目" width="420" align="left" sortable>
+        <template scope="scope">
+          <router-link to="/home/problem" @click.native.stop="xxxxx(scope.row)">{{ scope.row.title }}</router-link>
+        </template>
       </el-table-column>
       <el-table-column prop="tag" label="标签" width="300" align="left" :formatter="calcTag" sortable>
       </el-table-column>
@@ -43,7 +48,7 @@
 
 <script type="text/ecmascript-6">
   import axios from 'axios'
-  import { mapMutations } from 'vuex'
+  import { mapMutations, mapActions } from 'vuex'
   import Problem from 'common/js/problem'
   import { baseUrl } from 'common/js/data'
   import Search from 'components/search/search'
@@ -63,6 +68,10 @@
       this._getProblems()
     },
     methods: {
+      xxxxx(row){
+        this.saveOneProblem(new Problem(row))
+        console.log('dianji')
+      },
       _getProblems() {
         this.tableLoading = true
         let url = `${baseUrl}/problems?page=` + this.currentPage + '&per_page=' + PER_PAGE
@@ -78,15 +87,7 @@
       },
       _rowclick(row, event, column) {
         console.log(row)
-        this.setProblem(new Problem({
-          id: row.id,
-          title: row.title,
-          tag: row.tag,
-          level: row.level,
-          accepted: row.accepted,
-          submitted: row.submitted
-        }))
-        // this.$emit('clickrow')
+        this.saveOneProblem(new Problem(row))
         this.$router.push('/home/problem')
       },
       calcDifficultyTag(level) {
@@ -120,16 +121,10 @@
       },
       ...mapMutations({
         setProblem: 'SET_PROBLEM'
-      })
-    },
-    computed: {
-      loading: function () {
-        if (this.tableData === [] || this.tableData === null) {
-          return true
-        } else {
-          return false
-        }
-      }
+      }),
+      ...mapActions([
+        'saveOneProblem'
+      ])
     },
     components: {
       Search
@@ -139,21 +134,34 @@
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .problems-head
-    .img-title
-      vertical-align: middle
-    .text-title
-      vertical-align: middle
+    margin-top 6px
+    padding 10px 0 20px 0
+    .title-wrapper
       display inline-block
+      .img-title
+        vertical-align: middle
+      .text-title
+        vertical-align: middle
+        font-weight: 300;
+        font-size: 24px;
     .serach-warpper
       float right
-      margin-top 16px;
+      vertical-align: middle
       display inline-block
 
   .el-table
-    border-radius 5px
+    .el-table-column
+      &:hover
+        cursor pointer
+    .cell
+      a
+        color #08c
+        &:hover
+          color: #005580
 
   .pagination
     margin-top 15px
     margin-bottom 10px
     float right
+
 </style>

@@ -39,3 +39,4 @@ export function getAbsPosition (element) {
   }
   return abs
 }
+

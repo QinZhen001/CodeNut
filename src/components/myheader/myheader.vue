@@ -13,7 +13,6 @@
                 </span>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item command="usercenter">用户中心</el-dropdown-item>
-              <el-dropdown-item command="loginout">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </transition>
@@ -25,9 +24,8 @@
 <script type="text/ecmascript-6">
   import { clearToken } from 'common/js/cache'
   import axios from 'axios'
-  import { mapMutations, mapGetters } from 'vuex'
+  import { mapMutations, mapGetters, mapActions } from 'vuex'
   import { baseUrl, MSG_OK } from 'common/js/data'
-  import User from 'common/js/user'
 
   export default {
     props: {
@@ -72,10 +70,8 @@
             message: '注销用户成功!',
             type: 'success'
           })
-          //修改vuex 中的 user 数据
-          this.setUser(new User({}))
           console.log('成功退出')
-          console.log(this.getUser())
+          this.$router.push('/home')
         }).catch(() => {
         })
       },
@@ -85,6 +81,7 @@
           if (response.data.msg === MSG_OK) {
             // 清空相关的 localstorage
             clearToken()
+            this.clearOneUser()
             //注销用户成功 修改 axios的 拦截器
             this._changeAxiosInterceptor()
           }
@@ -106,9 +103,7 @@
       },
       handleCommand(command) {
         console.log(command)
-        if (command === 'loginout') {
-          this.quitUser()
-        } else if (command === 'usercenter') {
+        if (command === 'usercenter') {
           this.$router.push('/home/usercenter')
         }
       },
@@ -123,7 +118,10 @@
       }),
       ...mapGetters({
         getUser: 'user'
-      })
+      }),
+      ...mapActions([
+        'clearOneUser'
+      ])
     },
     watch: {
       datas(newVal) {
@@ -148,6 +146,8 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .myhead
     flex: 0 0 60px;
+    width 100%
+    max-width 100%
     margin-bottom: 8px;
     background-color #324157
     .meun-wrapper
@@ -163,7 +163,7 @@
         &:hover
           cursor pointer
       .menu
-        margin-left 1100px
+        margin-left 60%
         max-height 60px
         min-width 350px
         .el-dropdown-link
@@ -194,30 +194,6 @@
           padding: 1px 0;
           .el-dropdown-menu__item
             text-align: center;
-
-  @media screen and (max-width: 1330px)
-    .el-menu
-      position relative
-      transform: translateX(-180px);
-
-  @media screen and (max-width: 1150px)
-    .el-menu
-      position relative
-      transform: translateX(-300px);
-
-  @media screen and (max-width: 1050px)
-    .el-menu
-      position relative
-      transform: translateX(-450px);
-
-  @media screen and (max-width: 890px)
-    .el-menu
-      position relative
-      transform: translateX(-600px);
-
-    @media screen and (max-width: 800px)
-      .logo
-        display none
 
       .menu
         padding-left: 0

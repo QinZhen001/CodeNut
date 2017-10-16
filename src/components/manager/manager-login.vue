@@ -25,7 +25,7 @@
   import axios from 'axios'
   import { saveToken, getToken } from 'common/js/cache'
   import { baseUrl, MSG_OK } from 'common/js/data'
-  import { mapMutations, mapGetters } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
   import User from 'common/js/user'
 
   export default {
@@ -76,15 +76,12 @@
               saveToken(response.data.result[0].token)
               // 登录后 修改axios的拦截器
               this._changeAxiosInterceptor()
-              console.log(this.mangerLoginForm.username)
-              console.log(this.mangerLoginForm.password)
               // 页面跳转
               this.$notify({
                 title: '成功',
                 message: '管理员登录成功',
                 type: 'success'
               })
-              console.log(this.user)
               this.$router.push('/home/manager')
             } else {
               this.$notify({
@@ -105,6 +102,8 @@
         })
       },
       _changeAxiosInterceptor() {
+        console.log(getToken())
+        console.log(this.mangerLoginForm)
         axios.interceptors.request.use(
           config => {
             config.headers.token = getToken()
@@ -118,35 +117,21 @@
             return Promise.reject(err)
           })
       },
-      _saveToVuex(result) {
-        let newUser = new User({
-          user_id: result.user_id,
-          username: result.username,
-          school: result.school,
-          profile: result.profile,
-          about_me: result.about_me,
-          realname: result.realname,
-          submit_nums: result.submit_nums,
-          accept_nums: result.accept_nums,
-          role: result.role
-        })
-        this.setUser(newUser)
-      },
       FindUserInfo(id) {
         console.log(id)
         let url = `${baseUrl}/users/${id}`
         axios.get(url).then(response => {
           if (response.data.msg === MSG_OK) {
             if (response.data.result[0].role !== 'user') {
-              // 保存用户信息到vuex
-              this._saveToVuex(response.data.result[0])
+              this.saveOneUser(new User(response.data.result[0]))
             }
           }
         }, response => {})
       },
-      ...mapMutations({
-        setUser: 'SET_USER'
-      })
+      ...mapActions([
+        'saveOneUser'
+      ])
+
     },
     computed: {
       ...mapGetters([

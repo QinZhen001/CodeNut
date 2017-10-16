@@ -64,7 +64,11 @@
     <el-dialog
       title="提示"
       :visible.sync="contestDialogVisible">
-      <span class="contest-dialog-title">是否要加入{{chooseContest.sponsor}}举办的{{chooseContest.title}}比赛</span>
+      <span class="contest-dialog-title">是否要加入{{chooseContest.sponsor}}举办的“{{chooseContest.title}}”比赛?</span>
+      <div class="password-wrapper">
+        <span class="password-text">密码:</span>
+        <el-input class="password-input" v-model="password" placeholder="请输入比赛密码" size="small"></el-input>
+      </div>
       <span slot="footer" class="dialog-footer">
     <el-button @click="contestDialogVisible = false">取 消</el-button>
     <el-button type="primary" @click="comfirmContest">确 定</el-button>
@@ -86,7 +90,8 @@
       return {
         contestList: [],
         contestDialogVisible: false,
-        chooseContest: {}
+        chooseContest: {},
+        password: ''
       }
     },
     mounted(){
@@ -135,8 +140,9 @@
       },
       comfirmContest(){
         let url = `${baseUrl}/contests/${this.chooseContest.id}/users`
+        let password = (this.password === '' ? null : this.password)
         axios.post(url, {
-          password: null
+          password: password
         }).then(response => {
           if (response.data.msg === 'ok') {
             this.contestDialogVisible = false
@@ -157,14 +163,6 @@
         'collectionList',
         'user'
       ])
-    },
-    watch: {
-      user(newUser, oldUser){
-        console.log('改变了user')
-        if (newUser.user_id === null || newUser.user_id === undefined || newUser.user_id === '') {
-          this.$router.push('/home')
-        }
-      }
     },
     components: {
       UserCard,
@@ -198,6 +196,18 @@
   .contest-table
     margin-top 50px
 
-  .contest-dialog-title
-    font-size 18px
+  .el-dialog
+    .el-dialog__body
+      padding 10px 20px
+      .contest-dialog-title
+        font-size 18px
+        font-weight 400
+      .password-wrapper
+        margin-top 10px
+        .password-text
+          font-size 16px
+          font-weight 300
+        .password-input
+          margin-left 3px
+          width 60%
 </style>

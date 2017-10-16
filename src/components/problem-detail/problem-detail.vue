@@ -81,7 +81,7 @@
         })
       },
       collection() {
-        if (!this.user.id) {
+        if (!this.user.user_id) {
           this.$notify({
             title: '无法收藏题目',
             message: '请先登录',
@@ -125,7 +125,7 @@
         return index > -1
       },
       getFavoriteSrc(problemDetail) {
-        if (this.hasCollect(problemDetail.id)) {
+        if (this.user.user_id != null && this.hasCollect(problemDetail.id)) {
           return 'static/collection.png'
         } else {
           return 'static/nocollection.png'

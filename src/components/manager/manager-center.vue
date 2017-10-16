@@ -3,7 +3,7 @@
     <v-head></v-head>
     <v-sidebar></v-sidebar>
     <div class="content">
-      <transition name="move" mode="out-in">
+      <transition name="el-fade-in-linear">
         <router-view></router-view>
       </transition>
     </div>
@@ -20,15 +20,6 @@
       ...mapGetters([
         'user'
       ])
-    },
-    watch: {
-      user: function (newUser) {
-        console.log('发现newUser')
-        console.log(newUser)
-        if (newUser.user_id == null || newUser.username == null) {
-          this.$router.push('/home')
-        }
-      }
     },
     components: {
       vHead, vSidebar

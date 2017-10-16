@@ -1,5 +1,47 @@
 <template>
   <div class="manage-contests">
+    <div class="handle-box">
+      <el-button-group>
+        <el-button type="primary" @click="showSetupContestDialog">创建比赛</el-button>
+        <el-button type="success" @click="refreshContests">刷新数据</el-button>
+      </el-button-group>
+    </div>
+    <el-table :data="contestDatas" border style="width: 100%" ref="multipleTable"
+              @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55"></el-table-column>
+      <el-table-column prop="id" label="ID" width="150">
+      </el-table-column>
+      <el-table-column prop="title" label="标题" sortable width="150">
+      </el-table-column>
+      <el-table-column prop="description" label="描述" width="330" show-overflow-tooltip>
+      </el-table-column>
+      <el-table-column prop="start_time" label="开始时间" width="250">
+      </el-table-column>
+      <el-table-column prop="end_time" label="结束时间" width="250">
+      </el-table-column>
+      <el-table-column prop="sponsor" label="举办者" width="120">
+      </el-table-column>
+      <el-table-column prop="user_nums" label="参加人数" width="120">
+      </el-table-column>
+      <el-table-column label="操作" width="150" fixed="right">
+        <template scope="scope">
+          <el-button size="small"
+                     @click="handleEdit(scope.$index, scope.row)">编辑
+          </el-button>
+          <el-button size="small" type="danger"
+                     @click="handleDelete(scope.$index, scope.row)">删除
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
+    <div class="pagination">
+      <el-pagination
+        @current-change="handleCurrentChange"
+        layout="prev, pager, next"
+        :current-page="cur_page"
+        :total="100">
+      </el-pagination>
+    </div>
     <el-dialog title="创建比赛" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules">
         <el-form-item label="标题" prop="title">
@@ -18,55 +60,22 @@
             align="right">
           </el-date-picker>
         </div>
-        <el-form-item label="比赛密码" prop="password">
-          <el-input v-model="form.password" spellcheck="false"></el-input>
+        <el-form-item class="autojoin-item">
+          <el-checkbox v-model="isAutoJoin">自动批准用户加入</el-checkbox>
         </el-form-item>
-        <el-checkbox v-model="auto_checked">自动批准用户加入</el-checkbox>
+        <el-form-item class="password-item" prop="password">
+          <div>
+            <el-checkbox class="password-checkbox" v-model="canPassword">设置比赛密码</el-checkbox>
+            <el-input class="password-input" v-model="form.password" spellcheck="false"
+                      v-show="canPassword"></el-input>
+          </div>
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="setupContest">确 定</el-button>
       </div>
     </el-dialog>
-
-    <div class="handle-box">
-      <el-button type="primary" icon="edit" @click="showSetupContestDialog">创建比赛</el-button>
-    </div>
-    <el-table :data="contestDatas" border style="width: 100%" ref="multipleTable"
-              @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="id" label="ID" width="150">
-      </el-table-column>
-      <el-table-column prop="title" label="标题" sortable width="150">
-      </el-table-column>
-      <el-table-column prop="description" label="描述" width="330">
-      </el-table-column>
-      <el-table-column prop="start_time" label="开始时间" width="250">
-      </el-table-column>
-      <el-table-column prop="end_time" label="结束时间" width="250">
-      </el-table-column>
-      <el-table-column prop="sponsor" label="举办者" width="120">
-      </el-table-column>
-      <el-table-column prop="user_nums" label="参加人数" width="120">
-      </el-table-column>
-      <el-table-column label="操作" width="150">
-        <template scope="scope">
-          <el-button size="small"
-                     @click="handleEdit(scope.$index, scope.row)">编辑
-          </el-button>
-          <el-button size="small" type="danger"
-                     @click="handleDelete(scope.$index, scope.row)">删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="pagination">
-      <el-pagination
-        @current-change="handleCurrentChange"
-        layout="prev, pager, next"
-        :total="100">
-      </el-pagination>
-    </div>
   </div>
 </template>
 
@@ -130,7 +139,8 @@
           }]
         },
         date: '',
-        auto_checked: true
+        canPassword: false,
+        isAutoJoin: true
       }
     },
     created(){
@@ -147,7 +157,7 @@
         this.getData(this.cur_page)
       },
       getData(curPage){
-        let url = `${baseUrl}/contests`
+        let url = `${baseUrl}/contests?page=${curPage}`
         axios.get(url).then(response => {
           if (response.data.msg === MSG_OK) {
             this.contestDatas = response.data.result
@@ -164,7 +174,6 @@
         this.$message('编辑第' + (index + 1) + '行')
       },
       handleDelete(index, row){
-        //this.$message.error('删除第' + (index + 1) + '行')
         let url = `${baseUrl}/contests/${row.id}`
         axios.delete(url).then(response => {
           if (response.data.msg === 'ok') {
@@ -199,7 +208,9 @@
           title: this.form.title,
           description: this.form.description,
           start_time: '2017-09-25 07:24:41',
-          end_time: '2017-12-25 07:24:41'
+          end_time: '2017-12-25 07:24:41',
+          password: this.form.password,
+          auto_approve: this.isAutoJoin
         }).then(response => {
           if (response.data.msg === MSG_OK) {
             this.$notify({
@@ -216,6 +227,10 @@
             })
           }
         }, response => {})
+      },
+      refreshContests(){
+        this.cur_page = 1
+        this.getData(this.cur_page)
       }
     },
     computed: {
@@ -245,14 +260,26 @@
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .manage-contests
-    z-index 500
     .el-dialog
       .block
         .el-date-editor
           width 100%
     .handle-box
       margin-bottom 15px
+      .el-button-group
+        .el-button
+          width 100px
     .pagination
       margin: 20px 0;
       text-align: right;
+
+  .autojoin-item
+    margin-bottom 0
+
+  .password-item
+    padding 10px 0 0 0
+    margin-bottom 0
+    .password-input
+      margin-left 15px
+      width 50%
 </style>

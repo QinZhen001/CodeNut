@@ -17,7 +17,7 @@
           <el-button type="primary" @click="saveNoteConfirm">保 存</el-button>
         </div>
       </el-dialog>
-      <mavon-editor v-model="note" default_open="edit" placeholder="记录学习笔记" :ishljs="true" @save="_showSaveNoteDialog">
+      <mavon-editor v-model="note" default_open="edit" placeholder="记录学习笔记"  @save="_showSaveNoteDialog">
       </mavon-editor>
     </div>
   </transition>

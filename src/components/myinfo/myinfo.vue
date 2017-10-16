@@ -1,7 +1,7 @@
 <template>
   <transition name="el-zoom-in-top">
     <div class="myinfo">
-      <div class="info-title">
+      <div class="info-head">
         <img width="32" height="32" src="static/info.png" class="img-info"/>
         <p class="text-title">Information</p>
       </div>
@@ -63,7 +63,7 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .myinfo
     width 100%
-    .info-title
+    .info-head
       height 65px
       .img-info
         vertical-align: middle
@@ -118,7 +118,6 @@
                 .item-wrapper
                   width 100%
                   height 30px
-                  border-bottom 1px solid #ddd
                   &:last-child
                     border-bottom none
                   .text

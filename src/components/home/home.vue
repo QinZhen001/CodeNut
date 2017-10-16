@@ -10,7 +10,6 @@
           </el-carousel>
         </el-col>
       </el-row>
-
       <el-row :gutter="20">
         <el-col :span="1" :sm="0" :lg="3" :md="0" :xs="0">
           <div class="grid-content">
@@ -31,7 +30,6 @@
         </el-col>
       </el-row>
     </div>
-    <!--<myfooter></myfooter>-->
   </div>
 </template>
 
@@ -85,13 +83,13 @@
       min-height 100%
       margin-top 4px
       .el-carousel
-         margin-bottom 6px
-        .el-carousel__item h3
-          color: #475669;
-          font-size: 14px;
-          opacity: 0.75;
-          line-height: 200px;
-          margin: 0
+        margin-bottom 6px
+      .el-carousel__item h3
+        color: #475669;
+        font-size: 14px;
+        opacity: 0.75;
+        line-height: 200px;
+        margin: 0
     .bg-purple-dark
       background: #99a9bf;
     .bg-purple

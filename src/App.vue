@@ -1,6 +1,10 @@
 <template>
   <div id="app">
-    <m-header @login="_login" @register="_register" :datas="headers"></m-header>
+    <el-row>
+      <el-col :span="0" :sm="24" :lg="24" :md="24" :xs="24">
+        <m-header @login="_login" @register="_register" :datas="headers"></m-header>
+      </el-col>
+    </el-row>
     <login :dialogVisible="showLoginDialog" @closeLoginDialog="_closeLoginDialog" v-show="showLoginDialog"
            @loginSuccess="loginSuccess" ref="login"></login>
     <register :dialogVisible="showRegisterDialog" @closeRegisterDialog="_closeRegisterDialog"></register>
@@ -13,7 +17,7 @@
   import MHeader from 'components/myheader/myheader'
   import Login from 'components/login/login'
   import axios from 'axios'
-  import { mapMutations } from 'vuex'
+  import { mapMutations, mapActions } from 'vuex'
   import Register from 'components/register/register'
   import MFooter from 'components/myfooter/myfooter'
   import User from 'common/js/user'
@@ -48,20 +52,21 @@
           if (response.data.msg === MSG_OK) {
             this.headers = ['退出登录']
             let result = response.data.result[0]
-            let user = new User({
-              user_id: result.user_id,
-              username: result.username,
-              realname: result.realname,
-              school: result.school,
-              profile: result.profile,
-              about_me: result.about_me,
-              role: result.role,
-              accept_nums: result.accept_nums,
-              submit_nums: result.submit_nums,
-              tag: result.tag
-            })
-            this.setUser(user)
-            console.log(user)
+//            let user = new User({
+//              user_id: result.user_id,
+//              username: result.username,
+//              realname: result.realname,
+//              school: result.school,
+//              profile: result.profile,
+//              about_me: result.about_me,
+//              role: result.role,
+//              accept_nums: result.accept_nums,
+//              submit_nums: result.submit_nums,
+//              tag: result.tag
+//            })
+//            this.setUser(user)
+            this.saveOneUser(new User(result))
+            // console.log(user)
           }
         }, response => {
           console.log(response)
@@ -71,7 +76,11 @@
       },
       ...mapMutations({
         setUser: 'SET_USER'
-      })
+      }),
+      ...mapActions([
+        'saveOneUser'
+      ])
+
     },
     components: {
       MHeader,

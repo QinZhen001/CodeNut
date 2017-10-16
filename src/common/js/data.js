@@ -32,9 +32,20 @@ export const editorThemes = ['default', 'base16-dark', 'ambiance',
 
 export const keyMaps = ['sublime', 'emacs', 'vim']
 
-export const editorModes = ['text/x-csrc', 'text/x-c++src', 'text/x-java', 'text/x-python', 'text/x-swift', 'text/x-go']
+export const editorModes = ['text/x-csrc', 'text/x-c++src', 'text/x-csharp', 'text/x-java', 'text/x-python', 'text/javascript', 'text/x-ruby', 'text/x-go']
 
-export const languages = ['C', 'C++', 'Java', 'Python', 'Swift', 'Go']
+export const languages = ['C', 'C++', 'C#', 'Java', 'Python3', 'JavaScript', 'Ruby', 'Go']
+
+export const templets = [
+  {value: 'c', text: 'C', defaultCode: ''},
+  {value: 'cpp', text: 'C++', defaultCode: ''},
+  {value: 'csharp', text: 'C#', defaultCode: ''},
+  {value: 'java', text: 'Java', defaultCode: ''},
+  {value: 'python3', text: 'Python3', defaultCode: ''},
+  {value: 'javascript', text: 'Javascript', defaultCode: ''},
+  {value: 'ruby', text: 'Ruby', defaultCode: ''},
+  {value: 'golang', text: 'Go', defaultCode: ''}
+]
 
 export const templateCodes = [
   'int findMaximumXOR(int* nums, int numsSize) {\n\n}',

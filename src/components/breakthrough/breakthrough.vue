@@ -4,48 +4,46 @@
     <img class="people" src="static/breakthrough/people.png" @click="clickItem($refs.people)" ref="people"
          width="48" height="48">
     <div class="planet-wrapper planet-simple-1-wrapper">
-      <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetSimple1)" ref="planetSimple1"
+      <img src="static/breakthrough/planet1.png" @click="clickItem($refs.planetSimple1)" ref="planetSimple1"
            class="planet-simple-1"
            width="140" height="120">
       <span class="planet-text">简单难度</span>
     </div>
     <div class="planet-wrapper planet-simple-2-wrapper">
-      <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetSimple2)" ref="planetSimple2"
+      <img src="static/breakthrough/planet1.png" @click="clickItem($refs.planetSimple2)" ref="planetSimple2"
            class="planet-simple-2"
            width="140" height="120">
       <span class="planet-text">简单难度</span>
     </div>
 
     <div class="planet-wrapper planet-middle-1-wrapper">
-      <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetMiddle1)" ref="planetMiddle1"
+      <img src="static/breakthrough/planet2.png" @click="clickItem($refs.planetMiddle1)" ref="planetMiddle1"
            class="planet-middle-1"
-           width="140" height="120">
+           width="120" height="120">
       <span class="planet-text">冒险难度</span>
     </div>
     <div class="planet-wrapper planet-middle-2-wrapper">
-      <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetMiddle2)" ref="planetMiddle2"
+      <img src="static/breakthrough/planet2.png" @click="clickItem($refs.planetMiddle2)" ref="planetMiddle2"
            class="planet-middle-2"
-           width="140" height="120">
+           width="120" height="120">
       <span class="planet-text">冒险难度</span>
     </div>
 
     <div class="planet-wrapper planet-hard-1-wrapper">
-      <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetHard1)" ref="planetHard1"
+      <img src="static/breakthrough/planet3.png" @click="clickItem($refs.planetHard1)" ref="planetHard1"
            class="planet-hard-1"
-           width="140" height="120">
+           width="120" height="120">
       <span class="planet-text">地狱难度</span>
     </div>
     <div class="planet-wrapper planet-hard-2-wrapper">
-      <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetHard2)" ref="planetHard2"
-           class="planet-hard-2"
-           width="140" height="120">
+      <img src="static/breakthrough/planet3.png" @click="clickItem($refs.planetHard2)" ref="planetHard2"
+           class="planet-hard-2" width="120" height="120">
       <span class="planet-text">地狱难度</span>
     </div>
 
     <div class="planet-wrapper planet-boss">
-      <img src="static/breakthrough/planet.png" @click="clickItem($refs.planetBoss)" ref="planetBoss"
-           class="planetBoss"
-           width="140" height="120">
+      <img src="static/breakthrough/planet4.png" @click="clickItem($refs.planetBoss)" ref="planetBoss"
+           class="planetBoss" width="120" height="120">
       <span class="planet-text">BOSS</span>
     </div>
 
@@ -127,9 +125,11 @@
 //          } else {
 //          }
 //        } else if (ele.className.includes('hard')) {}
-        let index = parseInt(Math.random() * 5)
-        this.setProblem(new Problem({id: this.problems[index].linkProblemId}))
-        this.$router.push('/home/problem')
+        if (!ele.className.includes('people')) {
+          let index = parseInt(Math.random() * 5)
+          this.setProblem(new Problem({id: this.problems[index].linkProblemId}))
+          this.$router.push('/home/problem')
+        }
       },
       ...mapMutations({
         setProblem: 'SET_PROBLEM'

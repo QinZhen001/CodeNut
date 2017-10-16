@@ -8,7 +8,6 @@ function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
-
 module.exports = {
   entry: {
     app: './src/main.js'
@@ -27,6 +26,7 @@ module.exports = {
       '@': resolve('src'),
       'common': resolve('src/common'),
       'components': resolve('src/components'),
+      'base': resolve('src/base')
     },
     symlinks: false
   },

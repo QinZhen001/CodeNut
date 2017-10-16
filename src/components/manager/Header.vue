@@ -7,7 +7,7 @@
                     <img class="user-logo" src="static/avatar.jpg" width="40px" height="40px">{{user.username}}
                 </span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item command="loginout">退出</el-dropdown-item>
+          <el-dropdown-item command="logout">退出</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </div>
@@ -16,21 +16,35 @@
 
 
 <script type="text/ecmascript-6">
-  import { mapGetters, mapMutations } from 'vuex'
-  import User from 'common/js/user'
+  import { mapActions, mapGetters } from 'vuex'
+  import { clearToken } from 'common/js/cache'
+  import axios from 'axios'
 
   export default {
     methods: {
       handleCommand(command) {
-        if (command === 'loginout') {
-          let myuser = new User({})
-          this.setUser(myuser)
+        if (command === 'logout') {
+          this.clearOneUser()
+          clearToken()
+          this._changeAxiosInterceptor()
           this.$router.push('/home')
         }
       },
-      ...mapMutations({
-        setUser: 'SET_USER'
-      })
+      _changeAxiosInterceptor() {
+        console.log('_changeAxiosInterceptor')
+        axios.interceptors.request.use(
+          config => {
+            config.headers.token = ''
+            config.auth = {}
+            return config
+          },
+          err => {
+            return Promise.reject(err)
+          })
+      },
+      ...mapActions([
+        'clearOneUser'
+      ])
     },
     computed: {
       ...mapGetters([

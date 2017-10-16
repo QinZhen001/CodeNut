@@ -9,6 +9,9 @@ const mutations = {
   },
   [types.SET_COLLECTION_LIST](state, list) {
     state.collectionList = list
+  },
+  [types.SET_TEMPLETS](state, templets){
+    state.templets = templets
   }
 }
 

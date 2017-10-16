@@ -1,17 +1,58 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Home from '@/components/home'
-import ProblemDetail from 'components/problem-detail/problem-detail'
-import UserCenter from 'components/usercenter/usercenter'
-import MangerLogin from 'components/manager/manager-login'
-import MangerCenter from 'components/manager/manager-center'
-//import TestCanvas from 'components/breakthrough/testcanvas'
-import BreakThrough from 'components/breakthrough/breakthrough'
-import ManageUsers from 'components/manager/manage-users'
-import ManageProblems from 'components/manager/manage-problems'
-import ManageContests from 'components/manager/manage-contests'
 
 Vue.use(Router)
+
+const Home = (resolve) => {
+  import('components/home/home').then((moudle) => {
+    resolve(moudle)
+  })
+}
+const ProblemDetail = (resolve) => {
+  import('components/problem-detail/problem-detail').then((moudle) => {
+    resolve(moudle)
+  })
+}
+const UserCenter = (resolve) => {
+  import('components/usercenter/usercenter').then((moudle) => {
+    resolve(moudle)
+  })
+}
+const MangerLogin = (resolve) => {
+  import('components/manager/manager-login').then((moudle) => {
+    resolve(moudle)
+  })
+}
+const MangerCenter = (resolve) => {
+  import('components/manager/manager-center').then((moudle) => {
+    resolve(moudle)
+  })
+}
+const BreakThrough = (resolve) => {
+  import('components/breakthrough/breakthrough').then((moudle) => {
+    resolve(moudle)
+  })
+}
+const ManageUsers = (resolve) => {
+  import('components/manager/manage-users').then((moudle) => {
+    resolve(moudle)
+  })
+}
+const ManageProblems = (resolve) => {
+  import('components/manager/manage-problems').then((moudle) => {
+    resolve(moudle)
+  })
+}
+const ManageContests = (resolve) => {
+  import('components/manager/manage-contests').then((moudle) => {
+    resolve(moudle)
+  })
+}
+// const ManageProblemEdit = (resolve) => {
+//   import('components/manager/manage-problem-edit').then((moudle) => {
+//     resolve(moudle)
+//   })
+// }
 
 export default new Router({
   routes: [
@@ -52,10 +93,15 @@ export default new Router({
         {
           path: '/home/manager/managecontests',
           component: ManageContests
+          // children: [
+          //   {
+          //     path: '/home/manager/manageproblems/edit',
+          //     component: ManageProblemEdit
+          //   }
+          // ]
         }
       ]
-    },
-    {
+    }, {
       path: '/home/breakthrough',
       component: BreakThrough
       //component: TestCanvas

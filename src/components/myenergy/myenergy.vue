@@ -30,14 +30,15 @@
 <style lang="stylus" rel="stylesheet/stylus">
   .energy-wrapper
     width 100%
-    margin-top 30px
+    margin-top 10px
     .energy-title
+      height 65px
       .img-title
         vertical-align: middle
       .text-title
-        margin-left 2px
-        display inline-block
+        margin-left 3px
         vertical-align: middle
+        display inline-block
         font-size: 20px;
         font-weight: 300;
     .box-card
