@@ -1,4 +1,5 @@
-#include "/usr/include/python3.5m/Python.h"
+#include <Python.h>
+// #include "/usr/include/python3.5m/Python.h"
 // #include "/usr/include/python3.4m/Python.h" online
 #include "../src/judge.c"
 
