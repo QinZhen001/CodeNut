@@ -144,6 +144,15 @@ def delete_problem(id):
     return jsonify({'msg': 'ok'})
 
 
+@decorators.composed(decorators.route('/problems/<id>/std', methods=['GET']),
+                     decorators.permission_required(Permission.SPONSOR))
+def get_problem_std(id):
+    problem = Problem.query.get(verify_id(id))
+    if not problem:
+        return jsonify({'msg': 'no', 'error': 'problem doesn\'t exist'})
+    return jsonify({'msg': 'ok', 'result': [problem.std_to_json()]})
+
+
 @decorators.route('/problems/<id>/codes', methods=['GET'])
 def get_problem_code(id):
     code = None

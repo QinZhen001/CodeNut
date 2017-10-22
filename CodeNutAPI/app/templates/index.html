@@ -944,6 +944,9 @@
 <p><a href="#得到所有题目信息">得到所有题目信息</a></p>
 </li>
 <li>
+<p><a href="#得到题目官方标准">得到题目官方标准</a></p>
+</li>
+<li>
 <p><a href="#得到题目信息">得到题目信息</a></p>
 </li>
 <li>
@@ -1064,6 +1067,47 @@
     ......
   ]
 }
+</code></pre>
+
+<p><br></p>
+<h4 id="get-problemsidstd"><a href="#problems"><font color="#FF0000" id="得到题目官方标准">得到题目官方标准</font> GET <code>/problems/&lt;id&gt;/std</code>（举办比赛权限）</a></h4>
+<table>
+<thead>
+<tr>
+<th>请求参数</th>
+<th>格式</th>
+<th>必选</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td>无</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>成功返回值</li>
+</ul>
+<pre><code class="json">{
+  &quot;msg&quot;: &quot;ok&quot;,
+  &quot;result&quot;: [
+    {
+      &quot;input&quot;: &quot;YXNmZ2E=&quot;,
+      &quot;output&quot;: &quot;c2pYbVRFTTRrWUcxN1FxNjlLMFZnTElTQ2hhZGxEcG5pUDJib1JjTnRaQXhKZjg1QkY=&quot;,
+      &quot;program&quot;: &quot;ZnZ1eWFzYmNhdWlvY25jO3BhaW9zbmN3YWlvcGNuYXdjb2k7YXNvYXNpY25hcw==&quot;
+    }
+  ]
+}
+</code></pre>
+
+<ul>
+<li>失败返回值</li>
+</ul>
+<pre><code class="json">{&quot;msg&quot;: &quot;no&quot;, &quot;error&quot;: &quot;problem doesn't exist&quot;}
 </code></pre>
 
 <p><br></p>
@@ -2382,5 +2426,5 @@ int main(int argc, char* argv[]) {
 
 <!--
 MkDocs version : 0.16.3
-Build Date UTC : 2017-10-15 12:26:11
+Build Date UTC : 2017-10-22 02:21:11
 -->

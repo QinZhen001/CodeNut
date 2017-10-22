@@ -60,6 +60,14 @@ class Problem(db.Model):
         json = {'solution': self.solution}
         return json
 
+    def std_to_json(self):
+        json = {
+            'input': self.input,
+            'output': self.output,
+            'program': self.program
+        }
+        return json
+
     def __repr__(self):
         return '<Problem(title={})>'.format(self.title)
 
