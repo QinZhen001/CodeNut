@@ -27,3 +27,6 @@ class ResultTask:
 
     def __getitem__(self, key):
         return self.__dict__[key]
+
+    def to_json(self):
+        return self.__dict__

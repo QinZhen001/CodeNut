@@ -3,7 +3,7 @@
 function check_error() {
   local dir=$1
   for file in `ls $dir | awk '{print $1}'`; do
-    local error=`grep error $dir$file`
+    local error=`grep -i error $dir$file`
     if [[ ! -z $error ]]; then
       echo "[!]$file error"
     fi
