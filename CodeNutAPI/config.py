@@ -30,7 +30,7 @@ class TestingConfig(Config):
 
 class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-                              'mysql+pymysql://root:root@127.0.0.1:3306/codenut?charset=utf8'
+                              'mysql+pymysql://root:root@appmysql:3306/codenut?charset=utf8'
 
 
 config = {
