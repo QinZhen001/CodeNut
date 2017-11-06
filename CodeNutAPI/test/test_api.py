@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+FFDebug_FALG = 1
+
 import requests
 import json
-from insert_tmp_data import run as insert_run
+try:
+    FFDebug_FALG
+except NameError: 
+    from insert_tmp_data import run as insert_run
 import time
 
 
@@ -15,7 +20,12 @@ class Test:
     def tokens(self):
         resource = '/tokens'
         # login
-        data = {'username': 'administrator', 'password': 'administrator'}
+        try:
+            FFDebug_FALG
+        except NameError: 
+            data = {'username': 'administrator', 'password': 'administrator'}    
+        else:
+            data = {'username': 'admin', 'password': 'admin'}
         response = requests.post(
             self.url + resource, json=data, headers=self.headers)
         jdict = json.loads(json.dumps(response.json()))
@@ -290,21 +300,33 @@ class Test:
         self.tokens()
 
         data = {'language': 'C++',
-                'code': """
-                #include <cstdio>\n
-                #include <iostream>\n
+                'code': '''
+               class Solution {
+public:
+	int maximumProduct( vector<int> & a )
+	{
+		sort( a.begin(), a.end() );
+		int	n	= a.size();
+		int	res	= a[n - 3] * a[n - 2] * a[n - 1];
+		if ( a[0] < 0 && a[1] < 0 )
+		{
+			res = max( res, a[0] * a[1] * a[n - 1] );
+		}
+                //printf("%s","2333");
+		return(res);
+	}
+};
 
-                int main(int argc, char* argv[]) {\n
-                char* a = argv[1];\n
-                printf("hello %s", a);\n
-                return 0;\n
-            }"""}
-        for i in range(5):
+               '''}
+        for i in range(1):
             response = requests.patch(
-                self.url + resource + '/2/codes', json=data, headers=self.headers, auth=self.token)
+                self.url + resource + '/1/codes', json=data, headers=self.headers, auth=self.token)
             print(response.text)
 
 
 if __name__ == '__main__':
-    insert_run()
+    try:
+        FFDebug_FALG
+    except NameError: 
+        insert_run()
     Test().run_code()
