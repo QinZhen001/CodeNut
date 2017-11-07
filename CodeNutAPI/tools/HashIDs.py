@@ -242,6 +242,7 @@ def generate_id(id):
 
 
 def verify_id(id):
+    # return id  uncomment it for test_api.py work
     if id:
         id = HashIDs().decrypt(id)
         return id[0] if len(id) == 1 else -1

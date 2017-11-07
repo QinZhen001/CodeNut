@@ -10,10 +10,10 @@ import CodeNutJudge
 import shlex
 import linecache
 
-
-logging.basicConfig(level=logging.WARNING,
+logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s: [line:%(lineno)d] %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S')
+logging.debug('starting Program Class File')
 
 
 class Config:
@@ -39,8 +39,7 @@ class ResultStatus:
     PE = 'Presentation Error'
 
 
-config = Config.testing
-
+config = Config.development
 
 class Program:
     def __init__(self, problem):
@@ -51,9 +50,27 @@ class Program:
         # make a directory for user
         if not os.path.exists(self.user_dir):
             os.makedirs(self.user_dir)
-        self.__store()
+        self.completeCodeFile()
+        #self.__store()
+    def completeCodeFile(self):
 
-    def __store(self):
+        def completeCodeFileInternal(user_code, user_code_type, problem_filepath , output_filepath):
+
+            if user_code_type in ['Python3']:
+                delimiter_start = '# ssstart'
+                delimiter_end = '# eeend'
+            else:
+                delimiter_start = '// ssstart'
+                delimiter_end = '// eeend'
+            with open(problem_filepath) as f:
+                text_code = f.read()
+            start_index = text_code.find(delimiter_start)
+            end_index = text_code.find(delimiter_end)
+            result = text_code.replace(text_code[start_index:end_index], user_code)
+
+            with open(output_filepath, 'w') as f:
+                f.write(result)
+            return
         file_name = {
             'C': 'Solution.c',
             'C++': 'Solution.cpp',
@@ -64,10 +81,37 @@ class Program:
             'Ruby': 'Solution.rb',
             'JavaScript': 'Solution.js',
         }
-        file_path = os.path.join(
-            self.user_dir, file_name[self.problem['language']])
-        with codecs.open(file_path, 'w+', 'utf-8') as f:
-            f.write(self.problem['code'])
+        from os.path import join
+        with open('/tmp/debug','w') as f:
+            print(self.problem,file=f)
+        problem_id = str(self.problem['id'])
+        problem_type = self.problem['language']
+        answer_dir = config['answer_dir']
+
+        output_filepath = join(self.user_dir, file_name[problem_type])
+        problem_filepath = join(answer_dir,problem_id, file_name[problem_type])
+        user_code = self.problem['code']
+        user_code_type = self.problem['language']
+
+        completeCodeFileInternal(user_code, user_code_type, problem_filepath , output_filepath)
+
+        ''' trying replace __store with completeCodeFile
+            def __store(self):
+                file_name = {
+                    'C': 'Solution.c',
+                    'C++': 'Solution.cpp',
+                    'C#': 'Solution.cs',
+                    'Go': 'Solution.go',
+                    'Java': 'Solution.java',
+                    'Python3': 'Solution.py',
+                    'Ruby': 'Solution.rb',
+                    'JavaScript': 'Solution.js',
+                }
+                file_path = os.path.join(
+                    self.user_dir, file_name[self.problem['language']])
+                with codecs.open(file_path, 'w+', 'utf-8') as f:
+                    f.write(self.problem['code'])
+        '''
 
     def __compile(self):
         command = {
@@ -206,3 +250,35 @@ class Program:
 
     def __del__(self):  # clear user dir
         __import__("shutil").rmtree(self.user_dir)
+
+
+def test():
+    from os import chdir
+    chdir('/root/source_code.d/software_design.d/CodeNut/CodeNutJudge')
+    problem = {'id': 1,
+               'user_id': '1',
+               'language': 'C++',
+               'custom_input': None,
+               'code': '''
+               class Solution {
+public:
+	int maximumProduct( vector<int> & a )
+	{
+		sort( a.begin(), a.end() );
+		int	n	= a.size();
+		int	res	= a[n - 3] * a[n - 2] * a[n - 1];
+		if ( a[0] < 0 && a[1] < 0 )
+		{
+			res = max( res, a[0] * a[1] * a[n - 1] );
+		}
+                //printf("%s","2333");
+		return(res);
+	}
+};
+
+               '''}
+    t = Program(problem).run()
+    print(t.__dict__)
+
+if __name__=='__main__':
+    test()
