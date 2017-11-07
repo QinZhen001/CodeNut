@@ -3,7 +3,7 @@
 # before all of this
 apt-get update && apt-get install -y git
 git clone --branch all --single-branch -- https://github.com/QinZhen001/CodeNut.git /root/CodeNut
-cp -r /root/Codenut/CodeNutJudge/judge_src /root/CodeNut/Dockerfiles/flask/
+cp -r /root/CodeNut/CodeNutJudge/judge_src /root/CodeNut/Dockerfiles/flask/
 cp /root/CodeNut/CodeNutJudge/install_env.sh /root/CodeNut/Dockerfiles/flask/
 cp /root/CodeNut/CodeNutAPI/requirements.txt /root/CodeNut/Dockerfiles/flask/
 cp /root/CodeNut/SQL/codenut.sql /root/CodeNut/Dockerfiles/mysql/
