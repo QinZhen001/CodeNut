@@ -53,9 +53,13 @@ class Program:
         self.completeCodeFile()
         #self.__store()
     def completeCodeFile(self):
-
+        def completeCodeFileJavaRemovLastBraces(user_code):
+            fixed_code = user_code.rstrip().rstrip('}')
+            return fixed_code
         def completeCodeFileInternal(user_code, user_code_type, problem_filepath , output_filepath):
-
+            if user_code_type in ['Java']:
+                user_code = completeCodeFileJavaRemovLastBraces(user_code)
+                
             if user_code_type in ['Python3']:
                 delimiter_start = '# ssstart'
                 delimiter_end = '# eeend'
@@ -120,7 +124,7 @@ class Program:
             'C#': 'mcs Solution.cs',
             'Go': 'go build -ldflags "-s -w" Solution.go',
             'Java': 'javac Solution.java -encoding UTF8',
-            'Python3': 'python3 -m pycompile Solution.py',
+            'Python3': 'python3 -m py_compile Solution.py',
             'Ruby': 'ruby Solution.rb',
             'JavaScript': 'nodejs Solution.js',
         }
@@ -254,31 +258,33 @@ class Program:
 
 def test():
     from os import chdir
+           
+    
     chdir('/root/source_code.d/software_design.d/CodeNut/CodeNutJudge')
-    problem = {'id': 1,
+    problem = {'id': 3,
                'user_id': '1',
-               'language': 'C++',
+               'language': 'Python3',
                'custom_input': None,
                'code': '''
-               class Solution {
-public:
-	int maximumProduct( vector<int> & a )
-	{
-		sort( a.begin(), a.end() );
-		int	n	= a.size();
-		int	res	= a[n - 3] * a[n - 2] * a[n - 1];
-		if ( a[0] < 0 && a[1] < 0 )
-		{
-			res = max( res, a[0] * a[1] * a[n - 1] );
-		}
-                //printf("%s","2333");
-		return(res);
-	}
-};
-
+class Solution:
+    def judgeSquareSum(self, c):
+        """
+        :type c: int
+        :rtype: bool
+        """
+        def is_square(N):
+            return int(N** 0.5)**2 == N
+            
+        return any(is_square(c - a*a) 
+                   for a in range(int(c**.5) + 1))
                '''}
     t = Program(problem).run()
     print(t.__dict__)
-
+def updateData():
+    if 1:
+        from subprocess import run
+        run(['python3', '/root/source_code.d/software_design.d/insert_code_sql.py'], check= True)
+        run(['python3', 'download_answer.py'], check = True, shell = False, cwd = '/root/source_code.d/software_design.d/CodeNut')    
 if __name__=='__main__':
+    #updateData()
     test()

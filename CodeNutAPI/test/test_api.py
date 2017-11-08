@@ -299,28 +299,35 @@ class Test:
         resource = '/problems'
         self.tokens()
 
-        data = {'language': 'C++',
+        data = {'language': 'Python3',
                 'code': '''
-               class Solution {
-public:
-	int maximumProduct( vector<int> & a )
-	{
-		sort( a.begin(), a.end() );
-		int	n	= a.size();
-		int	res	= a[n - 3] * a[n - 2] * a[n - 1];
-		if ( a[0] < 0 && a[1] < 0 )
-		{
-			res = max( res, a[0] * a[1] * a[n - 1] );
-		}
-                //printf("%s","2333");
-		return(res);
-	}
-};
 
+from collections import defaultdict
+class Solution(object):
+    def helper(self, root, cache):
+        if root == None:
+            return
+        cache[root.val] += 1
+        self.helper(root.left, cache)
+        self.helper(root.right, cache)
+        return
+    
+    def findMode(self, root):
+        """
+        :type root: TreeNode
+        :rtype: List[int]
+        """
+        if root == None:
+            return []
+        cache = defaultdict(int)
+        self.helper(root, cache)
+        max_freq = max(cache.values())
+        result = [k for k,v in cache.items() if v == max_freq]
+        return result
                '''}
         for i in range(1):
             response = requests.patch(
-                self.url + resource + '/1/codes', json=data, headers=self.headers, auth=self.token)
+                self.url + resource + '/aG/codes', json=data, headers=self.headers, auth=self.token)
             print(response.text)
 
 

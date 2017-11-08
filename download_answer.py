@@ -43,6 +43,10 @@ def compile_answer_cpp(problem_dir):
 
 
 def download_answer(dic):
+    from json import loads
+    code = loads(b64_decode(dic.pop('code')))
+    code = {'Solution.' + key: value for (key, value) in code.items()}
+    dic.update(code)
     problem_dir = os.path.join(answer_dir, dic.pop('id'))
     if not os.path.exists(problem_dir):
         os.makedirs(problem_dir)
@@ -50,7 +54,7 @@ def download_answer(dic):
         file = os.path.join(problem_dir, key)
         if not os.path.exists(file) or is_changed(file, value):
             with codecs.open(file, 'w+', 'utf-8') as f:
-                f.write(b64_decode(value))
+                f.write(value)
             if key == 'Solution.cpp' and (not os.path.exists(os.path.join(problem_dir, 'Solution')) or is_changed(file, value)):
                 compile_answer_cpp(problem_dir)
 
@@ -60,19 +64,18 @@ def select_from_db():
     print('[!]start download')
 
     with db.cursor() as cursor:
-        sql = 'SELECT * FROM codenut_problems'
-        try:
-            cursor.execute(sql)
-            results = cursor.fetchall()
-            for idx, row in enumerate(results):
-                download_answer({'id': str(row[0]),
-                                 'in': row[11],
-                                 'out': row[12],
-                                 'Solution.cpp': row[13]})
-                if (idx + 1) % 6 == 0:
-                    print('[*]now is {}'.format(idx))
-        except Exception as e:
-            print(str(e))
+        sql = 'SELECT * FROM codenut_problems where id <10'
+
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        for idx, row in enumerate(results):
+            download_answer({'id': str(row[0]),
+                             'in': row[11],
+                             'out': row[12],
+                             'code': row[13]})
+            if (idx + 1) % 6 == 0:
+                print('[*]now is {}'.format(idx))
+
     print('[!]download ok')
     db.close()
 
