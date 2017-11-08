@@ -119,8 +119,8 @@ class Program:
 
     def __compile(self):
         command = {
-            'C': 'gcc Solution.c -o Solution -Wall -lm -O2 -std=c11 -lseccomp --static -DONLINE_JUDGE',
-            'C++': 'g++ Solution.cpp -o Solution -Wall -lm -O2 -lseccomp --static -DONLINE_JUDGE',
+            'C': 'gcc Solution.c -o Solution -Wall -lm -O2 -std=c11 -lseccomp -DONLINE_JUDGE',
+            'C++': 'g++ Solution.cpp -o Solution -Wall -lm -O2 -lseccomp -DONLINE_JUDGE',
             'C#': 'mcs Solution.cs',
             'Go': 'go build -ldflags "-s -w" Solution.go',
             'Java': 'javac Solution.java -encoding UTF8',
