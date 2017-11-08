@@ -59,7 +59,7 @@ class Program:
         def completeCodeFileInternal(user_code, user_code_type, problem_filepath , output_filepath):
             if user_code_type in ['Java']:
                 user_code = completeCodeFileJavaRemovLastBraces(user_code)
-                
+
             if user_code_type in ['Python3']:
                 delimiter_start = '# ssstart'
                 delimiter_end = '# eeend'
@@ -248,6 +248,9 @@ class Program:
     def run(self, choice='many'):
         # can not compile them
         if self.problem['language'] not in ['JavaScript', 'Ruby'] and self.__compile() is False:
+            err_path = os.path.join(self.user_dir, 'err')
+            with open(err_path) as f:
+                self.result.output=f.read()
             self.result.status = ResultStatus.CE
             return self.result
         return self.__judge(choice)
@@ -258,8 +261,8 @@ class Program:
 
 def test():
     from os import chdir
-           
-    
+
+
     chdir('/root/source_code.d/software_design.d/CodeNut/CodeNutJudge')
     problem = {'id': 3,
                'user_id': '1',
@@ -274,8 +277,8 @@ class Solution:
         """
         def is_square(N):
             return int(N** 0.5)**2 == N
-            
-        return any(is_square(c - a*a) 
+
+        return any(is_square(c - a*a)
                    for a in range(int(c**.5) + 1))
                '''}
     t = Program(problem).run()
@@ -284,7 +287,7 @@ def updateData():
     if 1:
         from subprocess import run
         run(['python3', '/root/source_code.d/software_design.d/insert_code_sql.py'], check= True)
-        run(['python3', 'download_answer.py'], check = True, shell = False, cwd = '/root/source_code.d/software_design.d/CodeNut')    
+        run(['python3', 'download_answer.py'], check = True, shell = False, cwd = '/root/source_code.d/software_design.d/CodeNut')
 if __name__=='__main__':
     #updateData()
     test()
