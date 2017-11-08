@@ -60,7 +60,7 @@ def download_answer(dic):
 
 
 def select_from_db():
-    db = pymysql.connect('localhost', 'root', 'root', 'codenut')
+    db = pymysql.connect('appmysql', 'root', 'root', 'codenut')
     print('[!]start download')
 
     with db.cursor() as cursor:
