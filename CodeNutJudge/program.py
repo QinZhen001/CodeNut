@@ -256,7 +256,8 @@ class Program:
         return self.__judge(choice)
 
     def __del__(self):  # clear user dir
-        __import__("shutil").rmtree(self.user_dir)
+        #__import__("shutil").rmtree(self.user_dir)
+        pass
 
 
 def test():
