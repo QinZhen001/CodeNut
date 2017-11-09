@@ -43,7 +43,6 @@
         font-weight: 300;
     .box-card
       max-height 350px
-      border 1px solid #EEF1F6
       .chart
         width 80%
         margin 0 auto

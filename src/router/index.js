@@ -13,6 +13,11 @@ const ProblemDetail = (resolve) => {
     resolve(moudle)
   })
 }
+const SelfStudy = (resolve) => {
+  import('components/selfstudy/selfstudy').then((moudle) => {
+    resolve(moudle)
+  })
+}
 const UserCenter = (resolve) => {
   import('components/usercenter/usercenter').then((moudle) => {
     resolve(moudle)
@@ -68,6 +73,10 @@ export default new Router({
       path: '/home/problem',
       component: ProblemDetail,
       meta: {scrollToTop: true}
+    },
+    {
+      path: '/home/selfstudy',
+      component: SelfStudy
     },
     {
       path: '/home/usercenter',

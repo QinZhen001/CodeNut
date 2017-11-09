@@ -2,7 +2,7 @@
   <div class="home">
     <div class="body">
       <el-row>
-        <el-col :span="0" :sm="24" :lg="24" :md="24" :xs="24">
+        <el-col :span="24">
           <el-carousel :interval="4000" type="card" height="288px">
             <el-carousel-item v-for="(item,index) in slideItems" :key="index">
               <img :src="item.picUrl" width="100%" height="100%" @click="clickCarouselItem(index)">
@@ -11,22 +11,20 @@
         </el-col>
       </el-row>
       <el-row :gutter="20">
-        <el-col :span="1" :sm="0" :lg="3" :md="0" :xs="0">
-          <div class="grid-content">
-          </div>
+        <el-col :lg="3" :md="1" :sm="0" :xs="0">
+          <div class="grid-content"></div>
         </el-col>
-        <el-col :span="15" :sm="24" :lg="13" :md="24" :xs="24">
+        <el-col :lg="13" :md="16" :sm="24" :xs="24">
           <mytable></mytable>
         </el-col>
-        <el-col :span="7" :sm="24" :lg="5" :md="24" :xs="24">
+        <el-col :lg="5" :md="6" :sm="24" :xs="24">
           <myinfo></myinfo>
           <myenergy></myenergy>
           <breakthrough-entry></breakthrough-entry>
           <listview></listview>
         </el-col>
-        <el-col :span="0" :sm="0" :lg="3" :md="0" :xs="0">
-          <div class="grid-content">
-          </div>
+        <el-col :lg="3" :md="1" :sm="0" :xs="0">
+          <div class="grid-content"></div>
         </el-col>
       </el-row>
     </div>
@@ -75,12 +73,10 @@
 
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-
   .home
     flex: 1 0 auto;
     width: 100%;
     .body
-      min-height 100%
       margin-top 4px
       .el-carousel
         margin-bottom 6px
@@ -90,16 +86,9 @@
         opacity: 0.75;
         line-height: 200px;
         margin: 0
-    .bg-purple-dark
-      background: #99a9bf;
-    .bg-purple
-      background: #d3dce6;
-    .bg-purple-light
-      background: #e5e9f2;
-    .grid-content
-      border-radius: 4px;
-      min-height: 36px;
 
-  /*@media screen and (max-width: 1199px) {*/
-  /*}*/
+  .grid-content
+    height: 36px;
+    border-radius: 4px;
+
 </style>

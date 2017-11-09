@@ -52,14 +52,14 @@
 </template>
 
 <script type="text/ecmascript-6">
-  // import { getAbsPosition } from 'common/js/util'
+  import { getAbsPosition } from 'common/js/util'
   import Stars from 'common/js/Star'
   import Moon from 'common/js/Moon'
   import Meteor from 'common/js/Meteor'
   //import { getChallengeInfo } from 'common/js/cache'
   import { mapMutations } from 'vuex'
   import { slides } from 'common/js/data'
-  import Problem from 'common/js/problem'
+  //import Problem from 'common/js/problem'
 
   export default{
     data(){
@@ -116,20 +116,13 @@
     },
     methods: {
       clickItem(ele) {
-        // let position = getAbsPosition(ele)
-//        if (ele.className.includes('simple') && this.challenges[0] === false) {
-//          console.log(ele.className)
-//        } else if (ele.className.includes('middle')) {
-//          if (this.challenges[1] === false && this.challenges[0] === true) {
-//            //通过了简单难度 还没有通过冒险难度
-//          } else {
-//          }
-//        } else if (ele.className.includes('hard')) {}
-        if (!ele.className.includes('people')) {
-          let index = parseInt(Math.random() * 5)
-          this.setProblem(new Problem({id: this.problems[index].linkProblemId}))
-          this.$router.push('/home/problem')
-        }
+        let position = getAbsPosition(ele)
+        console.log(position)
+//        if (!ele.className.includes('people')) {
+//          let index = parseInt(Math.random() * 5)
+//          this.setProblem(new Problem({id: this.problems[index].linkProblemId}))
+//          this.$router.push('/home/problem')
+//        }
       },
       ...mapMutations({
         setProblem: 'SET_PROBLEM'

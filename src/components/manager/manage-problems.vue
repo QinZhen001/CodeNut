@@ -89,8 +89,8 @@
             {min: 5, message: '描述过短', trigger: 'blur'}
           ]
         },
-        isShowEdit: false,
-        isEdit: false,
+        isShowEdit: false,  //是否展示编辑页面
+        isEdit: false,  //false新建题目 true编辑题目
         confirmText: '',
         curProblemId: '',
         curProblemTitle: '',
@@ -125,6 +125,7 @@
         return row.tag === value
       },
       handleEdit(index, row){
+        //点击编辑按钮
         console.log(row)
         this.saveOneProblem(new Problem(row))
         this.isEdit = true
@@ -132,12 +133,14 @@
         this.$refs.problemEdit.showPromblemInfo()
       },
       handleDelete(index, row){
+        //点击删除按钮
         this.curProblemId = row.id
         this.curProblemTitle = row.title
-        this.confirmText = `确定要删除题目“${this.curProblemTitle}”吗?`
+        this.confirmText = `确定要删除题目 “${this.curProblemTitle}”吗?`
         this.$refs.confirm.show()
       },
       confirmDele(){
+        //确认删除
         let url = `${baseUrl}/problems/${this.curProblemId}`
         axios.delete(url).then(response => {
           if (response.data.msg === MSG_OK) {
@@ -177,10 +180,12 @@
         this.multipleSelection = val
       },
       hideEdit(){
+        // 隐藏编辑页面
         this.isShowEdit = false
         this._getProblemsData(this.cur_page)
       },
       refreshProblems(){
+        //刷新manage-problems界面
         this.cur_page = 1
         this._getProblemsData(this.cur_page)
       },

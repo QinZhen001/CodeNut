@@ -1,7 +1,22 @@
 import { Radar } from 'vue-chartjs'
+import { RandomNumBoth } from 'common/js/util'
 
 export default Radar.extend({
+  data(){
+    return {
+      res1: 0,
+      res2: 0,
+      res3: 0,
+      res4: 0,
+      res5: 0
+    }
+  },
   mounted() {
+    this.res1 = RandomNumBoth(0, 100)
+    this.res2 = RandomNumBoth(0, 100)
+    this.res3 = RandomNumBoth(0, 100)
+    this.res4 = RandomNumBoth(0, 100)
+    this.res5 = RandomNumBoth(0, 100)
     this.renderChart({
       labels: ['活跃度', '经验值', '多样性', '技能值', '规范性'],
       datasets: [
@@ -12,7 +27,7 @@ export default Radar.extend({
           pointBackgroundColor: '#1D8CE0',
           // pointHoverBackgroundColor: 'rgba(1,1,1,1)',
           // pointHoverBorderColor: 'rgba(220,220,220,1)',
-          data: [65, 59, 90, 81, 56]
+          data: [this.res1, this.res2, this.res3, this.res4, this.res5]
         }
       ]
     }, {

@@ -81,8 +81,8 @@
           console.log(this.tableData)
           this.tableLoading = false
         }, response => {
-          console.log(response)
-          this._getProblems()
+//          console.log(response)
+//          this._getProblems()
         })
       },
       _rowclick(row, event, column) {

@@ -62,6 +62,7 @@
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .myinfo
+    border-radius 5px
     width 100%
     .info-head
       height 65px

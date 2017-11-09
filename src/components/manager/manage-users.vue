@@ -1,5 +1,5 @@
 <template>
-  <div class="manage-users-table">
+  <div class="manage-users">
     <div class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item><i class="el-icon-menu"></i> 用户管理</el-breadcrumb-item>
@@ -45,7 +45,8 @@
         :current-page="cur_page">
       </el-pagination>
     </div>
-    <confirm :text="confirmText" @confirm="confirmDele" ref="confirm"></confirm>
+    <users-chart></users-chart>
+    <confirm ref="confirm" :text="confirmText" @confirm="confirmDele"></confirm>
   </div>
 </template>
 
@@ -53,6 +54,7 @@
   import { baseUrl, MSG_OK, MSG_NO } from 'common/js/data'
   import axios from 'axios'
   import Confirm from 'base/confirm/confirm'
+  import UsersChart from 'components/manager/users-chart'
 
   export default {
     data() {
@@ -100,7 +102,7 @@
         console.log(row)
         this.curUserId = row.user_id
         this.curUsername = row.username
-        this.confirmText = `确定要删除用户“${this.curUsername}”吗?`
+        this.confirmText = `确定要删除用户 “${this.curUsername}”吗?`
         this.$refs.confirm.show()
       },
       confirmDele(){
@@ -164,13 +166,14 @@
       }
     },
     components: {
-      Confirm
+      Confirm,
+      UsersChart
     }
   }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-  .manage-users-table
+  .manage-users
     max-width 100%
     padding 0 60px 0 0
     .crumbs

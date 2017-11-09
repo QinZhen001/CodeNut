@@ -31,6 +31,7 @@ module.exports = {
     'spaced-comment': 0,
     'no-tabs': 0,
     'space-before-blocks': 0,
-    'eqeqeq': 0
+    'eqeqeq': 0,
+    'no-trailing-spaces': 0
   }
 }

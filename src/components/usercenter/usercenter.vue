@@ -17,7 +17,7 @@
           <el-col :span="14" :sm="24" :lg="13" :md="15" :xs="24">
             <el-table :data="collectionList" stripe @row-click="clickCollectionTableRow"
                       :max-height="600" :highlight-current-row=true empty-text="暂无收藏">
-              <el-table-column label="Your Collection" class="el-table-head">
+              <el-table-column label="我的收藏" class="el-table-head">
                 <el-table-column prop="id" label="ID" width="80" align="left">
                 </el-table-column>
 
@@ -38,9 +38,9 @@
             </el-table>
 
             <el-table class="contest-table" :data="contestList"
-                      stripe border :max-height="600" @row-click="clickContestTableRow"
+                      stripe border @row-click="clickContestTableRow"
                       :highlight-current-row=true empty-text="暂无比赛">
-              <el-table-column label="Your Contest" class="el-table-head">
+              <el-table-column label="我的比赛" class="el-table-head">
                 <el-table-column prop="id" label="ID" width="60" align="left">
                 </el-table-column>
                 <el-table-column prop="title" label="标题" width="200" align="left">
@@ -51,6 +51,15 @@
                 </el-table-column>
                 <el-table-column prop="end_time" label="结束时间" width="250" align="left">
                 </el-table-column>
+              </el-table-column>
+              <el-table-column label="操作" fixed="right" align="left" width="100">
+                <template scope="scope">
+                  <el-button
+                    size="small"
+                    type="success"
+                    @click="handleJoin(scope.$index, scope.row)">我要参加
+                  </el-button>
+                </template>
               </el-table-column>
             </el-table>
           </el-col>
@@ -64,7 +73,7 @@
     <el-dialog
       title="提示"
       :visible.sync="contestDialogVisible">
-      <span class="contest-dialog-title">是否要加入{{chooseContest.sponsor}}举办的“{{chooseContest.title}}”比赛?</span>
+      <span class="contest-dialog-title">是否要加入{{chooseContest.sponsor}}举办的 “{{chooseContest.title}}” 比赛?</span>
       <div class="password-wrapper">
         <span class="password-text">密码:</span>
         <el-input class="password-input" v-model="password" placeholder="请输入比赛密码" size="small"></el-input>
@@ -82,7 +91,7 @@
   import MyProgress from 'components/usercenter/myprogress'
   import AboutMe from 'components/usercenter/aboutme'
   import { mapGetters, mapMutations } from 'vuex'
-  import { baseUrl, MSG_OK } from 'common/js/data'
+  import { baseUrl, MSG_OK, MSG_NO } from 'common/js/data'
   import axios from 'axios'
 
   export default {
@@ -140,19 +149,29 @@
       },
       comfirmContest(){
         let url = `${baseUrl}/contests/${this.chooseContest.id}/users`
-        let password = (this.password === '' ? null : this.password)
         axios.post(url, {
-          password: password
+          password: this.password
         }).then(response => {
-          if (response.data.msg === 'ok') {
+          if (response.data.msg === MSG_OK) {
             this.contestDialogVisible = false
             this.$notify({
               title: '成功',
-              message: '加入比赛成功！',
+              message: '参加比赛成功！',
               type: 'success'
+            })
+            this.password = ''
+          } else if (response.data.msg === MSG_NO) {
+            this.$notify({
+              title: '失败',
+              message: `${response.data.error}`,
+              type: 'error'
             })
           }
         }, response => {})
+      },
+      handleJoin(index, row){
+        this.chooseContest = row
+        this.contestDialogVisible = true
       },
       ...mapMutations({
         setProblem: 'SET_PROBLEM'
@@ -203,11 +222,13 @@
         font-size 18px
         font-weight 400
       .password-wrapper
-        margin-top 10px
+        margin-top 15px
         .password-text
           font-size 16px
           font-weight 300
         .password-input
           margin-left 3px
           width 60%
+
+
 </style>

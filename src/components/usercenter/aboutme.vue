@@ -89,6 +89,7 @@
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .about-me
+    border-radius 5px
     margin-top 20px
     .panel
       border-radius: 5px

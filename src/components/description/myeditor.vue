@@ -142,7 +142,7 @@
   export default {
     data() {
       return {
-        code: templateCodes[0],
+        code: '',
         templateCodes: templateCodes,
         Languages: languages,
         editorModes: editorModes,
@@ -184,8 +184,13 @@
         let url = `${baseUrl}/problems/${this.problem.id}/codes`
         axios.get(url).then(response => {
           let result = JSON.parse(response.data.result[0].code)
-          let templet = result.find((item) => item.text === selectLanguage)
-          if (templet) {
+          console.log(result)
+          let templet = result.find((item) => {
+            if (item) {
+              return item.text === selectLanguage
+            }
+          })
+          if (templet && templet.defaultCode) {
             this.code = templet.defaultCode
           } else {
             this.code = ''
@@ -298,7 +303,7 @@
   .myeditor
     margin-top 20px
     .myeditor-header
-      padding 0 0 12px 30px
+       margin-bottom 12px
       .language-dropdown
         .el-dropdown-menu__item
           padding 0 5px

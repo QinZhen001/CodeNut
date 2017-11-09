@@ -26,8 +26,11 @@
         if (command === 'logout') {
           this.clearOneUser()
           clearToken()
-          this._changeAxiosInterceptor()
-          this.$router.push('/home')
+          //应该不会有问题的
+          this.$nextTick(() => {
+            this._changeAxiosInterceptor()
+            this.$router.push('/home')
+          })
         }
       },
       _changeAxiosInterceptor() {

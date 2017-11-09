@@ -8,7 +8,7 @@ import ElementUI from 'element-ui'
 import VueCodeMirror from 'vue-codemirror'
 import mavonEditor from 'mavon-editor'
 
-import 'codemirror/lib/codemirror.css'    // css，必要
+import 'codemirror/lib/codemirror.css'
 import 'codemirror/lib/codemirror.js'
 
 import 'element-ui/lib/theme-default/index.css'
@@ -25,6 +25,7 @@ Vue.use(mavonEditor)
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
+  render: h => h(App),
   data() {
     return {value: ''}
   },

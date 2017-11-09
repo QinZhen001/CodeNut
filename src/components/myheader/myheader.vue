@@ -1,8 +1,8 @@
 <template>
   <div class="myhead">
     <div class="meun-wrapper">
-      <img class="logo" width="146" height="38" src="static/logo.png" @click="clickLogo">
-      <el-menu theme="dark" class="menu" mode="horizontal" @select="handleSelect">
+      <img class="logo" width="146" height="38" src="static/logo.png" @click="LinkToHome">
+      <el-menu class="menu" mode="horizontal" theme="dark" @select="handleSelect">
         <el-menu-item v-for="(item, index) in headrs" :key="index" :index=item>{{item}}
         </el-menu-item>
         <transition name="el-fade-in-linear">
@@ -43,16 +43,25 @@
     methods: {
       handleSelect(key, keyPath) {
         console.log(key)
-        if (key === '注册') {
-          // 注册
-          this.$emit('register')
-        } else if (key === '用户登录') {
-          // 登录
-          this.$emit('login')
-        } else if (key === '退出登录') {
-          this.quitUser()
-        } else if (key === '管理员登录') {
-          this.mangerLogin()
+        switch (key) {
+          case '注册':
+            this.$emit('register')
+            break
+          case '用户登录':
+            this.$emit('login')
+            break
+          case '退出登录':
+            this.quitUser()
+            break
+          case '管理员登录':
+            this.LinkToMangerLogin()
+            break
+          case '自学资料':
+            this.LinkToSelfstudy()
+            break
+          case '用户中心':
+            this.LinkToUserCenter()
+            break
         }
       },
       quitUser() {
@@ -63,15 +72,6 @@
         }).then(() => {
           //注销用户
           this._logoff()
-          // 修改header的内容
-          this.headrs = ['注册', '用户登录', '管理员登录']
-          this.$notify({
-            title: '退出登录',
-            message: '注销用户成功!',
-            type: 'success'
-          })
-          console.log('成功退出')
-          this.$router.push('/home')
         }).catch(() => {
         })
       },
@@ -79,9 +79,18 @@
         let url = `${baseUrl}/tokens`
         axios.delete(url).then(response => {
           if (response.data.msg === MSG_OK) {
-            // 清空相关的 localstorage
             clearToken()
             this.clearOneUser()
+            // 修改header的内容
+            this.headrs = ['注册', '用户登录', '管理员登录']
+            // 清空相关的 localstorage
+            this.$notify({
+              title: '退出登录',
+              message: '注销用户成功!',
+              type: 'success'
+            })
+            console.log('成功退出')
+            this.$router.push('/home')
             //注销用户成功 修改 axios的 拦截器
             this._changeAxiosInterceptor()
           }
@@ -104,14 +113,20 @@
       handleCommand(command) {
         console.log(command)
         if (command === 'usercenter') {
-          this.$router.push('/home/usercenter')
+          this.LinkToUserCenter()
         }
       },
-      clickLogo() {
+      LinkToUserCenter(){
+        this.$router.push('/home/usercenter')
+      },
+      LinkToHome() {
         this.$router.push('/home')
       },
-      mangerLogin() {
+      LinkToMangerLogin() {
         this.$router.push('/home/managerlogin')
+      },
+      LinkToSelfstudy(){
+        this.$router.push('/home/selfstudy')
       },
       ...mapMutations({
         setUser: 'SET_USER'

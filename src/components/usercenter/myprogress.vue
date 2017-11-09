@@ -40,6 +40,7 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   .progress
     margin-top 20px
+    border-radius 5px
     .panel
       border-radius: 5px
       border 1px solid #ddd

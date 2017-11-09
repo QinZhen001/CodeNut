@@ -48,6 +48,7 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   .solution
+    background #F2F2F2;
     line-height: 1.7;
     .toc
       display: table;

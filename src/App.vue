@@ -1,21 +1,19 @@
 <template>
   <div id="app">
-    <el-row>
-      <el-col :span="0" :sm="24" :lg="24" :md="24" :xs="24">
-        <m-header @login="_login" @register="_register" :datas="headers"></m-header>
-      </el-col>
-    </el-row>
+    <m-header @login="_login" @register="_register" :datas="headers"></m-header>
+    <router-view></router-view>
+    <m-footer></m-footer>
+    <welcome ref="welcome" @clickLogin="_login" @clickRegister="_register" @linkToselfStudy="linkToselfStudy"></welcome>
     <login :dialogVisible="showLoginDialog" @closeLoginDialog="_closeLoginDialog" v-show="showLoginDialog"
            @loginSuccess="loginSuccess" ref="login"></login>
     <register :dialogVisible="showRegisterDialog" @closeRegisterDialog="_closeRegisterDialog"></register>
-    <router-view></router-view>
-    <m-footer></m-footer>
   </div>
 </template>
 
 <script>
   import MHeader from 'components/myheader/myheader'
   import Login from 'components/login/login'
+  import Welcome from 'components/welcome/welcome'
   import axios from 'axios'
   import { mapMutations, mapActions } from 'vuex'
   import Register from 'components/register/register'
@@ -30,6 +28,10 @@
         showRegisterDialog: false,
         headers: ['注册', '用户登录', '管理员登录']
       }
+    },
+    beforeDestory: function () {
+      console.log('beforeDestory')
+      this.clearOneUser()
     },
     methods: {
       _login() {
@@ -50,23 +52,10 @@
         let url = `${baseUrl}/users/${id}`
         axios.get(url).then(response => {
           if (response.data.msg === MSG_OK) {
-            this.headers = ['退出登录']
+            this.headers = ['退出登录', '自学资料', '用户中心']
             let result = response.data.result[0]
-//            let user = new User({
-//              user_id: result.user_id,
-//              username: result.username,
-//              realname: result.realname,
-//              school: result.school,
-//              profile: result.profile,
-//              about_me: result.about_me,
-//              role: result.role,
-//              accept_nums: result.accept_nums,
-//              submit_nums: result.submit_nums,
-//              tag: result.tag
-//            })
-//            this.setUser(user)
             this.saveOneUser(new User(result))
-            // console.log(user)
+            this.$refs.welcome.linkToHome()
           }
         }, response => {
           console.log(response)
@@ -74,11 +63,15 @@
           this.loginSuccess()
         })
       },
+      linkToselfStudy(){
+        this.$router.push('/home/selfstudy')
+      },
       ...mapMutations({
         setUser: 'SET_USER'
       }),
       ...mapActions([
-        'saveOneUser'
+        'saveOneUser',
+        'clearOneUser'
       ])
 
     },
@@ -86,7 +79,8 @@
       MHeader,
       Login,
       Register,
-      MFooter
+      MFooter,
+      Welcome
     }
   }
 </script>

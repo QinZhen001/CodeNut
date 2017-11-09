@@ -1,47 +1,63 @@
 <template>
-  <div class="manage-contests">
-    <div class="handle-box">
-      <el-button-group>
-        <el-button type="primary" @click="showSetupContestDialog">创建比赛</el-button>
-        <el-button type="success" @click="refreshContests">刷新数据</el-button>
-      </el-button-group>
-    </div>
-    <el-table :data="contestDatas" border style="width: 100%" ref="multipleTable"
-              @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="id" label="ID" width="150">
-      </el-table-column>
-      <el-table-column prop="title" label="标题" sortable width="150">
-      </el-table-column>
-      <el-table-column prop="description" label="描述" width="330" show-overflow-tooltip>
-      </el-table-column>
-      <el-table-column prop="start_time" label="开始时间" width="250">
-      </el-table-column>
-      <el-table-column prop="end_time" label="结束时间" width="250">
-      </el-table-column>
-      <el-table-column prop="sponsor" label="举办者" width="120">
-      </el-table-column>
-      <el-table-column prop="user_nums" label="参加人数" width="120">
-      </el-table-column>
-      <el-table-column label="操作" width="150" fixed="right">
-        <template scope="scope">
-          <el-button size="small"
-                     @click="handleEdit(scope.$index, scope.row)">编辑
-          </el-button>
-          <el-button size="small" type="danger"
-                     @click="handleDelete(scope.$index, scope.row)">删除
-          </el-button>
-        </template>
-      </el-table-column>
-    </el-table>
-    <div class="pagination">
-      <el-pagination
-        @current-change="handleCurrentChange"
-        layout="prev, pager, next"
-        :current-page="cur_page"
-        :total="100">
-      </el-pagination>
-    </div>
+  <div>
+    <transition name="el-fade-in-linear">
+      <div class="manage-contests" v-show="!isShowEdit">
+        <div class="handle-box">
+          <el-button-group>
+            <el-button type="primary" @click="showSetupContestDialog">创建比赛</el-button>
+            <el-button type="success" @click="refreshContests">刷新数据</el-button>
+          </el-button-group>
+        </div>
+        <el-table :data="contestDatas" border style="width: 100%" ref="multipleTable"
+                  @selection-change="handleSelectionChange" @expand="expandCol">
+          <el-table-column type="expand">
+            <template scope="props">
+              <ul class="user-list">
+                <li>
+                  <span>参赛选手:</span>
+                </li>
+                <li v-for="(item,index) in contestants" :key="index">
+                  {{item.user}}
+                </li>
+              </ul>
+            </template>
+          </el-table-column>
+          <el-table-column prop="id" label="ID" width="150">
+          </el-table-column>
+          <el-table-column prop="title" label="标题" sortable width="150">
+          </el-table-column>
+          <el-table-column prop="description" label="描述" width="330" show-overflow-tooltip>
+          </el-table-column>
+          <el-table-column prop="start_time" label="开始时间" width="250">
+          </el-table-column>
+          <el-table-column prop="end_time" label="结束时间" width="250">
+          </el-table-column>
+          <el-table-column prop="sponsor" label="举办者" width="120">
+          </el-table-column>
+          <el-table-column prop="user_nums" label="参加人数" width="120">
+          </el-table-column>
+          <el-table-column label="操作" width="150" fixed="right">
+            <template scope="scope">
+              <el-button size="small"
+                         @click="handleEdit(scope.$index, scope.row)">编辑
+              </el-button>
+              <el-button size="small" type="danger"
+                         @click="handleDelete(scope.$index, scope.row)">删除
+              </el-button>
+            </template>
+          </el-table-column>
+        </el-table>
+        <div class="pagination">
+          <el-pagination
+            @current-change="handleCurrentChange"
+            layout="prev, pager, next"
+            :current-page="cur_page"
+            :total="100">
+          </el-pagination>
+        </div>
+      </div>
+    </transition>
+    <contests-chart></contests-chart>
     <el-dialog title="创建比赛" :visible.sync="dialogFormVisible">
       <el-form :model="form" :rules="rules">
         <el-form-item label="标题" prop="title">
@@ -57,6 +73,7 @@
             type="datetimerange"
             :picker-options="pickerOptions"
             placeholder="选择时间范围"
+            @change="getTime"
             align="right">
           </el-date-picker>
         </div>
@@ -76,16 +93,23 @@
         <el-button type="primary" @click="setupContest">确 定</el-button>
       </div>
     </el-dialog>
+    <confirm ref="confirm" :text="confirmText" @confirm="confirmDele"></confirm>
+    <transition name="el-fade-in-linear">
+      <contest-edit v-show="isShowEdit" :contest="curContest" @successEdit="successEdit"
+                    @editFinish="hideEdit" ref="contestEdit"></contest-edit>
+    </transition>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import { baseUrl, MSG_OK } from 'common/js/data'
   import axios from 'axios'
-  import ElFormItem from '../../../node_modules/element-ui/packages/form/src/form-item'
+  //import ElFormItem from '../../../node_modules/element-ui/packages/form/src/form-item'
+  import Confirm from 'base/confirm/confirm'
+  import ContestEdit from 'components/manager/manage-contests-edit'
+  import ContestsChart from 'components/manager/contests-chart'
 
   export default{
-    components: {ElFormItem},
     data(){
       return {
         dialogFormVisible: false,
@@ -138,15 +162,28 @@
             }
           }]
         },
-        date: '',
+        date: [new Date(2017, 10, 10, 10, 10), new Date(2017, 12, 30, 10, 10)],
         canPassword: false,
-        isAutoJoin: true
+        isAutoJoin: true,
+        confirmText: '',
+        curContestname: '',
+        curContestId: '',
+        contestants: [],
+        isShowEdit: false,
+        curContest: {},
+        time: ''
       }
     },
     created(){
       this.getData(this.cur_page)
     },
     methods: {
+      successEdit(){
+        this.getData(this.cur_page)
+      },
+      hideEdit(){
+        this.isShowEdit = false
+      },
       showSetupContestDialog(){
         this.title = ''
         this.description = ''
@@ -171,20 +208,31 @@
         return row.tag === value
       },
       handleEdit(index, row){
-        this.$message('编辑第' + (index + 1) + '行')
+        this.curContest = row
+        this.curContest.date = this.time
+        this.isShowEdit = true
+        this.$nextTick(() => {
+          this.$refs.contestEdit.showInfo()
+        })
       },
       handleDelete(index, row){
-        let url = `${baseUrl}/contests/${row.id}`
+        this.curContestId = row.id
+        this.curContestname = row.title
+        this.confirmText = `确定要删除比赛 “${this.curContestname}吗?”`
+        this.$refs.confirm.show()
+      },
+      confirmDele(){
+        let url = `${baseUrl}/contests/${this.curContestId}`
         axios.delete(url).then(response => {
           if (response.data.msg === 'ok') {
             this.getData(this.cur_page)
             this.$message({
-              message: `成功删除比赛:${row.title}`,
+              message: `成功删除比赛:${this.curContestname}`,
               type: 'success'
             })
           }
         }, response => {
-          this.$message.error(`无法删除比赛${row.title}`)
+          this.$message.error(`无法删除比赛${this.curContestname}`)
         })
       },
       delAll(){
@@ -202,13 +250,16 @@
         this.multipleSelection = val
       },
       setupContest(){
-        console.log(this.date)
+//        let a = document.getElementById('el-input__inner')
+//        console.log(a.value)
+        console.log(this.time)
         let url = `${baseUrl}/contests`
+        let resulTime = (this.time + '').split(/\s\S\s/)
         axios.post(url, {
           title: this.form.title,
           description: this.form.description,
-          start_time: '2017-09-25 07:24:41',
-          end_time: '2017-12-25 07:24:41',
+          start_time: resulTime[0],
+          end_time: resulTime[1],
           password: this.form.password,
           auto_approve: this.isAutoJoin
         }).then(response => {
@@ -218,19 +269,49 @@
               message: '创建比赛成功',
               type: 'success'
             })
-            this.dialogFormVisible = false
+            this._setupContestSuccess()
           } else {
             this.$notify({
-              title: '失败',
-              message: '创建比赛失败',
+              title: '创建比赛失败',
+              message: `${response.data.error}`,
               type: 'error'
             })
           }
         }, response => {})
       },
+      _setupContestSuccess(){
+        this.getData(this.cur_page)
+        this.dialogFormVisible = false
+        this.form.title = ''
+        this.form.description = ''
+        this.form.password = ''
+        this.isAutoJoin = true
+        this.date = [new Date(2017, 10, 10, 10, 10), new Date(2017, 12, 30, 10, 10)]
+      },
       refreshContests(){
         this.cur_page = 1
         this.getData(this.cur_page)
+      },
+      expandCol(row, expanded){
+        console.log(row)
+        console.log(expanded)
+        if (expanded) {
+          let url = `${baseUrl}/contests/${row.id}/users`
+          axios.get(url).then(response => {
+            if (response.data.msg === MSG_OK) {
+              if (response.data.result) {
+                this.contestants = response.data.result
+              } else {
+                this.contestants = '暂无'
+              }
+
+              console.log(this.contestants)
+            }
+          }, response => {})
+        }
+      },
+      getTime(date){
+        this.time = date
       }
     },
     computed: {
@@ -254,6 +335,11 @@
           }
         })
       }
+    },
+    components: {
+      Confirm,
+      ContestEdit,
+      ContestsChart
     }
   }
 </script>
@@ -282,4 +368,16 @@
     .password-input
       margin-left 15px
       width 50%
+
+  .user-list
+    li
+      float: left
+      list-style: none; /* 将默认的列表符号去掉 */
+      padding: 0; /* 将默认的内边距去掉 */
+      margin-left: 6px;
+      font-size 16px
+      span
+        font-weight 400
+        font-size 16px
+        color #1D8CE0
 </style>
