@@ -214,7 +214,8 @@ class Program:
             retval = self.result
         else:
             retval = self.__judge(choice)
-        logger('return:%s', retval.__dict__)
+        logger.debug('return:%s', retval.__dict__)
+        return retval
 
     def __del__(self):  # clear user dir
         
@@ -286,5 +287,5 @@ config = {
 }    
     
 if __name__=='__main__':
-    updateData()
+    #updateData()
     test()
