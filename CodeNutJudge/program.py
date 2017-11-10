@@ -211,9 +211,10 @@ class Program:
             with open(self.user_out_path) as f:
                 self.result.output=f.read()
             self.result.status = ResultStatus.CE
-            return self.result
+            retval = self.result
         else:
-            return self.__judge(choice)
+            retval = self.__judge(choice)
+        logger('return:%s', retval.__dict__)
 
     def __del__(self):  # clear user dir
         
