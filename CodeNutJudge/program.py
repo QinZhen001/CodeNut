@@ -56,7 +56,7 @@ class Program:
             start_index = text_code.find(delimiter_start)
             end_index = text_code.find(delimiter_end)
             result = text_code.replace(text_code[start_index:end_index], user_code)
-            logger.debug('codefile:%s', result)
+            logger.saveCodeFile(result)
             with open(output_filepath, 'w') as f:
                 f.write(result)
             return
@@ -256,6 +256,12 @@ def configLogger():
             if self.use_color:
                 record.name = '\x1b[32m' + record.name + '\x1b[0m'
             return super().format(record)
+        
+    def saveCodeFile(content):
+        with open('/tmp/program.code', 'w') as f:
+            f.write(content)
+    
+
 
     logfilepath = str(Path(__file__).parent / 'program.log')
     
@@ -275,7 +281,10 @@ def configLogger():
     filehander.setFormatter(formatter)
     logger.addHandler(filehander)
     
+    logger.saveCodeFile = saveCodeFile
+    
     logger.debug('starting logger %s', datetime.now().strftime('%H:%M:%S'))
+    
     
     return logger
 
