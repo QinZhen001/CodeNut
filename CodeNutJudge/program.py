@@ -33,13 +33,11 @@ class Program:
         if not os.path.exists(self.user_dir):
             os.makedirs(self.user_dir)
         self.completeCodeFile()
-        #self.__store()
     def completeCodeFile(self):
         def completeCodeFileJavaRemovLastBraces(user_code):
             fixed_code = user_code.rstrip()
             if fixed_code[-1] == '}':
                 fixed_code = fixed_code[:-1]
-            
             return fixed_code
         def completeCodeFileInternal(user_code, user_code_type, problem_filepath , output_filepath):
             if user_code_type in ['Java']:
@@ -60,6 +58,7 @@ class Program:
             with open(output_filepath, 'w') as f:
                 f.write(result)
             return
+        
         file_name = {
             'C': 'Solution.c',
             'C++': 'Solution.cpp',
@@ -86,7 +85,7 @@ class Program:
     def __compile(self):
         command = {
             'C': 'gcc Solution.c -o Solution -Wall -lm -O2 -std=c11 -lseccomp -DONLINE_JUDGE',
-            'C++': 'g++ Solution.cpp -o Solution -Wall -lm -O2 -lseccomp -DONLINE_JUDGE',
+            'C++': 'g++ Solution.cpp -o Solution -std=c++11 -Wall -lm -O2 -lseccomp -DONLINE_JUDGE',
             'C#': 'mcs Solution.cs',
             'Go': 'go build -ldflags "-s -w" Solution.go',
             'Java': 'javac Solution.java -encoding UTF8',
@@ -115,7 +114,7 @@ class Program:
             'Java': '/usr/bin/java -cp {}/ Solution'.format(dir),
             'Python3': '/usr/bin/python3 {}/Solution.py'.format(dir),
             'Ruby': '/usr/bin/ruby {}/Solution.rb'.format(dir),
-            'JavaScript': '/usr/bin/nodejs {}/Solution.js'.format(dir),
+            'JavaScript': '/usr/bin/nodejs --no-deprecation {}/Solution.js'.format(dir),
         }
         # get exe like: ['go','run', '123/Solution.go']
         program = shlex.split(command[self.problem['language']])
@@ -154,7 +153,7 @@ class Program:
         for i in range(count):
             input = in_list[i].replace('\r', '').rstrip().split()
             
-            logger.debug('args:%s, fp:%s', user_program + input, self.user_out_path)              
+            logger.debug('args:%s, fp:%s', user_program + input, self.user_out_path)
             result = CodeNutJudge.run({
                 'args': user_program + input,
                 'output': self.user_out_path,
@@ -163,6 +162,7 @@ class Program:
                 'memory_limit': memory_limit,  # in KB
             })
             logger.debug('result:%s', result)
+            
             with open(self.user_out_path) as f:
                 logger.debug('fp:%s', self.user_out_path)
                 logger.debug('file:%s', f.read())
@@ -192,18 +192,13 @@ class Program:
             user_out_list = f.readlines()
         logger.debug('userfp:%s', self.user_out_path)
         logger.debug('user:%s, office:%s', user_out_list, official_out_list)
-        for i in range(len(user_out_list)):
-            user_out = user_out_list[i].replace('\r', '').rstrip()
-            official_out = official_out_list[i].replace('\r', '').rstrip()
-            if user_out == official_out:
-                continue
-            elif user_out.split() == official_out.split():
-                return ResultStatus.PE
-            elif official_out in user_out:
-                return ResultStatus.OLE
-            else:
-                return ResultStatus.WA
-        return ResultStatus.AC
+        if len(official_out_list) != len(user_out_list):
+            return ResultStatus.WA
+        if all([x.strip() == y.strip() for x, y in zip(official_out_list, user_out_list)]):
+            return ResultStatus.AC
+        else:
+            return ResultStatus.WA
+       
 
     def run(self, choice='many'):
         # can not compile them
@@ -221,7 +216,7 @@ class Program:
         
         __import__("shutil").rmtree(self.user_dir)
         pass
-
+        
 
 def test():
     from os import chdir

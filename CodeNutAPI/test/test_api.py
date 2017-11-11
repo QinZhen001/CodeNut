@@ -316,6 +316,7 @@ class Test:
             print(fpath)            
             if 'Accepted' not in response.text:
                 save_bug_info(pid, lan, text)
+
                 raise ValueError(fpath)
             #sleep(3)
         print('test done')

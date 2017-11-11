@@ -176,8 +176,8 @@ int load_limit(const RunConfig *run_config) {
   }
 
   if (strcmp(run_config->language, "Java") != 0 &&
-      strcmp(run_config->language, "JavaScript") !=
-          0) { // Java and JavaScript do not limit
+      strcmp(run_config->language, "JavaScript") != 0 &&
+      strcmp(run_config->language,"C#")!=0) { // Java and JavaScript C# do not limit
     rtmp.rlim_max = MEMTOP;
     rtmp.rlim_cur =
         (rlim_t)2 * run_config->limit_list.memory_limit * 1024 * 1024 <
@@ -205,6 +205,12 @@ int load_limit(const RunConfig *run_config) {
 }
 
 void child_process(const RunConfig *run_config) {
+  puts("begin print args");
+  for(char** args=run_config->args;*args!='\0';args++){
+    puts(*args);
+  }
+  puts("done print args");
+  REPORTER("prepare execute subroutine");
   if (freopen(run_config->output, "a", stdout) == NULL) {
     REPORTER("Freopen out failed");
     exit(1);
@@ -226,9 +232,8 @@ void child_process(const RunConfig *run_config) {
       exit(1);
   }
 
-  REPORTER("prepare execute subroutine");
   if (execve(run_config->args[0], run_config->args, NULL) == -1) {
-    REPORTER("Execve failed");
+    perror("Execve failed");
     exit(1);
   }
 
