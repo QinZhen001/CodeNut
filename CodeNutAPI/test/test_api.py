@@ -13,9 +13,11 @@ import time
 
 
 class Test:
-    url = 'http://0.0.0.0:5000'
-    headers = {'Content-Type': 'application/json'}
-    token = tuple()
+    def __init__(self, url):
+        
+        self.url = url 
+        self.headers = {'Content-Type': 'application/json'}
+        self.token = tuple()
 
     def tokens(self):
         resource = '/tokens'
@@ -318,7 +320,7 @@ class Test:
                 save_bug_info(pid, lan, text)
 
                 raise ValueError(fpath)
-            #sleep(3)
+            sleep(3)
         print('test done')
 def save_bug_info(pid, language, codetext):
     from pickle import dump
@@ -367,4 +369,4 @@ if __name__ == '__main__':
         FFDebug_FALG
     except NameError: 
         insert_run()
-    Test().run_code()
+    Test(url='http://123.207.236.216:5000').run_code()
