@@ -12,5 +12,6 @@ setup(
     version='1.0 beta',
     ext_modules=[Extension(name='CodeNutJudge',
                            sources=['PythonAPI/PyAPI.c'],
+                           extra_compile_args=['-std=c11'],
                            libraries=['seccomp'])]
 )

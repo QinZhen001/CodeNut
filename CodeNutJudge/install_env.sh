@@ -1,7 +1,11 @@
 #!/bin/bash
 
 function java() {
-  apt-get install openjdk-8-jdk -y || apt-get install -y openjdk-7-jdk
+  #apt-get install openjdk-8-jdk -y || apt-get install -y openjdk-7-jdk
+  echo "deb http://http.debian.net/debian jessie-backports main" | \
+      sudo tee --append /etc/apt/sources.list.d/jessie-backports.list > /dev/null
+  sudo apt-get update
+  sudo apt-get install -y -t jessie-backports openjdk-8-jdk
 }
 
 function ruby() {
@@ -43,10 +47,13 @@ function go() {
 
 function nodejs() {
   # https://nodejs.org/en/download/
-  apt-get install --yes nodejs
+  # apt-get install --yes nodejs
+  apt update
+  apt install -y curl
+  curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+  sudo apt-get install -y nodejs
   return
 }
-
 
 
 function main() {

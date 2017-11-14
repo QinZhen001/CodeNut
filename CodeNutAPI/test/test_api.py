@@ -13,9 +13,11 @@ import time
 
 
 class Test:
-    url = 'http://0.0.0.0:5000'
-    headers = {'Content-Type': 'application/json'}
-    token = tuple()
+    def __init__(self, url):
+        
+        self.url = url 
+        self.headers = {'Content-Type': 'application/json'}
+        self.token = tuple()
 
     def tokens(self):
         resource = '/tokens'
@@ -296,44 +298,75 @@ class Test:
         assert jdict['msg'] == 'no'
 
     def run_code(self):
+        from time import sleep
+        from subprocess import run, PIPE
+        from sys import path
+        path.append('/root/source_code.d/software_design.d/CodeNut/CodeNutAPI/tools')
+        from HashIDs import generate_id
+        print('begin test')
+        run('supervisorctl -c ../../supervisord.conf restart all', shell = True, check= True, stdout = PIPE)
+        
         resource = '/problems'
         self.tokens()
+        
+        for pid, lan, text, fpath in getRequestData():
+            hasd_pid = generate_id(pid)            
+            data = {'language': lan,'code': text}
+            URL = self.url + resource + '/%s/codes' % hasd_pid
+            response = requests.patch(URL, json=data, headers=self.headers, auth=self.token)
+            
+            print(fpath)            
+            if 'Accepted' not in response.text:
+                save_bug_info(pid, lan, text)
 
-        data = {'language': 'Python3',
-                'code': '''
+                raise ValueError(fpath)
+            sleep(3)
+        print('test done')
+def save_bug_info(pid, language, codetext):
+    from pickle import dump
+    problem = {
+        'id': pid,
+        'user_id': '1',
+        'language': language,
+        'custom_input': None,
+        'code': codetext
+    }
+    with open('/tmp/CodeNutJudge_problem.bug', 'wb') as f:    
+        dump(problem, f)
 
-from collections import defaultdict
-class Solution(object):
-    def helper(self, root, cache):
-        if root == None:
-            return
-        cache[root.val] += 1
-        self.helper(root.left, cache)
-        self.helper(root.right, cache)
-        return
+def getRequestData():
+    from pathlib import Path
+    language_type = {
+        'C': 'Solution.c',
+        'C++': 'Solution.cpp',
+        'C#': 'Solution.cs',
+        'Go': 'Solution.go',
+        'Java': 'Solution.java',
+        'Python3': 'Solution.py',
+        'Ruby': 'Solution.rb',
+        'JavaScript': 'Solution.js',
+    }        
     
-    def findMode(self, root):
-        """
-        :type root: TreeNode
-        :rtype: List[int]
-        """
-        if root == None:
-            return []
-        cache = defaultdict(int)
-        self.helper(root, cache)
-        max_freq = max(cache.values())
-        result = [k for k,v in cache.items() if v == max_freq]
-        return result
-               '''}
-        for i in range(1):
-            response = requests.patch(
-                self.url + resource + '/aG/codes', json=data, headers=self.headers, auth=self.token)
-            print(response.text)
-
-
+    root = Path('/root/source_code.d/software_design.d/problem_solution.d')
+    for pdir in root.glob('*d'):
+        pid = int(list(pdir.glob('?'))[0].name)
+        for fpath in pdir.glob('Solu*'):
+            language = [key for key,item in language_type.items() if item== fpath.name][0]                
+            with fpath.open() as f:
+                content = f.read()
+            code_text = getUserCode(content, language)
+            yield pid, language, code_text, str(fpath)
+                
+def getUserCode(content, language):
+    from re import findall, MULTILINE, DOTALL
+    text = findall(r'ssstart\n(.+)\n[ ]*[/#]{1,2} eeend',content,MULTILINE|DOTALL)[0]
+    if language == 'Java':
+        text = text + '}'
+    return text
+            
 if __name__ == '__main__':
     try:
         FFDebug_FALG
     except NameError: 
         insert_run()
-    Test().run_code()
+    Test(url='http://123.207.236.216:5000').run_code()
