@@ -22,8 +22,8 @@
       <div class="panel-body">
         <img width="77" height="77" src="static/avatar.jpg" class="avatar">
         <P class="username">{{user.username}}</P>
-        <p class="realname">真实姓名: {{user.realname}}</p>
-        <p class="school">毕业学校: {{user.school}}</p>
+        <p class="realname">真实姓名: admin</p>
+        <p class="school">毕业学校: 五邑大学</p>
         <div class="panel-body-left">
           <el-rate v-model="score" :disabled=true disabled-void-color="#ddd">
           </el-rate>

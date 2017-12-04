@@ -16,7 +16,6 @@
 
 <style lang="stylus" rel="stylesheet/stylus">
   .myfooter
-    z-index -1
     flex: 0 0 auto;
     margin-top 20px
     width 100%

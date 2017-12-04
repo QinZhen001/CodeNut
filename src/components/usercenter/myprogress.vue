@@ -79,7 +79,6 @@
           display: block;
           padding: 10px 15px;
           margin-bottom: -1px;
-          background-color: #fff;
           border-width 1px 0
           border-style solid
           border-color #ddd

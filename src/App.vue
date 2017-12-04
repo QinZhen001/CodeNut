@@ -2,11 +2,11 @@
   <div id="app">
     <m-header @login="_login" @register="_register" :datas="headers"></m-header>
     <router-view></router-view>
-    <m-footer></m-footer>
     <welcome ref="welcome" @clickLogin="_login" @clickRegister="_register" @linkToselfStudy="linkToselfStudy"></welcome>
     <login :dialogVisible="showLoginDialog" @closeLoginDialog="_closeLoginDialog" v-show="showLoginDialog"
            @loginSuccess="loginSuccess" ref="login"></login>
     <register :dialogVisible="showRegisterDialog" @closeRegisterDialog="_closeRegisterDialog"></register>
+    <m-footer></m-footer>
   </div>
 </template>
 

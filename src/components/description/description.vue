@@ -30,13 +30,7 @@
   .description
     border-bottom 1px solid #ddd
     p
-      margin: 0 0 10px
-      display: block;
-      font-size: 16px;
-      -webkit-margin-before: 1em;
-      -webkit-margin-after: 1em;
-      -webkit-margin-start: 0px;
-      -webkit-margin-end: 0px;
+      margin: 0 0 10px;
     pre
       display: block;
       padding: 9.5px;

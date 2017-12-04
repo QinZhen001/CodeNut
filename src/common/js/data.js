@@ -48,12 +48,22 @@ export const templets = [
 ]
 
 export const templateCodes = [
-  'int findMaximumXOR(int* nums, int numsSize) {\n\n}',
-  'class Solution {\npublic:\n     int findMaximumXOR(vector<int>& nums) {\n\n     }\n};',
-  'class Solution {\n    public int findMaximumXOR(int[] nums) {\n\n    }\n}',
-  'class Solution(object):\n    def findMaximumXOR(self, nums):\n      """\n      :type nums: List[int]\n      :rtype: int\n      """',
-  'class Solution {\n    func findMaximumXOR(_ nums: [Int]) -> Int {\n\n    }\n}',
-  'func findMaximumXOR(nums []int) int {\n\n}'
+  {text: 'C', defaultCode: 'int findMaximumXOR(int* nums, int numsSize) {\n\n}'},
+  {text: 'C++', defaultCode: 'class Solution {\npublic:\n     int findMaximumXOR(vector<int>& nums) {\n\n     }\n};'},
+  {text: 'C#', defaultCode: 'class Solution {\n    public int findMaximumXOR(int[] nums) {\n\n    }\n}'},
+  {
+    text: 'Java',
+    defaultCode: 'class Solution {\n\n}'
+  },
+  {
+    text: 'Python3',
+    defaultCode: 'class Solution(object):\n    def findMaximumXOR(self, nums):\n      """\n      :type nums: List[int]\n      :rtype: int\n      """'
+  },
+  {text: 'javascript', defaultCode: 'function(s) {\n\n};'},
+  {text: 'Ruby', defaultCode: 'class Solution {\n    func findMaximumXOR(_ nums: [Int]) -> Int {\n\n    }\n}'},
+  {text: 'Go', defaultCode: 'func findMaximumXOR(nums []int) int {\n\n}'}
+  // 'class Solution {\n    func findMaximumXOR(_ nums: [Int]) -> Int {\n\n    }\n}',
+  // 'func findMaximumXOR(nums []int) int {\n\n}'
 ]
 
 export const selfStudyItems = [
@@ -273,6 +283,19 @@ export const selfStudyItems = [
     difficulty: 1.7,
     attention: 9634
   }
+]
+
+export const results = [
+  {name: 'System Error', value: '设置错误或其他问题'},
+  {name: 'Accepted', value: '成功运行并得到了正确的结果'},
+  {name: 'Wrong Answer', value: '成功运行但到得了错误的结果'},
+  {name: 'Dangerous System Call', value: '程序因为危险的系统调用被终止'},
+  {name: 'Runtime Error', value: '程序因为类似于堆栈溢出的错误而被系统终止，即运行错误'},
+  {name: 'Compile Error', value: '源代码无法被正确编译'},
+  {name: 'Time Limit Exceed', value: '超过时间限制'},
+  {name: 'Output Limit Exceed', value: '程序输出长度超过答案长度'},
+  {name: 'Memory Limit Exceed', value: '超过内存限制'},
+  {name: 'Run Successfully', value: '运行成功但是不可预知的错误发生'}
 ]
 
 export const baseUrl = 'https://api.txdna.cn'

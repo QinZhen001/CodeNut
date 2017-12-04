@@ -59,7 +59,7 @@
   import { baseUrl, MSG_OK, MSG_NO, editorThemes } from 'common/js/data'
   import axios from 'axios'
   import ElFormItem from '../../../node_modules/element-ui/packages/form/src/form-item'
-  import Search from 'components/search/search'
+  import Search from 'base/search/search'
   import ProblemEdit from 'components/manager/manage-problem-edit'
   import { mapActions } from 'vuex'
   import Problem from 'common/js/problem'

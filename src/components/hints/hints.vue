@@ -19,7 +19,7 @@
       padding: 8rem 4rem;
       text-align: center;
       font-size: 1.5rem;
-      color: #dadada;
+      color: #555;
       .suggest
         margin-top: 30px;
         color: grey

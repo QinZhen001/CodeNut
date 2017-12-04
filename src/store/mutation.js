@@ -12,6 +12,9 @@ const mutations = {
   },
   [types.SET_TEMPLETS](state, templets){
     state.templets = templets
+  },
+  [types.SET_BREAKTHROUGH](state, breakthrough){
+    state.breakthrough = breakthrough
   }
 }
 

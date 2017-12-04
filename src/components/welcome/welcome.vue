@@ -1,7 +1,7 @@
 <template>
   <transition name="el-fade-in-linear">
     <div class="welcome" v-show="showFrag">
-      <slider :pages="mypages" :sliderinit="slider">
+      <slider ref="slider" :pages="welcomPages" :sliderinit="slider" @mousewheel.native="mouseScroll">
       </slider>
       <div class="welcome-header">
         <span class="welcome-header-title">CodeNut</span>
@@ -10,16 +10,18 @@
         <div class="welcome-header-btn register-btn" @click="clickRegisterBtn">注册</div>
         <div class="welcome-header-btn" @click="clickLoginBtn">登录</div>
       </div>
-      <div class="bottom-pointer" v-show="slider.currentPage === 0">↓继续滚动</div>
+      <div class="bottom-pointer" v-show="slider.currentPage === 0">
+        <span class="bottom-pointer-img">↓</span>继续滚动
+      </div>
       <transition-group name="el-fade-in">
-        <img class="center-img" v-show="slider.currentPage===0" src="static/welcome/welcome_1.png" width="256"
-             height="256" :key="slider.currentPage">
-        <img class="center-img" v-show="slider.currentPage===1" src="static/welcome/welcome_2.png" width="256"
-             height="256" :key="slider.currentPage">
-        <img class="center-img" v-show="slider.currentPage===2" src="static/welcome/welcome_3.png" width="256"
-             height="256" :key="slider.currentPage">
+        <img class="center-img" v-show="slider.currentPage===0" src="static/welcome/welcome_1.png" width="200"
+             height="200" :key="slider.currentPage">
+        <img class="center-img" v-show="slider.currentPage===1" src="static/welcome/welcome_2.png" width="200"
+             height="200" :key="slider.currentPage">
+        <img class="center-img" v-show="slider.currentPage===2" src="static/welcome/welcome_3.png" width="200"
+             height="200" :key="slider.currentPage">
       </transition-group>
-      <el-button class="enter-home" @click="linkToHome" type="success" size="medium">进入主页<i
+      <el-button class="enter-home-btn" @click="linkToHome" type="success" size="medium">进入主页<i
         class="el-icon-d-arrow-right"></i></el-button>
     </div>
   </transition>
@@ -31,7 +33,7 @@
   export default{
     data(){
       return {
-        mypages: [
+        welcomPages: [
           {
             title: '邑大人自己的Online Judge平台',
             style: {
@@ -65,7 +67,7 @@
     },
     methods: {
       linkToHome(){
-        this.showFrag = false
+        this.hide()
       },
       clickLoginBtn(){
         this.$emit('clickLogin')
@@ -74,8 +76,21 @@
         this.$emit('clickRegister')
       },
       linkToselfStudy(){
-        this.showFrag = false
+        this.hide()
         this.$emit('linkToselfStudy')
+      },
+      hide(){
+        this.showFrag = false
+      },
+      mouseScroll(e){
+        console.log(e.wheelDelta)
+        if (e.wheelDelta < 0) {
+          //向下
+          this.$refs.slider.$emit('slideNext')
+        } else {
+          //向上
+          this.$refs.slider.$emit('slidePre')
+        }
       }
     },
     components: {
@@ -129,17 +144,24 @@
     .center-img
       position: absolute
       left 50%
-      top 20%
-      margin-left: -128px;
+      top 50%
+      margin-left: -100px;
+      margin-top -250px
       z-index 101
     .bottom-pointer
       position: absolute
+      vertical-align: middle
       top: auto
+      height 20px
       bottom: 20px
       left: 48%
       z-index 101
       color whitesmoke
-    .enter-home
+      .bottom-pointer-img
+        display inline-block
+        position relative
+        bottom: 2px
+    .enter-home-btn
       position: absolute
       bottom: 30px
       right 30px

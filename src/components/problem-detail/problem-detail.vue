@@ -1,6 +1,9 @@
 <template>
   <transition name="el-fade-in-linear">
-    <div class="problem">
+    <div class="problem"
+         v-loading.fullscreen="fullscreenLoading"
+         element-loading-text="拼命加载中"
+    >
       <el-row>
         <el-col :sm="0" :lg="2" :md="1" :xs="0">
           <div class="grid-content">
@@ -15,16 +18,16 @@
           </div>
           <div class="container">
             <el-tabs v-model="tab" type="card">
-              <el-tab-pane label="Description" name="description">
+              <el-tab-pane label="题目描述" name="description">
                 <description :data="problemDetail"></description>
               </el-tab-pane>
-              <el-tab-pane label="Solution" name="solution">
+              <el-tab-pane label="解决方案" name="solution">
                 <solution></solution>
               </el-tab-pane>
-              <el-tab-pane label="Hints" name="third">
+              <el-tab-pane label="提示" name="third">
                 <hints></hints>
               </el-tab-pane>
-              <el-tab-pane label="Notes" name="fourth">
+              <el-tab-pane label="笔记" name="fourth">
                 <notes :name="problem.title"></notes>
               </el-tab-pane>
             </el-tabs>
@@ -35,6 +38,7 @@
           </div>
         </el-col>
       </el-row>
+      <router-view></router-view>
     </div>
   </transition>
 </template>
@@ -52,7 +56,7 @@
   export default {
     data() {
       return {
-        loading: true,
+        fullscreenLoading: true,
         problemDetail: {},
         tab: 'description'
       }
@@ -66,6 +70,7 @@
           this.$router.push('/home')
           return
         }
+        this.fullscreenLoading = true
         console.log('problem detail id')
         console.log(this.problem.id)
         let url = `${baseUrl}/problems/${this.problem.id}`
@@ -74,7 +79,7 @@
             console.log(response.data.result)
             this.problemDetail = response.data.result[0]
             console.log(this.problemDetail.id)
-            this.loading = false
+            this.fullscreenLoading = false
           }
         }, response => {
           this._getProblemDetail()
@@ -89,34 +94,30 @@
           })
         } else {
           if (!this.hasCollect(this.problemDetail.id)) {
-            this.saveFavoriteList(new Problem({
-              id: this.problemDetail.id,
-              title: this.problemDetail.title,
-              tag: this.problemDetail.tag,
-              level: this.problemDetail.level,
-              accepted: this.problemDetail.accepted,
-              submitted: this.problemDetail.submitted
-            }))
+            this.saveFavoriteList(this.getCurProblem())
             this.$notify({
               title: '收藏成功',
               message: `收藏题目:${this.problemDetail.title}`,
               type: 'success'
             })
           } else {
-            this.deleteFavoriteList(new Problem({
-              id: this.problemDetail.id,
-              title: this.problemDetail.title,
-              tag: this.problemDetail.tag,
-              level: this.problemDetail.level,
-              accepted: this.problemDetail.accepted,
-              submitted: this.problemDetail.submitted
-            }))
+            this.deleteFavoriteList(this.getCurProblem())
             this.$notify.info({
               title: '取消成功',
               message: `取消收藏题目:${this.problemDetail.title}`
             })
           }
         }
+      },
+      getCurProblem(){
+        return new Problem({
+          id: this.problemDetail.id,
+          title: this.problemDetail.title,
+          tag: this.problemDetail.tag,
+          level: this.problemDetail.level,
+          accepted: this.problemDetail.accepted,
+          submitted: this.problemDetail.submitted
+        })
       },
       hasCollect(id) {
         const index = this.collectionList.findIndex((item) => {

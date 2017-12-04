@@ -13,6 +13,11 @@ const ProblemDetail = (resolve) => {
     resolve(moudle)
   })
 }
+const BgAnimation = (resolve) => {
+  import('components/breakthrough/bganimation').then((moudle) => {
+    resolve(moudle)
+  })
+}
 const SelfStudy = (resolve) => {
   import('components/selfstudy/selfstudy').then((moudle) => {
     resolve(moudle)
@@ -53,11 +58,6 @@ const ManageContests = (resolve) => {
     resolve(moudle)
   })
 }
-// const ManageProblemEdit = (resolve) => {
-//   import('components/manager/manage-problem-edit').then((moudle) => {
-//     resolve(moudle)
-//   })
-// }
 
 export default new Router({
   routes: [
@@ -72,7 +72,13 @@ export default new Router({
     {
       path: '/home/problem',
       component: ProblemDetail,
-      meta: {scrollToTop: true}
+      meta: {scrollToTop: true},
+      children: [
+        {
+          path: '/home/problem/success-animation',
+          component: BgAnimation
+        }
+      ]
     },
     {
       path: '/home/selfstudy',
@@ -102,12 +108,6 @@ export default new Router({
         {
           path: '/home/manager/managecontests',
           component: ManageContests
-          // children: [
-          //   {
-          //     path: '/home/manager/manageproblems/edit',
-          //     component: ManageProblemEdit
-          //   }
-          // ]
         }
       ]
     }, {

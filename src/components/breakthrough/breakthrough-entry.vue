@@ -59,6 +59,6 @@
         margin-top 5px
       &:hover
         cursor pointer
-        transition all 1s ease-in
-        transform: rotate(360deg) scale(1.1,1.1)
+        transition all 0.1s ease-in
+        transform: scale(1.1, 1.1)
 </style>

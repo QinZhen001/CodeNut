@@ -53,9 +53,9 @@
         <el-tag type="success" v-show="item.mytitle === 'SubmitResult'">{{item.mytitle}}</el-tag>
         <el-tag type="warning" v-show="item.mytitle === 'RunResult'">{{item.mytitle}}</el-tag>
       </div>
-      <span class="result-item">
-        <span class="result-item-text">程序输出</span> {{item.output}}
-      </span>
+      <!--<span class="result-item">-->
+      <!--<span class="result-item-text">程序输出</span> {{item.output}}-->
+      <!--</span>-->
       <span class="result-item">
         <span class="result-item-text">耗费内存</span> {{item.memory_used}}
       </span>
@@ -63,10 +63,14 @@
         <span class="result-item-text">耗费时间</span> {{item.time_used}}
       </span>
       <span class="result-item">
-        <span class="result-item-text">运行状态</span> {{item.status}}
+        <span class="result-item-text">运行状态
+          <span :class="[item.status.includes('Error')?'error':'default']"> {{item.status}}</span>
+        </span>
+         <img class="result-item-img" src="static/target.png" width="32" height="32"
+              v-show="index === (result.length-1)">
       </span>
-      <img class="result-item-img" src="static/target.png" width="32" height="32" v-show="index === (result.length-1)">
     </div>
+    <run-result-dialog ref="dialog" :result="Runresult"></run-result-dialog>
   </div>
 </template>
 
@@ -136,8 +140,11 @@
 
   import { MSG_OK, MSG_NO, baseUrl, editorThemes, keyMaps, editorModes, languages, templateCodes } from 'common/js/data'
   import axios from 'axios'
-  import { mapGetters } from 'vuex'
+  import { mapGetters, mapMutations } from 'vuex'
   import ReturnResult from 'common/js/ReturnResult'
+
+  //组件
+  import RunResultDialog from 'components/description/runresultdialog'
 
   export default {
     data() {
@@ -166,7 +173,8 @@
           // 如果有hint方面的配置，也应该出现在这里
         },
         result: [],
-        fullscreenLoading: false
+        fullscreenLoading: false,
+        Runresult: {}
       }
     },
     created(){
@@ -183,17 +191,25 @@
       _getTempletCode(selectLanguage){
         let url = `${baseUrl}/problems/${this.problem.id}/codes`
         axios.get(url).then(response => {
-          let result = JSON.parse(response.data.result[0].code)
-          console.log(result)
-          let templet = result.find((item) => {
-            if (item) {
+          let result
+          try {
+            result = JSON.parse(response.data.result[0].code)
+            let templet = result.find((item) => {
               return item.text === selectLanguage
+            })
+            if (templet && templet.defaultCode) {
+              this.code = templet.defaultCode
+            } else {
+              this.code = this.templateCodes.find((item) => {
+                return item.text === selectLanguage
+              }).defaultCode
             }
-          })
-          if (templet && templet.defaultCode) {
-            this.code = templet.defaultCode
-          } else {
-            this.code = ''
+          } catch (error) {
+            //后端抓取的json数据 格式有问题 所以肯定会catch到error
+            console.log(error)
+            this.code = this.templateCodes.find((item) => {
+              return item.text === selectLanguage
+            }).defaultCode
           }
         }, response => {})
       },
@@ -207,6 +223,15 @@
         this.editorOptions.theme = command
         this.selectTheme = command
       },
+      getReturnResult(title, returnResult){
+        return new ReturnResult({
+          mytitle: title,
+          memory_used: returnResult.memory_used.toFixed(2) + 'kb',
+          output: returnResult.output,
+          status: returnResult.status,
+          time_used: returnResult.time_used.toFixed(2) + 's'
+        })
+      },
       onClickSubmit(){
         if (!this._checkLogin()) {
           return
@@ -217,22 +242,16 @@
           code: this.code
         }).then(response => {
           if (response.data.msg === MSG_OK) {
-            this.result.push(new ReturnResult({
-              mytitle: 'SubmitResult',
-              memory_used: response.data.result[0].memory_used.toFixed(4) + ' M',
-              output: response.data.result[0].output,
-              status: response.data.result[0].status,
-              time_used: response.data.result[0].time_used.toFixed(4) + ' s'
-            }))
-            this._showLoading()
-            console.log(this.result)
+            console.log(response.data.result[0])
+            this.Runresult = this.getReturnResult('SubmitResult', response.data.result[0])
+            this.result.push(this.Runresult)
+            this.checkIsBreakthrough()
           } else if (response.data.mag === MSG_NO) {
-            this.$notify.error({
-              title: '错误',
-              message: response.data.error
-            })
+            this.showError(response.data.error)
           }
-        }, response => {})
+        }, response => {
+          this.showError()
+        })
       },
       onClickRun(){
         if (!this._checkLogin()) {
@@ -245,22 +264,41 @@
           code: this.code
         }).then(response => {
           if (response.data.msg === MSG_OK) {
-            this.result.push(new ReturnResult({
-              mytitle: 'RunResult',
-              memory_used: response.data.result[0].memory_used.toFixed(4) + ' M',
-              output: response.data.result[0].output,
-              status: response.data.result[0].status,
-              time_used: response.data.result[0].time_used.toFixed(4) + ' s'
-            }))
-            this._showLoading()
             console.log(response.data.result[0])
+            this.Runresult = this.getReturnResult('RunResult', response.data.result[0])
+            this.result.push(this.Runresult)
+            this.checkIsBreakthrough()
           } else if (response.data.mag === MSG_NO) {
-            this.$notify.error({
-              title: '错误',
-              message: response.data.error
-            })
+            this.showError(response.data.error)
           }
-        }, response => {})
+        }, response => {
+          this.showError()
+        })
+      },
+      /**
+       * checkIsBreakthrough() 闯关模式逻辑并未设计好 这里只是展示效果
+       */
+      checkIsBreakthrough(){
+        if (this.breakthrough) {
+          //当前处于闯关模式
+          console.log('当前处于闯关模式')
+          this.$router.push('/home/problem/success-animation')
+          this.setBreakThrough(false)
+        } else {
+          //当前不处于闯关模式
+          console.log('当前处不于闯关模式')
+          this._showLoading()
+          setTimeout(() => {
+            this.$refs.dialog.show()
+          }, 1000)
+          this.setBreakThrough(false)
+        }
+      },
+      showError(error = 'INTERNAL SERVER ERROR'){
+        this.$notify.error({
+          title: '错误',
+          message: error
+        })
       },
       onClickCustom(){
         let url = `${baseUrl}/problems/${this.problem.id}/codes`
@@ -272,7 +310,7 @@
         }, response => {})
       },
       _checkLogin(){
-        if (this.user.user_id == null || this.user.user_id === '') {
+        if (this.user.user_id === null || this.user.user_id === undefined || this.user.user_id === '') {
           this.$notify({
             title: '警告',
             message: '请先登录！',
@@ -287,31 +325,38 @@
         this.fullscreenLoading = true
         setTimeout(() => {
           this.fullscreenLoading = false
-        }, 2000)
-      }
+        }, 1000)
+      },
+      ...mapMutations({
+        setBreakThrough: 'SET_BREAKTHROUGH'
+      })
     },
     computed: {
       ...mapGetters([
         'problem',
-        'user'
+        'user',
+        'breakthrough'
       ])
+    },
+    components: {
+      RunResultDialog
     }
   }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" scoped rel="stylesheet/stylus">
   .myeditor
     margin-top 20px
     .myeditor-header
-       margin-bottom 12px
-      .language-dropdown
-        .el-dropdown-menu__item
-          padding 0 5px
-      .el-dropdown-theme
-        float right
-      .el-dropdown-keyMap
-        float right
-        margin-right 8px
+      margin-bottom 12px
+    .language-dropdown
+      .el-dropdown-menu__item
+        padding 0 5px
+    .el-dropdown-theme
+      float right
+    .el-dropdown-keyMap
+      float right
+      margin-right 8px
     .CodeMirror
       height 400px
     .myeditor-footer
@@ -331,24 +376,27 @@
         width 150px
     .result-wrapper
       display flex
-      margin-top -1px
-      padding 10px 0
-      border-bottom 1px solid #ddd
-      border-top 1px solid #ddd
+      height 30px
+      padding 7px 0
+      border-bottom 1px solid #bbb
       .result-type
-        flex 1 1 auto
+        flex 0 1 auto
         display inline-block
         .el-tag
           margin-top 4px
           font-size: 18px;
       .result-item
         flex 1 1 auto
+        text-align center
         .result-item-text
           font-size 18px
-          font-weight 600
           margin 0 5px
           line-height 30px
           color: #9E9E9E
+          .error
+            color #ff1744
+          .default
+            color #333
       .result-item-img
-        vertical-align middle
+        vertical-align top
 </style>

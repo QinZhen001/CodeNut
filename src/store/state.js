@@ -1,13 +1,14 @@
 /**
  * Created by qinzhen on 2017/9/5.
  */
-import { loadFavorite, loadProblem, loadUser } from 'common/js/cache'
+import { loadFavorite, loadProblem } from 'common/js/cache'
 
 const state = {
   problem: loadProblem(),
-  user: loadUser(),
+  user: {},
   collectionList: loadFavorite(),
-  templets: []
+  templets: [],
+  breakthrough: false
 }
 
 export default state
