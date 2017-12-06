@@ -3,7 +3,7 @@
     <div class="meun-wrapper">
       <img class="logo" width="146" height="38" src="static/logo.png" @click="LinkToHome">
       <el-menu class="menu" mode="horizontal" theme="dark" @select="handleSelect">
-        <el-menu-item v-for="(item, index) in headrs" :key="index" :index=item>{{item}}
+        <el-menu-item v-for="(item, index) in headerData" :key="index" :index=item>{{item}}
         </el-menu-item>
         <transition name="el-fade-in-linear">
           <el-dropdown @command="handleCommand" trigger="hover" v-show="showUserItem">
@@ -18,37 +18,29 @@
         </transition>
       </el-menu>
     </div>
+    <login-dialog ref="loginDialog"></login-dialog>
+    <register-dialog ref="registerDialog"></register-dialog>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
-  import { clearToken } from 'common/js/cache'
   import axios from 'axios'
+  import LoginDialog from 'base/logindialog/logindialog'
+  import RegisterDialog from 'base/registerdialog/registerdialog'
+  import { clearToken } from 'common/js/cache'
   import { mapMutations, mapGetters, mapActions } from 'vuex'
   import { baseUrl, MSG_OK } from 'common/js/data'
 
   export default {
-    props: {
-      datas: {
-        type: Array,
-        default: ['注册', '用户登录', '管理员登录']
-      }
-    },
-    data() {
-      return {
-        headrs: this.datas,
-        user: {}
-      }
-    },
     methods: {
       handleSelect(key, keyPath) {
         console.log(key)
         switch (key) {
           case '注册':
-            this.$emit('register')
+            this.$refs.registerDialog.show()
             break
           case '用户登录':
-            this.$emit('login')
+            this.$refs.loginDialog.show()
             break
           case '退出登录':
             this.quitUser()
@@ -79,11 +71,11 @@
         let url = `${baseUrl}/tokens`
         axios.delete(url).then(response => {
           if (response.data.msg === MSG_OK) {
+            // 清空相关的 localstorage
             clearToken()
             this.clearOneUser()
             // 修改header的内容
-            this.headrs = ['注册', '用户登录', '管理员登录']
-            // 清空相关的 localstorage
+            this.setHeaderData(['注册', '用户登录', '管理员登录'])
             this.$notify({
               title: '退出登录',
               message: '注销用户成功!',
@@ -92,14 +84,14 @@
             console.log('成功退出')
             this.$router.push('/home')
             //注销用户成功 修改 axios的 拦截器
-            this._changeAxiosInterceptor()
+            this.clearAxiosInterceptor()
           }
         }, response => {
           this._logoff()
         })
       },
-      _changeAxiosInterceptor() {
-        console.log('_changeAxiosInterceptor')
+      clearAxiosInterceptor() {
+        console.log('clearAxiosInterceptor')
         axios.interceptors.request.use(
           config => {
             config.headers.token = ''
@@ -129,31 +121,26 @@
         this.$router.push('/home/selfstudy')
       },
       ...mapMutations({
-        setUser: 'SET_USER'
-      }),
-      ...mapGetters({
-        getUser: 'user'
+        setUser: 'SET_USER',
+        setHeaderData: 'SET_HEADERDATA'
       }),
       ...mapActions([
         'clearOneUser'
       ])
     },
-    watch: {
-      datas(newVal) {
-        this.headrs = newVal
+    computed: {
+      ...mapGetters([
+        'user',
+        'headerData'
+      ]),
+      showUserItem() {
+        //headerData存在 '退出登录' 返回true 否则返回false
+        return this.headerData.indexOf('退出登录') !== -1
       }
     },
-    computed: {
-      showUserItem() {
-        if (this.headrs.indexOf('退出登录') !== -1) {
-          // 证明已经登录 那么显示用户
-          this.user = this.getUser()
-          console.log(this.user)
-          return true
-        } else {
-          return false
-        }
-      }
+    components: {
+      LoginDialog,
+      RegisterDialog
     }
   }
 </script>

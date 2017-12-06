@@ -46,8 +46,8 @@
       </el-button>
     </div>
 
-    <div class="result-wrapper" v-show="result!==[]"
-         v-for="(item, index) in result" :key="index"
+    <div class="result-wrapper" v-show="returnResults.length>0"
+         v-for="(item, index) in returnResults" :key="index"
          v-loading.fullscreen.lock="fullscreenLoading" element-loading-text="正在运行中...">
       <div class="result-type">
         <el-tag type="success" v-show="item.mytitle === 'SubmitResult'">{{item.mytitle}}</el-tag>
@@ -57,20 +57,21 @@
       <!--<span class="result-item-text">程序输出</span> {{item.output}}-->
       <!--</span>-->
       <span class="result-item">
-        <span class="result-item-text">耗费内存</span> {{item.memory_used}}
+        <span class="result-item-text">耗费内存:</span> {{item.memory_used}}
       </span>
       <span class="result-item">
-        <span class="result-item-text">耗费时间</span> {{item.time_used}}
+        <span class="result-item-text">耗费时间:</span> {{item.time_used}}
       </span>
       <span class="result-item">
-        <span class="result-item-text">运行状态
+        <span class="result-item-text">运行状态:
           <span :class="[item.status.includes('Error')?'error':'default']"> {{item.status}}</span>
         </span>
          <img class="result-item-img" src="static/target.png" width="32" height="32"
-              v-show="index === (result.length-1)">
+              v-show="index === (returnResults.length-1)">
       </span>
     </div>
-    <run-result-dialog ref="dialog" :result="Runresult"></run-result-dialog>
+    <run-result-dialog ref="dialog" v-if="returnResults"
+                       :content="returnResults[returnResults.length-1]"></run-result-dialog>
   </div>
 </template>
 
@@ -172,9 +173,8 @@
           highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
           // 如果有hint方面的配置，也应该出现在这里
         },
-        result: [],
-        fullscreenLoading: false,
-        Runresult: {}
+        returnResults: [],
+        fullscreenLoading: false
       }
     },
     created(){
@@ -243,9 +243,7 @@
         }).then(response => {
           if (response.data.msg === MSG_OK) {
             console.log(response.data.result[0])
-            this.Runresult = this.getReturnResult('SubmitResult', response.data.result[0])
-            this.result.push(this.Runresult)
-            this.checkIsBreakthrough()
+            this.checkBreakthrough(this.getReturnResult('SubmitResult', response.data.result[0]))
           } else if (response.data.mag === MSG_NO) {
             this.showError(response.data.error)
           }
@@ -265,9 +263,7 @@
         }).then(response => {
           if (response.data.msg === MSG_OK) {
             console.log(response.data.result[0])
-            this.Runresult = this.getReturnResult('RunResult', response.data.result[0])
-            this.result.push(this.Runresult)
-            this.checkIsBreakthrough()
+            this.checkBreakthrough(this.getReturnResult('RunResult', response.data.result[0]))
           } else if (response.data.mag === MSG_NO) {
             this.showError(response.data.error)
           }
@@ -276,11 +272,11 @@
         })
       },
       /**
-       * checkIsBreakthrough() 闯关模式逻辑并未设计好 这里只是展示效果
+       * checkBreakthrough() 闯关模式逻辑并未设计好 这里只是展示效果
        */
-      checkIsBreakthrough(){
+      checkBreakthrough(returnResult){
         if (this.breakthrough) {
-          //当前处于闯关模式
+          //当前处于闯关模式 不会触发returnResults.push 结果数组不会变化
           console.log('当前处于闯关模式')
           this.$router.push('/home/problem/success-animation')
           this.setBreakThrough(false)
@@ -290,6 +286,7 @@
           this._showLoading()
           setTimeout(() => {
             this.$refs.dialog.show()
+            this.returnResults.push(returnResult)
           }, 1000)
           this.setBreakThrough(false)
         }

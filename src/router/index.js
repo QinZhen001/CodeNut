@@ -8,6 +8,11 @@ const Home = (resolve) => {
     resolve(moudle)
   })
 }
+const Welcome = (resolve) => {
+  import('components/welcome/welcome').then((moudle) => {
+    resolve(moudle)
+  })
+}
 const ProblemDetail = (resolve) => {
   import('components/problem-detail/problem-detail').then((moudle) => {
     resolve(moudle)
@@ -59,18 +64,23 @@ const ManageContests = (resolve) => {
   })
 }
 
+// 路径设置不是很好 懒得再调了
 export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/home'
+      redirect: '/welcome'
     },
     {
       path: '/home',
       component: Home
     },
     {
-      path: '/home/problem',
+      path: '/welcome',
+      component: Welcome
+    },
+    {
+      path: '/problem',
       component: ProblemDetail,
       meta: {scrollToTop: true},
       children: [
@@ -110,7 +120,8 @@ export default new Router({
           component: ManageContests
         }
       ]
-    }, {
+    },
+    {
       path: '/home/breakthrough',
       component: BreakThrough
       //component: TestCanvas

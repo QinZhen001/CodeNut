@@ -10,3 +10,5 @@ export const collectionList = state => state.collectionList
 export const templets = state => state.templets
 
 export const breakthrough = state => state.breakthrough
+
+export const headerData = state => state.headerData

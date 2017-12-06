@@ -69,7 +69,9 @@
       }
     },
     mounted() {
-      this.dynamicTags = this.StringToArray(this.user.tag)
+      if (this.user.tag) {
+        this.dynamicTags = this.stringToArray(this.user.tag)
+      }
     },
     methods: {
       closeTag(tag) {
@@ -171,10 +173,10 @@
         console.log(str)
         return str
       },
-      StringToArray(str) {
-        let arr = []
-        arr = str.split(',')
+      stringToArray(str) {
+        let arr = new Array(str.split(','))
         // 在每个逗号(,)处进行分解。
+        console.log(arr)
         return arr
       },
       ...mapMutations({

@@ -1,7 +1,7 @@
 <template>
   <transition name="el-fade-in-linear">
-    <div class="welcome" v-show="showFrag">
-      <slider ref="slider" :pages="welcomPages" :sliderinit="slider" @mousewheel.native="mouseScroll">
+    <div class="welcome">
+      <slider ref="slider" :pages="welcomePages" :sliderinit="slider" @mousewheel.native="mouseScroll">
       </slider>
       <div class="welcome-header">
         <span class="welcome-header-title">CodeNut</span>
@@ -21,38 +21,26 @@
         <img class="center-img" v-show="slider.currentPage===2" src="static/welcome/welcome_3.png" width="200"
              height="200" :key="slider.currentPage">
       </transition-group>
-      <el-button class="enter-home-btn" @click="linkToHome" type="success" size="medium">进入主页<i
+      <el-button class="enter-home-btn" @click="linkToHome" type="success" size="medium">进入主页 <i
         class="el-icon-d-arrow-right"></i></el-button>
+      <login-dialog ref="loginDialog">
+      </login-dialog>
+      <register-dialog ref="registerDialog">
+      </register-dialog>
     </div>
   </transition>
 </template>
 
 <script type="text/ecmascript-6">
-  import slider from 'vue-concise-slider'// 引入slider组件
+  import Slider from 'vue-concise-slider'// 引入slider组件
+  import LoginDialog from 'base/logindialog/logindialog'
+  import RegisterDialog from 'base/registerdialog/registerdialog'
+  import { welcomePages } from 'common/js/data'
 
   export default{
     data(){
       return {
-        welcomPages: [
-          {
-            title: '邑大人自己的Online Judge平台',
-            style: {
-              background: '#409EFF'
-            }
-          },
-          {
-            title: '打造舒适的在线编程体验',
-            style: {
-              background: '#FA5555'
-            }
-          },
-          {
-            title: '一步一步，逐渐掌握知识技能',
-            style: {
-              background: '#EB9E05'
-            }
-          }
-        ],
+        welcomePages: welcomePages,
         slider: {
           currentPage: 0,  //当前页码
           thresholdDistance: 200,   //滑动判定距离
@@ -62,25 +50,22 @@
           infinite: 1, //无限滚动前后遍历数
           slidesToScroll: 1 //每次滑动项数
         },
-        showFrag: true
+        showLoginDialog: false,
+        showRegisterDialog: false
       }
     },
     methods: {
       linkToHome(){
-        this.hide()
+        this.$router.replace('/home')
       },
       clickLoginBtn(){
-        this.$emit('clickLogin')
+        this.$refs.loginDialog.show()
       },
       clickRegisterBtn(){
-        this.$emit('clickRegister')
+        this.$refs.registerDialog.show()
       },
       linkToselfStudy(){
-        this.hide()
-        this.$emit('linkToselfStudy')
-      },
-      hide(){
-        this.showFrag = false
+        this.$router.replace('/home/selfstudy')
       },
       mouseScroll(e){
         console.log(e.wheelDelta)
@@ -94,7 +79,9 @@
       }
     },
     components: {
-      slider
+      Slider,
+      LoginDialog,
+      RegisterDialog
     }
   }
 </script>

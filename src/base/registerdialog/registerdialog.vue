@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="注册用户" :visible.sync="dialogShow" :before-close="handleBeforeClose">
+  <el-dialog title="注册用户" :visible.sync="visible" :before-close="handleBeforeClose">
     <el-form>
       <el-form-item label="账号:" :label-width="formLabelWidth">
         <el-input v-model.trim.lazy="username" placeholder="请输入用户名" ref="username"
@@ -40,12 +40,6 @@
 
   export default {
     components: {ElFormItem},
-    props: {
-      dialogVisible: {
-        type: Boolean,
-        default: false
-      }
-    },
     data() {
       return {
         username: '',
@@ -54,7 +48,7 @@
 //        school: '',
 //        occupation: '',
         formLabelWidth: '50px',
-        dialogShow: false
+        visible: false
       }
     },
     created() {
@@ -63,9 +57,15 @@
       this.email = ''
     },
     methods: {
+      show(){
+        this.visible = true
+      },
+      hide(){
+        this.visible = false
+      },
       clickCancel() {
-        this.$emit('closeRegisterDialog')
         this._clearData()
+        this.hide()
       },
       clickConfirm() {
         let url = `${baseUrl}/users`
@@ -84,8 +84,7 @@
               type: 'success'
             })
             // 只有注册成功才关闭dialog
-            this.$emit('closeRegisterDialog')
-            this._clearData()
+            this.clickCancel()
           } else if (response.data.msg === MSG_NO) {
             // 该用户已存在
             this.$notify({
@@ -104,8 +103,7 @@
         })
       },
       handleBeforeClose(done) {
-        this.$emit('closeRegisterDialog')
-        this._clearData()
+        this.clickCancel()
       },
       _clearData() {
         this.username = ''
@@ -122,11 +120,6 @@
 //          this._setUserRole(userId)
 //        })
 //      }
-    },
-    watch: {
-      dialogVisible(newVal) {
-        this.dialogShow = newVal
-      }
     },
     computed: {
       showUserPrompt: function () {

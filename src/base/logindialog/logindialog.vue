@@ -1,5 +1,5 @@
 <template>
-  <el-dialog title="用户登录" :visible.sync="dialogShow" :before-close="handleBeforeClose">
+  <el-dialog title="用户登录" :visible.sync="visible" :before-close="handleBeforeClose">
     <el-form>
       <el-form-item label="账号:" :label-width="formLabelWidth">
         <el-input v-model.trim.lazy="username" placeholder="请输入账号" ref="username" spellcheck="false"></el-input>
@@ -17,34 +17,37 @@
 
 <script type="text/ecmascript-6">
   import axios from 'axios'
+  import User from 'common/js/user'
   import { saveToken, getToken } from 'common/js/cache'
-  import { baseUrl } from 'common/js/data'
+  import { baseUrl, MSG_OK } from 'common/js/data'
+  import { mapMutations, mapActions } from 'vuex'
 
   export default {
-    props: {
-      dialogVisible: {
-        type: Boolean,
-        default: false
-      }
-    },
     data() {
       return {
         username: '',
         password: '',
         formLabelWidth: '50px',
-        dialogShow: false
+        visible: false
       }
     },
     mounted() {
-      this.username = ''
-      this.password = ''
+      this.clearData()
     },
     methods: {
-      clickCancel() {
-        this.dialogShow = false
-        this.$emit('closeLoginDialog')
+      show(){
+        this.visible = true
+      },
+      hide(){
+        this.visible = false
+      },
+      clearData(){
         this.username = ''
         this.password = ''
+      },
+      clickCancel() {
+        this.clearData()
+        this.hide()
       },
       clickConfirm() {
         let url = `${baseUrl}/tokens`
@@ -52,11 +55,7 @@
           console.log(response)
           // 登录成功保存token到localStorage
           saveToken(response.data.result[0].token)
-          console.log(response.data.result[0].token)
-          // 登录后 修改axios的拦截器
-          this._changeAxiosInterceptor()
-          this.$emit('closeLoginDialog')
-          this.$emit('loginSuccess', response.data.result[0].id)
+          this.afterLoginSuccess(response.data.result[0].id)
           this.$notify({
             title: '成功',
             message: '登录成功',
@@ -68,16 +67,34 @@
             title: '错误',
             message: '登录失败'
           })
-          this.username = ''
-          this.password = ''
+          this.clearData()
         })
         console.log(this.username)
         console.log(this.password)
       },
+      afterLoginSuccess(id) {
+        // 登录后 修改axios的拦截器
+        this._changeAxiosInterceptor()
+        console.log(id)
+        // 在这里 同时保存用户信息 到Vuex
+        let url = `${baseUrl}/users/${id}`
+        axios.get(url).then(response => {
+          if (response.data.msg === MSG_OK) {
+            this.setHeaderData(['退出登录', '自学资料', '用户中心'])
+            this.saveOneUser(new User(response.data.result[0]))
+            this.linkToHome()
+            this.clickCancel()
+          }
+        }, response => {
+          console.log(response)
+          this.afterLoginSuccess(id)
+        })
+      },
+      linkToHome(){
+        this.$router.replace('/home')
+      },
       handleBeforeClose(done) {
-        this.$emit('closeLoginDialog')
-        this.username = ''
-        this.password = ''
+        this.clickCancel()
       },
       _changeAxiosInterceptor() {
         axios.interceptors.request.use(
@@ -92,12 +109,14 @@
           err => {
             return Promise.reject(err)
           })
-      }
-    },
-    watch: {
-      dialogVisible(newVal) {
-        this.dialogShow = newVal
-      }
+      },
+      ...mapMutations({
+        setHeaderData: 'SET_HEADERDATA'
+      }),
+      ...mapActions([
+        'saveOneUser',
+        'clearOneUser'
+      ])
     }
   }
 </script>

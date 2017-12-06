@@ -7,7 +7,9 @@
       </el-table-column>
       <el-table-column prop="title" label="题目" width="420" align="left" sortable>
         <template scope="scope">
-          <router-link to="/home/problem" @click.native.stop="xxxxx(scope.row)">{{ scope.row.title }}</router-link>
+          <router-link rel='noopener' to="/problem" @click.native.stop="clickOneProblem(scope.row)">
+            {{ scope.row.title }}
+          </router-link>
         </template>
       </el-table-column>
       <el-table-column prop="tag" label="标签" width="300" align="left" :formatter="calcTag" sortable>
@@ -58,7 +60,7 @@
       this._getProblems()
     },
     methods: {
-      xxxxx(row){
+      clickOneProblem(row){
         this.saveOneProblem(new Problem(row))
         console.log('dianji')
       },
@@ -78,7 +80,7 @@
       _rowclick(row, event, column) {
         console.log(row)
         this.saveOneProblem(new Problem(row))
-        this.$router.push('/home/problem')
+        this.$router.push('/problem')
       },
       calcDifficultyTag(level) {
         if (level === 1) {

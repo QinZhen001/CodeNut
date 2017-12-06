@@ -298,6 +298,27 @@ export const results = [
   {name: 'Run Successfully', value: '运行成功但是不可预知的错误发生'}
 ]
 
+export const welcomePages = [
+  {
+    title: '邑大人自己的Online Judge平台',
+    style: {
+      background: '#409EFF'
+    }
+  },
+  {
+    title: '打造舒适的在线编程体验',
+    style: {
+      background: '#FA5555'
+    }
+  },
+  {
+    title: '一步一步，逐渐掌握知识技能',
+    style: {
+      background: '#EB9E05'
+    }
+  }
+]
+
 export const baseUrl = 'https://api.txdna.cn'
 
 // export const baseUrl = '0.0.0.0:5000'

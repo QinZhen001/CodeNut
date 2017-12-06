@@ -3,10 +3,10 @@
     <el-dialog
       title="运行结果"
       :visible.sync="dialogVisible">
-      <span slot="title"> {{result.status}}</span>
+      <span slot="title"> {{content.status}}</span>
       <div class="dialog-container">
-        <div class="explanation" v-text="getExplanation(result.status)"></div>
-        <div class="text" v-html="result.output"></div>
+        <div class="explanation" v-text="getExplanation(content.status)"></div>
+        <div class="text" v-html="content.output"></div>
       </div>
       <span slot="footer" class="dialog-footer">
          <el-button @click="dialogVisible = false">取 消</el-button>
@@ -21,9 +21,11 @@
 
   export default{
     props: {
-      result: {
-        type: Object
-
+      content: {
+        type: Object,
+        default: function () {
+          return {}
+        }
       }
     },
     data(){

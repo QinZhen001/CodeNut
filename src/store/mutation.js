@@ -1,6 +1,9 @@
 import * as types from './mutation-types'
 
 const mutations = {
+  [types.SET_HEADERDATA](state, headerData){
+    state.headerData = headerData
+  },
   [types.SET_PROBLEM](state, problem) {
     state.problem = problem
   },

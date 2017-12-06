@@ -22,6 +22,12 @@ Vue.use(ElementUI)
 Vue.use(VueCodeMirror)
 Vue.use(mavonEditor)
 
+router.beforeEach((to, from, next) => {
+  console.log(to)
+  console.log(from)
+  next()
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

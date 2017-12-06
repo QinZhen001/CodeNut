@@ -1,7 +1,7 @@
 <template>
   <div class="manger-center">
-    <v-head></v-head>
-    <v-sidebar></v-sidebar>
+    <manage-header></manage-header>
+    <manage-sidebar></manage-sidebar>
     <div class="content">
       <transition name="el-fade-in-linear">
         <router-view></router-view>
@@ -11,8 +11,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import vHead from './Header.vue'
-  import vSidebar from './Sidebar.vue'
+  import ManageHeader from './manage-header.vue'
+  import ManageSidebar from './manage-sidebar.vue'
   import { mapGetters } from 'vuex'
 
   export default {
@@ -22,7 +22,8 @@
       ])
     },
     components: {
-      vHead, vSidebar
+      ManageHeader,
+      ManageSidebar
     }
   }
 </script>
