@@ -11,20 +11,20 @@
           <el-col :span="6" :sm="24" :lg="5" :md="7" :xs="24">
             <user-card></user-card>
             <about-me></about-me>
-            <my-progress @chooseContest="chooseContest(contest)"></my-progress>
+            <my-progress></my-progress>
           </el-col>
 
           <el-col :span="14" :sm="24" :lg="13" :md="15" :xs="24">
             <collected-table :collectionList="collectionList"></collected-table>
-            <contest-table :contestList="contestList"></contest-table>
+            <contest-table :contestList="contestList" @joinContest="joinContest"></contest-table>
           </el-col>
           <el-col :span="2" :sm="0" :lg="3" :md="1" :xs="0">
             <div class="grid-content"></div>
           </el-col>
         </el-row>
+        <contest-dialog ref="contestDialog" :contest="curContest"></contest-dialog>
       </div>
     </transition>
-    <contest-dialog :contest="curContest"></contest-dialog>
   </div>
 </template>
 
@@ -51,15 +51,14 @@
       axios.get(url).then(response => {
         if (response.data.msg === MSG_OK) {
           this.contestList = response.data.result
-          console.log('created')
-          console.log(this.contestList)
         }
       }, response => {})
     },
     methods: {
-      chooseContest(contest){
-        console.log(contest)
+      joinContest(contest){
+        console.log('joinContest')
         this.curContest = contest
+        this.$refs.contestDialog.show()
       }
     },
     computed: {
@@ -67,6 +66,13 @@
         'collectionList',
         'user'
       ])
+    },
+    watch: {
+      user(newUser){
+        if (newUser.user_id === null || newUser.user_id === '' || newUser.user_id === undefined) {
+          this.$router.replace('/home')
+        }
+      }
     },
     components: {
       UserCard,

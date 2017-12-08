@@ -2,15 +2,18 @@
   <el-dialog
     title="提示"
     :visible.sync="visible">
-    <span class="contest-dialog-title">是否要加入{{contest.sponsor}}举办的 “{{contest.title}}” 比赛?</span>
-    <div class="password-wrapper">
-      <span class="password-text">密码:</span>
-      <el-input class="password-input" v-model="password" placeholder="请输入比赛密码" size="small"></el-input>
-    </div>
+    <el-form>
+      <el-form-item class="dialog-item">
+        <p class="text">是否要加入{{contest.sponsor}}举办的  “{{contest.title}}”  比赛?</p>
+      </el-form-item>
+      <el-form-item class="dialog-item" label="密码:" :label-width="formLabelWidth">
+        <el-input class="password-input" v-model="password" placeholder="请输入比赛密码(可以为空)" size="small"></el-input>
+      </el-form-item>
+    </el-form>
     <span slot="footer" class="dialog-footer">
-    <el-button @click="hide">取 消</el-button>
-    <el-button type="primary" @click="comfirmContest">确 定</el-button>
-        </span>
+      <el-button @click="hide">取 消</el-button>
+      <el-button type="primary" @click="comfirmContest">确 定</el-button>
+    </span>
   </el-dialog>
 </template>
 
@@ -27,7 +30,8 @@
     data(){
       return {
         visible: false,
-        password: ''
+        password: '',
+        formLabelWidth: '50px'
       }
     },
     methods: {
@@ -42,18 +46,17 @@
         this.password = ''
       },
       comfirmContest(){
-        let url = `${baseUrl}/contests/${this.chooseContest.id}/users`
+        let url = `${baseUrl}/contests/${this.contest.id}/users`
         axios.post(url, {
           password: this.password
         }).then(response => {
           if (response.data.msg === MSG_OK) {
-            this.contestDialogVisible = false
             this.$notify({
               title: '成功',
               message: '参加比赛成功！',
               type: 'success'
             })
-            this.password = ''
+            this.hide()
           } else if (response.data.msg === MSG_NO) {
             this.$notify({
               title: '失败',
@@ -68,18 +71,10 @@
 </script>
 
 <style lang="stylus" scoped rel="stylesheet/stylus">
-  .el-dialog
-    .el-dialog__body
-      padding 10px 20px
-      .contest-dialog-title
-        font-size 18px
-        font-weight 400
-      .password-wrapper
-        margin-top 15px
-        .password-text
-          font-size 16px
-          font-weight 300
-        .password-input
-          margin-left 3px
-          width 60%
+  .dialog-item
+    margin-bottom 10px
+    .text
+      margin 0 0 0 5px
+      font-size 20px
+      line-height 20px
 </style>

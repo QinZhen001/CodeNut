@@ -38,7 +38,7 @@
         console.log(row)
       },
       handleJoin(index, row){
-        this.$emit('chooseContest', row)
+        this.$emit('joinContest', row)
       },
       calcTag(row, column, cellValue) {
         if (cellValue === '') {

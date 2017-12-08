@@ -30,7 +30,7 @@
           <el-tag type="warning" v-text="calcGrade"></el-tag>
         </div>
         <div class="panel-body-bottom">
-          <el-tag :key="tag" v-for="(tag,index) in dynamicTags" :closable="true" @close="closeTag(tag)"
+          <el-tag :key="index" v-for="(tag,index) in dynamicTags" :closable="true" @close="closeTag(tag)"
                   :hit=true :type="calcType(index)">{{tag}}
           </el-tag>
           <el-input
