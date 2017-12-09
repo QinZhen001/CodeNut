@@ -36,6 +36,7 @@
     top 0
     bottom 0
     background-color #F2F2F2
+    z-index 100
     .content
       background: none repeat scroll 0 0 #fff;
       position: absolute;

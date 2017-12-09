@@ -1,8 +1,8 @@
 <template>
-  <div class="problem-edit">
+  <div class="problem-edit" v-show="showFlag">
     <div class="panel">
       <div class="panel-heading">
-        <i class="el-icon-arrow-left" @click.stop="quit"></i>
+        <i class="el-icon-arrow-left" @click.stop="hide"></i>
         <h3 class="panel-title" v-show="!isEdit">创建题目</h3>
         <h3 class="panel-title" v-show="isEdit">修改题目(ID:{{problem.id}})</h3>
         <el-tag class="quit-tag" type="danger" @click.native.stop="quit">退出</el-tag>
@@ -33,7 +33,7 @@
               <codemirror
                 class="program-edit-inner"
                 v-model="form.program"
-                :options="editorOptions1">
+                :options="officialEditorOptions">
               </codemirror>
             </div>
           </el-form-item>
@@ -46,7 +46,7 @@
                       type="textarea" :rows="5" placeholder="Enter a sample output testcase"></el-input>
           </el-form-item>
           <el-form-item label="模板选择">
-            <el-checkbox-group v-model="form.checkLanguageList">
+            <el-checkbox-group v-model="form.checkedLanguageList">
               <el-checkbox v-for="(item,index) in Languages" :key="index" :label="item"></el-checkbox>
             </el-checkbox-group>
           </el-form-item>
@@ -78,7 +78,7 @@
               <codemirror
                 ref="myEditor"
                 v-model="code"
-                :options="editorOptions2">
+                :options="templetEditorOptions">
               </codemirror>
             </div>
             <el-button class="setup-btn" @click="clickBtn"
@@ -168,15 +168,16 @@
     },
     data(){
       return {
+        showFlag: false,
         form: {
           title: '',
           description: '',
           level: 1,
           tag: '',
           program: '',
-          input: '',
-          output: '',
-          checkLanguageList: ['C']
+          input: '', //输入
+          output: '', //输出
+          checkedLanguageList: ['C']  //选择了的语言
         },
         toolbars: {
           bold: true, // 粗体
@@ -199,7 +200,7 @@
           alignright: true, // 右对齐
           preview: true// 预览
         },
-        editorOptions1: {
+        officialEditorOptions: {
           tabSize: 4,
           mode: 'text/x-csrc',
           theme: 'default',
@@ -213,7 +214,7 @@
           highlightSelectionMatches: {showToken: /\w/, annotateScrollbar: true}
           // 如果有hint方面的配置，也应该出现在这里
         },
-        editorOptions2: {
+        templetEditorOptions: {
           tabSize: 4,
           mode: 'text/x-csrc',
           theme: 'default',
@@ -241,106 +242,72 @@
         templetJs: {value: 'javascript', text: 'JavaScript', defaultCode: ''},
         templetRuby: {value: 'ruby', text: 'Ruby', defaultCode: ''},
         templetGolang: {value: 'golang', text: 'Go', defaultCode: ''},
-        newTitle: ''
+        initialTitle: ''
       }
     },
     methods: {
-      quit(){
-        this._clearAllData()
-        this.$emit('editFinish')
-      },
       clickBtn(){
-        let Base64 = require('js-base64').Base64
         //把最后一次模板templet加上
-        this._addTemplet()
-        let array = this._pushALLTemplets()
+        this.addCodeToTemplet()
+        let array = this.pushALLTemplets()
         console.log(array)
         let resultTemplets = []
-        for (let i = 0; i < this.form.checkLanguageList.length; i++) {
-          resultTemplets.push(array.find((item) => item.text === this.form.checkLanguageList[i]))
+        for (let i = 0; i < this.form.checkedLanguageList.length; i++) {
+          resultTemplets.push(array.find((item) => item.text === this.form.checkedLanguageList[i]))
         }
-        //console.log(resultTemplets)
-        console.log(this.isEdit)
-
-        if (this.isEdit) {
-          //修改题目
-          console.log('修改题目')
-          this.reviseProblem(Base64, resultTemplets)
-        } else {
-          //创建题目
-          this.setupProblem(Base64, resultTemplets)
-        }
+        this.isEdit ? this.reviseProblem(resultTemplets) : this.setupProblem(resultTemplets)
       },
-      setupProblem(Base64, resultTemplets){
+      setupProblem(resultTemplets){
         let url = `${baseUrl}/problems`
-        axios.post(url, {
-          title: this.form.title,
-          description: this.form.description,
-          level: this.form.level + '',
-          tag: this.form.tag,
-          program: Base64.encode(this.form.program),
-          code: JSON.stringify(resultTemplets),
-          input: Base64.encode(this.form.input),
-          output: Base64.encode(this.form.output)
-        }).then(response => {
+        axios.post(url, this.createProblem(this.form.title, resultTemplets)).then(response => {
           if (response.data.msg === MSG_OK) {
-            this.$notify({
-              title: '成功',
-              message: `成功创建题目:${response.data.result[0].title}`,
-              type: 'success'
-            })
+            this.notifySuccess('创建题目成功！')
             //成功后清除数据
             this._clearAllData()
             this.$emit('editFinish')
           } else if (response.data.msg === MSG_NO) {
-            this.$notify({
-              title: '创建失败',
-              message: `${response.data.error}`,
-              type: 'error'
-            })
+            this.notifyError(response.data.error)
           }
         }, response => {})
       },
-      reviseProblem(Base64, resultTemplets){
+      reviseProblem(resultTemplets){
         let url = `${baseUrl}/problems/${this.problem.id}`
-        let resultTitle = this.form.title === this.newTitle ? null : this.form.title
-        if (resultTitle) {
-          this.reviseProblemWithTitle(url, Base64, resultTemplets)
+        //this.form.title === this.initialTitle 相等证明标题并未修改过 不相等证明标题修改过
+        if (this.form.title === this.initialTitle) {
+          console.log('未改变标题')
+          this.reviseProblemNoChangeTitle(url, resultTemplets)
         } else {
-          this.reviseProblemWithoutTitle(url, Base64, resultTemplets)
+          this.reviseProblemChangeTitle(url, resultTemplets)
         }
       },
-      reviseProblemWithTitle(url, Base64, resultTemplets){
-        axios.put(url, {
-          title: this.form.title,
-          description: this.form.description,
-          level: this.form.level + '',
-          tag: this.form.tag,
-          program: Base64.encode(this.form.program),
-          code: JSON.stringify(resultTemplets),
-          input: Base64.encode(this.form.input),
-          output: Base64.encode(this.form.output)
-        }).then(response => {
+      reviseProblemNoChangeTitle(url, resultTemplets){
+        axios.put(url, this.createProblem(null, resultTemplets)
+        ).then(response => {
           if (response.data.msg === MSG_OK) {
-            this.$notify({
-              title: '成功',
-              message: '修改题目成功',
-              type: 'success'
-            })
+            this.notifySuccess()
             //成功后清除数据
             this._clearAllData()
             this.$emit('editFinish')
           } else if (response.data.msg === MSG_NO) {
-            this.$notify({
-              title: '修改失败',
-              message: `${response.data.error}`,
-              type: 'error'
-            })
+            this.notifyError(response.data.error)
           }
         }, response => {})
       },
-      reviseProblemWithoutTitle(url, Base64, resultTemplets){
-        axios.put(url, {
+      reviseProblemChangeTitle(url, resultTemplets){
+        axios.put(url, this.createProblem(this.form.title, resultTemplets)).then(response => {
+          if (response.data.msg === MSG_OK) {
+            this.notifySuccess()
+            //成功后清除数据
+            this._clearAllData()
+            this.$emit('editFinish')
+          } else if (response.data.msg === MSG_NO) {
+            this.notifyError(response.data.error)
+          }
+        }, response => {})
+      },
+      createProblem(title, resultTemplets){
+        let Base64 = require('js-base64').Base64
+        let tempProblem = {
           description: this.form.description,
           level: this.form.level + '',
           tag: this.form.tag,
@@ -348,24 +315,27 @@
           code: JSON.stringify(resultTemplets),
           input: Base64.encode(this.form.input),
           output: Base64.encode(this.form.output)
-        }).then(response => {
-          if (response.data.msg === MSG_OK) {
-            this.$notify({
-              title: '成功',
-              message: '修改题目成功',
-              type: 'success'
-            })
-            //成功后清除数据
-            this._clearAllData()
-            this.$emit('editFinish')
-          } else if (response.data.msg === MSG_NO) {
-            this.$notify({
-              title: '修改失败',
-              message: `${response.data.error}`,
-              type: 'error'
-            })
-          }
-        }, response => {})
+        }
+        if (title) {
+          tempProblem.title = title
+        }
+        console.log('tempProblem')
+        console.log(tempProblem)
+        return tempProblem
+      },
+      notifySuccess(text = '修改题目成功！'){
+        this.$notify({
+          title: '成功',
+          message: text,
+          type: 'success'
+        })
+      },
+      notifyError(error){
+        this.$notify({
+          title: '修改失败',
+          message: error,
+          type: 'error'
+        })
       },
       _clearAllData(){
         //清除所有数据 回到默认状态
@@ -376,12 +346,12 @@
         this.form.program = ''
         this.form.input = ''
         this.form.output = ''
-        this.form.checkLanguageList = ['C']
+        this.form.checkedLanguageList = ['C']
         this.code = ''
         this.selectTheme = editorThemes[0]
         this.selectLanguage = languages[0]
-        this.editorOptions2.mode = this.editorModes[0]
-        this.editorOptions2.theme = this.selectTheme
+        this.templetEditorOptions.mode = this.editorModes[0]
+        this.templetEditorOptions.theme = this.selectTheme
         this.templetC = {value: 'c', text: 'C', defaultCode: ''}
         this.templetCpp = {value: 'cpp', text: 'C++', defaultCode: ''}
         this.templetCsharp = {value: 'csharp', text: 'C#', defaultCode: ''}
@@ -396,7 +366,7 @@
       handleCommandLangage(index) {
         //切换语言
         console.log('xuan ' + index)
-        this.editorOptions2.mode = this.editorModes[index]
+        this.templetEditorOptions.mode = this.editorModes[index]
         this.selectLanguage = this.Languages[index]
         //如果之前(一次编辑中)写过code   那么code=之前的对应的templet的defaultCode
         let result = this.templets.find((item) => item && item.text === this.selectLanguage)
@@ -410,14 +380,13 @@
         //当语言下拉菜单状态改变
         if (isShow) {
           //当语言下拉菜单展开
-          this._addTemplet()
-          let res = this._pushALLTemplets()
+          this.addCodeToTemplet()
           //  这里有bug (showPromblemInfo获取了setTemplets 这里又修改了Templets )
           //   解决：在此之前 每个对应模板加入相应的的数据
-          this.setTemplets(res)
+          this.setTemplets(this.pushALLTemplets())
         }
       },
-      _pushALLTemplets(){
+      pushALLTemplets(){
         //把所有模板集合成一个数组返回
         let result = []
         result.push(this.templetC)
@@ -430,48 +399,65 @@
         result.push(this.templetGolang)
         return result
       },
-      _addTemplet(){
+      addCodeToTemplet(){
         //把code加入到当前选中的语言的 对应的语言模板的defaultCode中
-        if (this.selectLanguage === 'C') {
-          this.templetC.defaultCode = this.code
-        } else if (this.selectLanguage === 'C++') {
-          this.templetCpp.defaultCode = this.code
-        } else if (this.selectLanguage === 'C#') {
-          this.templetCsharp.defaultCode = this.code
-        } else if (this.selectLanguage === 'Java') {
-          this.templetJava.defaultCode = this.code
-        } else if (this.selectLanguage === 'Python3') {
-          this.templetPython.defaultCode = this.code
-        } else if (this.selectLanguage === 'JavaScript') {
-          this.templetJs.defaultCode = this.code
-        } else if (this.selectLanguage === 'Ruby') {
-          this.templetRuby.defaultCode = this.code
-        } else if (this.selectLanguage === 'Go') {
-          this.templetGolang.defaultCode = this.code
+        switch (this.selectLanguage) {
+          case 'C':
+            this.templetC.defaultCode = this.code
+            break
+          case 'C++':
+            this.templetCpp.defaultCode = this.code
+            break
+          case 'C#':
+            this.templetCsharp.defaultCode = this.code
+            break
+          case 'Java':
+            this.templetJava.defaultCode = this.code
+            break
+          case 'Python3':
+            this.templetPython.defaultCode = this.code
+            break
+          case 'JavaScript':
+            this.templetJs.defaultCode = this.code
+            break
+          case 'Ruby':
+            this.templetRuby.defaultCode = this.code
+            break
+          case 'Go':
+            this.templetGolang.defaultCode = this.code
+            break
         }
       },
-      showPromblemInfo(){
+      hide(){
+        this.showFlag = false
         this._clearAllData()
+        this.$emit('editFinish')
+      },
+      show(){
+        this._clearAllData()
+        this.showFlag = true
         //处于编辑题目模式 先展示出题目信息
         let url1 = `${baseUrl}/problems/${this.problem.id}`
         axios.get(url1).then(response => {
           if (response.data.msg === MSG_OK) {
             this.form.title = response.data.result[0].title
-            this.newTitle = response.data.result[0].title
+            this.initialTitle = response.data.result[0].title
             this.form.description = response.data.result[0].description
             this.form.level = response.data.result[0].level
             this.form.tag = response.data.result[0].tag
           }
         }, response => {})
+
         let url2 = `${baseUrl}/problems/${this.problem.id}/codes`
         axios.get(url2).then(response => {
           if (response.data.msg === MSG_OK) {
-            console.log(JSON.parse(response.data.result[0].code))
-            this.setTemplets(JSON.parse(response.data.result[0].code))
-            //templetC templetCpp templetCsharp... 加入对应的数据 明天写。
+            console.log('setTemplets')
+            //Templets后端捕获时出错
+            this.setTemplets(response.data.result[0].code)
             this.changeTemplets()
           }
         }, response => {})
+
         this.getProblemStd()
       },
       getProblemStd(){
@@ -486,100 +472,75 @@
           }
         }, response => {})
       },
+      findAndAddTemp(lang){
+        console.log(this.templets)
+        //由于这里后端的json数据有误 所以暂时采用静态数据
+//        let resultTemp =
+//          this.templets.find((item) => {
+//            if (item) {
+//              item.text === lang
+//            }
+//          }) || null
+
+        let resultTemp = null  //resultTemp静态设置为了null 所以模板选择了所有语言
+        switch (lang) {
+          case 'C':
+            this.templetC = resultTemp || this.templetC
+            this.form.checkedLanguageList.push(this.templetC.text)
+            break
+          case 'C++':
+            this.templetCpp = resultTemp || this.templetCpp
+            this.form.checkedLanguageList.push(this.templetCpp.text)
+            break
+          case 'C#':
+            this.templetCsharp = resultTemp || this.templetCsharp
+            this.form.checkedLanguageList.push(this.templetCsharp.text)
+            break
+          case 'Java':
+            this.templetJava = resultTemp || this.templetJava
+            this.form.checkedLanguageList.push(this.templetJava.text)
+            break
+          case 'Python3':
+            this.templetPython = resultTemp || this.templetPython
+            this.form.checkedLanguageList.push(this.templetPython.text)
+            break
+          case 'JavaScript':
+            this.templetJs = resultTemp || this.templetJs
+            this.form.checkedLanguageList.push(this.templetJs.text)
+            break
+          case 'Ruby':
+            this.templetRuby = resultTemp || this.templetRuby
+            this.form.checkedLanguageList.push(this.templetRuby.text)
+            break
+          case 'Go':
+            this.templetGolang = resultTemp || this.templetGolang
+            this.form.checkedLanguageList.push(this.templetGolang.text)
+            break
+        }
+      },
       changeTemplets(){
-        this.form.checkLanguageList = []
-        let tempC = this.templets.find((item) => {
-          if (item) {
-            return item.text === 'C'
-          }
-        })
-        if (tempC) {
-          this.templetC = tempC
-          this.form.checkLanguageList.push(this.templetC.text)
+        this.form.checkedLanguageList = []
+        this.findAndAddTemp('C')
+        this.findAndAddTemp('C++')
+        this.findAndAddTemp('C#')
+        this.findAndAddTemp('Java')
+        this.findAndAddTemp('Python3')
+        this.findAndAddTemp('JavaScript')
+        this.findAndAddTemp('Ruby')
+        this.findAndAddTemp('Go')
+        try {
+          this.code = this.templets.find((item) => item && item.text === this.selectLanguage).defaultCode
+        } catch (error) {
+          this.code = ''
         }
-
-        let tempCpp = this.templets.find((item) => {
-          if (item) {
-            return item.text === 'C++'
-          }
-        })
-        if (tempCpp) {
-          this.templetCpp = tempCpp
-          this.form.checkLanguageList.push(this.templetCpp.text)
-        }
-
-        let tempCsharp = this.templets.find((item) => {
-          if (item) {
-            return item.text === 'C#'
-          }
-        })
-        if (tempCsharp) {
-          this.templetCsharp = tempCsharp
-          this.form.checkLanguageList.push(this.templetCsharp.text)
-        }
-
-        let tempJava = this.templets.find((item) => {
-          if (item) {
-            return item.text === 'Java'
-          }
-        })
-        if (tempJava) {
-          this.templetJava = tempJava
-          this.form.checkLanguageList.push(this.templetJava.text)
-        }
-        let tempPython = this.templets.find((item) => {
-          if (item) {
-            return item.text === 'Python3'
-          }
-        })
-        if (tempPython) {
-          this.templetPython = tempPython
-          this.form.checkLanguageList.push(this.templetPython.text)
-        }
-
-        let tempJs = this.templets.find((item) => {
-          if (item) {
-            return item.text === 'JavaScript'
-          }
-        })
-        if (tempJs) {
-          this.templetJs = tempJs
-          this.form.checkLanguageList.push(this.templetJs.text)
-        }
-
-        let tempRuby = this.templets.find((item) => {
-          if (item) {
-            return item.text === 'Ruby'
-          }
-        })
-        if (tempRuby) {
-          this.templetRuby = tempRuby
-          this.form.checkLanguageList.push(this.templetRuby.text)
-        }
-
-        let tempGo = this.templets.find((item) => {
-          if (item) {
-            return item.text === 'Go'
-          }
-        })
-        if (tempGo) {
-          this.templetGolang = tempGo
-          this.form.checkLanguageList.push(this.templetGolang.text)
-        }
-
-        this.code = this.templets.find((item) => item && item.text === this.selectLanguage).defaultCode || ''
       },
       calcBtnText(){
         //计算btn的文字
-        if (this.isEdit) {
-          return '修改题目'
-        } else {
-          return '创建题目'
-        }
+        return this.isEdit ? '修改题目' : '创建题目'
       },
       handleCommandTheme(command){
         //修改主题
-        this.editorOptions2.theme = command
+        this.templetEditorOptions.theme = command
         this.selectTheme = command
       },
       ...mapMutations({
@@ -598,6 +559,7 @@
 <style lang="stylus" scoped rel="stylesheet/stylus">
 
   .problem-edit
+
     .panel
       border-radius: 5px;
       margin-bottom: 20px;

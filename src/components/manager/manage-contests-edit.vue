@@ -1,52 +1,54 @@
 <template>
-  <div class="problem-edit">
-    <div class="panel">
-      <div class="panel-heading">
-        <i class="el-icon-arrow-left" @click.stop="quit"></i>
-        <h3 class="panel-title">更新比赛</h3>
-        <h3 class="panel-title">比赛(ID:{{contest.id}})</h3>
-        <el-tag class="quit-tag" type="danger" @click.native.stop="quit">退出</el-tag>
-      </div>
-      <div class="panel-body">
-        <el-form ref="form" :model="form" label-width="80px">
-          <el-form-item label="比赛题目">
-            <el-input class="short-input" v-model="form.title" spellcheck="false" size="small"></el-input>
-          </el-form-item>
-          <el-form-item label="描述" prop="description">
-            <el-input v-model="form.description" spellcheck="false" type="textarea" :rows="5"></el-input>
-          </el-form-item>
-          <el-form-item class="password-item" prop="password">
-            <div>
-              <el-checkbox class="time-checkbox" v-model="canChangeTime">修改比赛时间</el-checkbox>
-              <el-date-picker
-                v-show="canChangeTime"
-                format="yyyy-MM-dd HH:mm:ss"
-                v-model="date"
-                type="datetimerange"
-                :picker-options="pickerOptions"
-                placeholder="选择时间范围"
-                @change="geteDditTime"
-                align="left">
-              </el-date-picker>
-            </div>
-          </el-form-item>
-          <el-form-item class="autojoin-item">
-            <el-checkbox v-model="isAutoJoin">自动批准用户加入</el-checkbox>
-          </el-form-item>
-          <el-form-item class="password-item" prop="password">
-            <div>
-              <el-checkbox class="password-checkbox" v-model="canChangePassword">修改比赛密码</el-checkbox>
-              <el-input class="short-input password-input" v-model="form.password" spellcheck="false"
-                        v-show="canChangePassword"></el-input>
-            </div>
-          </el-form-item>
-          <el-button class="setup-btn" @click="clickBtn"
-                     type="success">更新比赛
-          </el-button>
-        </el-form>
+  <transition name="el-fade-in-linear">
+    <div class="problem-edit">
+      <div class="panel">
+        <div class="panel-heading">
+          <i class="el-icon-arrow-left" @click.stop="quit"></i>
+          <h3 class="panel-title">更新比赛</h3>
+          <h3 class="panel-title">比赛(ID:{{contest.id}})</h3>
+          <el-tag class="quit-tag" type="danger" @click.native.stop="quit">退出</el-tag>
+        </div>
+        <div class="panel-body">
+          <el-form ref="form" :model="form" label-width="80px">
+            <el-form-item label="比赛题目">
+              <el-input class="short-input" v-model="form.title" spellcheck="false" size="small"></el-input>
+            </el-form-item>
+            <el-form-item label="描述" prop="description">
+              <el-input v-model="form.description" spellcheck="false" type="textarea" :rows="5"></el-input>
+            </el-form-item>
+            <el-form-item class="password-item" prop="password">
+              <div>
+                <el-checkbox class="time-checkbox" v-model="canChangeTime">修改比赛时间</el-checkbox>
+                <el-date-picker
+                  v-show="canChangeTime"
+                  format="yyyy-MM-dd HH:mm:ss"
+                  v-model="date"
+                  type="datetimerange"
+                  :picker-options="pickerOptions"
+                  placeholder="选择时间范围"
+                  @change="geteDditTime"
+                  align="left">
+                </el-date-picker>
+              </div>
+            </el-form-item>
+            <el-form-item class="autojoin-item">
+              <el-checkbox v-model="isAutoJoin">自动批准用户加入</el-checkbox>
+            </el-form-item>
+            <el-form-item class="password-item" prop="password">
+              <div>
+                <el-checkbox class="password-checkbox" v-model="canChangePassword">修改比赛密码</el-checkbox>
+                <el-input class="short-input password-input" v-model="form.password" spellcheck="false"
+                          v-show="canChangePassword"></el-input>
+              </div>
+            </el-form-item>
+            <el-button class="setup-btn" @click="clickBtn"
+                       type="success">更新比赛
+            </el-button>
+          </el-form>
+        </div>
       </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script type="text/ecmascript-6">
@@ -126,19 +128,11 @@
           password: this.form.password
         }).then(response => {
           if (response.data.msg === MSG_OK) {
-            this.$notify({
-              title: '成功',
-              message: '更新比赛成功',
-              type: 'success'
-            })
-            this.quit()
-            this.$emit('successEdit')
+            this.notifySuccess()
+            this._clearAllData()
+            this.$emit('editSuccess')
           } else if (response.data.msg === MSG_NO) {
-            this.$notify({
-              title: '更新失败',
-              message: response.data.error,
-              type: 'error'
-            })
+            this.notifyError(response.data.error)
           }
         }, response => {})
       },
@@ -150,20 +144,27 @@
           password: this.form.password
         }).then(response => {
           if (response.data.msg === MSG_OK) {
-            this.$notify({
-              title: '成功',
-              message: '更新比赛成功',
-              type: 'success'
-            })
-            this.quit()
+            this.notifySuccess()
+            this._clearAllData()
+            this.$emit('editSuccess')
           } else if (response.data.msg === MSG_NO) {
-            this.$notify({
-              title: '更新失败',
-              message: response.data.error,
-              type: 'error'
-            })
+            this.notifyError(response.data.error)
           }
         }, response => {})
+      },
+      notifySuccess(){
+        this.$notify({
+          title: '成功',
+          message: '更新比赛成功',
+          type: 'success'
+        })
+      },
+      notifyError(error){
+        this.$notify({
+          title: '更新失败',
+          message: error,
+          type: 'error'
+        })
       },
       _clearAllData(){
         this.date = []
@@ -174,7 +175,7 @@
         this.canChangePassword = false
         this.canChangeTime = false
       },
-      showInfo(){
+      show(){
         this._clearAllData()
         console.log(this.contest)
         this.form.title = this.contest.title

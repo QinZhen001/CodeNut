@@ -122,7 +122,7 @@
           let index = parseInt(Math.random() * 5)
           this.setProblem(new Problem({id: this.problems[index].linkProblemId}))
           this.setBreakThrough(true)
-          this.$router.push('/home/problem')
+          this.$router.push('/problem')
         }
       },
       ...mapMutations({
@@ -153,8 +153,7 @@
     .planet-wrapper
       position relative
       width 128px
-      animation: shake_up_down 3s ease-in-out;
-      animation-iteration-count: infinite;
+      animation: shake_up_down 3s ease-in-out infinite;
       &:hover
         cursor pointer
     .planet-simple-1-wrapper

@@ -2,7 +2,7 @@
   <div class="manage-problem">
     <confirm :text="confirmText" @confirm="confirmDele" ref="confirm"></confirm>
     <transition name="el-fade-in-linear">
-      <div v-show="!isShowEdit">
+      <div v-show="showFlag">
         <div class="handle-box">
           <el-button-group>
             <el-button type="primary" @click.stop="showSetupProblem">创建题目</el-button>
@@ -12,8 +12,7 @@
             <search></search>
           </div>
         </div>
-        <el-table :data="problemDatas" border ref="multipleTable" style="width: 80%"
-                  @selection-change="handleSelectionChange">
+        <el-table :data="problemDatas" border ref="multipleTable" style="width: 80%">
           <el-table-column type="selection" width="55"></el-table-column>
           <el-table-column prop="id" label="ID" width="150">
           </el-table-column>
@@ -49,7 +48,7 @@
       </div>
     </transition>
     <transition name="el-fade-in-linear">
-      <problem-edit v-show="isShowEdit" :isEdit="isEdit"
+      <problem-edit :isEdit="isEdit"
                     @editFinish="hideEdit" ref="problemEdit"></problem-edit>
     </transition>
   </div>
@@ -70,7 +69,6 @@
       return {
         problemDatas: [],
         cur_page: 1,
-        multipleSelection: [],
         select_cate: '',
         select_word: '',
         del_list: [],
@@ -89,13 +87,13 @@
             {min: 5, message: '描述过短', trigger: 'blur'}
           ]
         },
-        isShowEdit: false,  //是否展示编辑页面
         isEdit: false,  //false新建题目 true编辑题目
         confirmText: '',
         curProblemId: '',
         curProblemTitle: '',
         editorThemes: editorThemes,
-        selectTheme: editorThemes[0]
+        selectTheme: editorThemes[0],
+        showFlag: true //manage-problem这个页面是否展示
       }
     },
     created(){
@@ -104,7 +102,8 @@
     methods: {
       showSetupProblem(){
         this.isEdit = false
-        this.isShowEdit = true
+        this.showFlag = false
+        this.$refs.problemEdit.show()
       },
       handleCurrentChange(val){
         this.cur_page = val
@@ -128,9 +127,9 @@
         //点击编辑按钮
         console.log(row)
         this.saveOneProblem(new Problem(row))
-        this.isEdit = true
-        this.isShowEdit = true
-        this.$refs.problemEdit.showPromblemInfo()
+        this.isEdit = true  //处于编辑模式
+        this.showFlag = false //隐藏当前页面
+        this.$refs.problemEdit.show() //显示编辑页面
       },
       handleDelete(index, row){
         //点击删除按钮
@@ -159,29 +158,12 @@
           this.$message.error(`无法删除题目${this.curProblemTitle}`)
         })
       },
-      delAll(){
-        const self = this,
-          length = self.multipleSelection.length
-        let str = ''
-        self.del_list = self.del_list.concat(self.multipleSelection)
-        for (let i = 0; i < length; i++) {
-          str += self.multipleSelection[i].name + ' '
-        }
-        self.$message.error('删除了' + str)
-        self.multipleSelection = []
-      },
       calcTag(row, column, cellValue) {
-        if (cellValue === '') {
-          return 'Nothing'
-        }
-        return cellValue.replace(',', ' & ')
-      },
-      handleSelectionChange(val){
-        this.multipleSelection = val
+        return cellValue === '' ? 'Nothing' : cellValue.replace(',', ' & ')
       },
       hideEdit(){
-        // 隐藏编辑页面
-        this.isShowEdit = false
+        //隐藏编辑页面后调用
+        this.showFlag = true
         this._getProblemsData(this.cur_page)
       },
       refreshProblems(){
@@ -192,28 +174,6 @@
       ...mapActions([
         'saveOneProblem'
       ])
-    },
-    computed: {
-      data(){
-        const self = this
-        return self.contestDatas.filter(function (d) {
-          let is_del = false
-          for (let i = 0; i < self.del_list.length; i++) {
-            if (d.name === self.del_list[i].name) {
-              is_del = true
-              break
-            }
-          }
-          if (!is_del) {
-            if (d.address.indexOf(self.select_cate) > -1 &&
-              (d.name.indexOf(self.select_word) > -1 ||
-              d.address.indexOf(self.select_word) > -1)
-            ) {
-              return d
-            }
-          }
-        })
-      }
     },
     components: {
       ElFormItem,
