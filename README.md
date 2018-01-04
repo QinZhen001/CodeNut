@@ -10,3 +10,11 @@
 * 网络请求采用axios
 * 打包工具webpack
 
+## 截图
+![enter description here][1]
+
+
+
+
+
+ [1]: https://github.com/QinZhen001/CodeNut/blob/web-pc/screenshot/screenshot1.png
