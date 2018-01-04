@@ -11,10 +11,19 @@
 * 打包工具webpack
 
 ## 截图
-![enter description here][1]
+![欢迎页][1]
+
+![主页][2]
+
+![OJ判题][3]
+
+![用户中心][4]
+
+![笔记记录][5]
 
 
-
-
-
- [1]: https://github.com/QinZhen001/CodeNut/blob/web-pc/screenshot/screenshot1.png
+  [1]: https://github.com/QinZhen001/CodeNut/blob/web-pc/screenshot/screenshot1.png
+  [2]: https://github.com/QinZhen001/CodeNut/blob/web-pc/screenshot/screenshot2.png
+  [3]: https://github.com/QinZhen001/CodeNut/blob/web-pc/screenshot/screenshot3.png
+  [4]: https://github.com/QinZhen001/CodeNut/blob/web-pc/screenshot/screenshot4.png
+  [5]: https://github.com/QinZhen001/CodeNut/blob/web-pc/screenshot/screenshot5.png
