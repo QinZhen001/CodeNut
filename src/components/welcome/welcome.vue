@@ -65,9 +65,10 @@
         this.$refs.registerDialog.show()
       },
       linkToselfStudy(){
-        this.$router.replace('/home/selfstudy')
+        this.$router.replace('/selfstudy')
       },
       mouseScroll(e){
+        // wheelDelta不兼容火狐浏览器
         console.log(e.wheelDelta)
         if (e.wheelDelta < 0) {
           //向下

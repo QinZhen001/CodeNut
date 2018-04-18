@@ -18,9 +18,10 @@
 <script type="text/ecmascript-6">
   import axios from 'axios'
   import User from 'common/js/user'
-  import { saveToken, getToken } from 'common/js/cache'
+  import { saveToken } from 'common/js/cache'
   import { baseUrl, MSG_OK } from 'common/js/data'
   import { mapMutations, mapActions } from 'vuex'
+  import { changeAxiosInterceptor } from '../../config/config'
 
   export default {
     data() {
@@ -62,7 +63,6 @@
             type: 'success'
           })
         }, response => {
-          console.log(response)
           this.$notify.error({
             title: '错误',
             message: '登录失败'
@@ -74,7 +74,7 @@
       },
       afterLoginSuccess(id) {
         // 登录后 修改axios的拦截器
-        this._changeAxiosInterceptor()
+        changeAxiosInterceptor(this.username, this.password)
         console.log(id)
         // 在这里 同时保存用户信息 到Vuex
         let url = `${baseUrl}/users/${id}`
@@ -95,20 +95,6 @@
       },
       handleBeforeClose(done) {
         this.clickCancel()
-      },
-      _changeAxiosInterceptor() {
-        axios.interceptors.request.use(
-          config => {
-            config.headers.token = getToken()
-            config.auth = {
-              username: this.username,
-              password: this.password
-            }
-            return config
-          },
-          err => {
-            return Promise.reject(err)
-          })
       },
       ...mapMutations({
         setHeaderData: 'SET_HEADERDATA'

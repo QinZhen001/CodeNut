@@ -14,7 +14,7 @@
 
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" scoped rel="stylesheet/stylus">
   .myfooter
     flex: 0 0 auto;
     margin-top 20px

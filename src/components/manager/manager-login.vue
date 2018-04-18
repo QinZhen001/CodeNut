@@ -21,12 +21,12 @@
 </template>
 
 <script type="text/ecmascript-6">
-  // import { getToken } from 'common/js/cache'
   import axios from 'axios'
-  import { saveToken, getToken } from 'common/js/cache'
+  import { saveToken } from 'common/js/cache'
   import { baseUrl, MSG_OK } from 'common/js/data'
   import { mapGetters, mapActions } from 'vuex'
   import User from 'common/js/user'
+  import { changeAxiosInterceptor } from '../../config/config'
 
   export default {
     data: function () {
@@ -75,7 +75,7 @@
             if (this.user.role !== 'user') {
               saveToken(response.data.result[0].token)
               // 登录后 修改axios的拦截器
-              this._changeAxiosInterceptor()
+              changeAxiosInterceptor(this.mangerLoginForm.username, this.mangerLoginForm.password)
               // 页面跳转
               this.$notify({
                 title: '成功',
@@ -101,22 +101,6 @@
           this.mangerLoginForm.password = ''
         })
       },
-      _changeAxiosInterceptor() {
-        console.log(getToken())
-        console.log(this.mangerLoginForm)
-        axios.interceptors.request.use(
-          config => {
-            config.headers.token = getToken()
-            config.auth = {
-              username: this.mangerLoginForm.username,
-              password: this.mangerLoginForm.password
-            }
-            return config
-          },
-          err => {
-            return Promise.reject(err)
-          })
-      },
       FindUserInfo(id) {
         console.log(id)
         let url = `${baseUrl}/users/${id}`
@@ -131,7 +115,6 @@
       ...mapActions([
         'saveOneUser'
       ])
-
     },
     computed: {
       ...mapGetters([

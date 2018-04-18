@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 Vue.use(Router)
 
+//  可以用const Foo = () => import('./Foo.vue')
 const Home = (resolve) => {
   import('components/home/home').then((moudle) => {
     resolve(moudle)
@@ -66,18 +67,15 @@ const ManageContests = (resolve) => {
 
 // 路径设置不是很好 懒得再调了
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
-      redirect: '/welcome'
+      component: Welcome
     },
     {
       path: '/home',
       component: Home
-    },
-    {
-      path: '/welcome',
-      component: Welcome
     },
     {
       path: '/problem',
@@ -85,21 +83,21 @@ export default new Router({
       meta: {scrollToTop: true},
       children: [
         {
-          path: '/home/problem/success-animation',
+          path: '/problem/success-animation',
           component: BgAnimation
         }
       ]
     },
     {
-      path: '/home/selfstudy',
+      path: '/selfstudy',
       component: SelfStudy
     },
     {
-      path: '/home/usercenter',
+      path: '/usercenter',
       component: UserCenter
     },
     {
-      path: '/home/managerlogin',
+      path: '/managerlogin',
       component: MangerLogin
     },
     {
@@ -122,9 +120,8 @@ export default new Router({
       ]
     },
     {
-      path: '/home/breakthrough',
+      path: '/breakthrough',
       component: BreakThrough
-      //component: TestCanvas
     }
   ]
 })

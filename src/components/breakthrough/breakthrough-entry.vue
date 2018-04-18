@@ -25,7 +25,7 @@
           })
           return
         }
-        this.$router.push('/home/breakthrough')
+        this.$router.push('/breakthrough')
       }
     },
     computed: {

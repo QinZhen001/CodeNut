@@ -44,7 +44,7 @@
         })
       },
       linkToselfStudy(){
-        this.$router.push('/home/selfstudy')
+        this.$router.push('/selfstudy')
       },
       ...mapMutations({
         setUser: 'SET_USER'

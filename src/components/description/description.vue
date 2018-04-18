@@ -26,7 +26,7 @@
   }
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" scoped rel="stylesheet/stylus">
   .description
     border-bottom 1px solid #ddd
     p

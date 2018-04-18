@@ -25,6 +25,8 @@
 
 <script type="text/ecmascript-6">
   import axios from 'axios'
+  import { notify } from '../../util/util'
+  import { clearAxiosInterceptor } from '../../config/config'
   import LoginDialog from 'base/logindialog/logindialog'
   import RegisterDialog from 'base/registerdialog/registerdialog'
   import { clearToken } from 'common/js/cache'
@@ -76,31 +78,15 @@
             this.clearOneUser()
             // 修改header的内容
             this.setHeaderData(['注册', '用户登录', '管理员登录'])
-            this.$notify({
-              title: '退出登录',
-              message: '注销用户成功!',
-              type: 'success'
-            })
+            notify({title: '退出登录', message: '注销用户成功!', type: 'success'})
             console.log('成功退出')
             this.$router.push('/home')
             //注销用户成功 修改 axios的 拦截器
-            this.clearAxiosInterceptor()
+            clearAxiosInterceptor()
           }
         }, response => {
           this._logoff()
         })
-      },
-      clearAxiosInterceptor() {
-        console.log('clearAxiosInterceptor')
-        axios.interceptors.request.use(
-          config => {
-            config.headers.token = ''
-            config.auth = {}
-            return config
-          },
-          err => {
-            return Promise.reject(err)
-          })
       },
       handleCommand(command) {
         console.log(command)
@@ -109,16 +95,16 @@
         }
       },
       LinkToUserCenter(){
-        this.$router.push('/home/usercenter')
+        this.$router.push('/usercenter')
       },
       LinkToHome() {
         this.$router.push('/home')
       },
       LinkToMangerLogin() {
-        this.$router.push('/home/managerlogin')
+        this.$router.push('/managerlogin')
       },
       LinkToSelfstudy(){
-        this.$router.push('/home/selfstudy')
+        this.$router.push('/selfstudy')
       },
       ...mapMutations({
         setUser: 'SET_USER',
