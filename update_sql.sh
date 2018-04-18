@@ -1,5 +1,9 @@
+#! /usr/bin/env bash
 
-SQL_FILE=./SQL/codenutv2.sql
+
+#SQL_FILE=./SQL/codenutv2.sql
+
+SQL_FILE=$1
 
 cd /root/CodeNut &&
     git pull &&
