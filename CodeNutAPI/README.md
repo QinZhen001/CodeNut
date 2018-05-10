@@ -1,15 +1,6 @@
 # CodeNut API
 
 doc: https://api.txdna.cn
-主站：https://oj.txdna.cn
-
-# 部分截图
-
-![1](https://github.com/QinZhen001/CodeNut/blob/master/README/1.png)
-
-![2](https://github.com/QinZhen001/CodeNut/blob/master/README/2.png)
-
-![3](https://github.com/QinZhen001/CodeNut/blob/master/README/3.png)
 
 ## 更新历史
 
