@@ -8,6 +8,7 @@ from dispatcher.task import ResultTask
 import CodeNutJudge
 import shlex
 
+
 class ResultStatus:
     RS = 'Run Successfully'
     AC = 'Accepted'
@@ -20,7 +21,6 @@ class ResultStatus:
     PE = 'Presentation Error'
 
 
-
 class Program:
     def __init__(self, problem):
         logger.debug('arg problem %s', problem)
@@ -28,18 +28,20 @@ class Program:
         self.result = ResultTask(user_id=self.problem['user_id'])
         self.user_dir = os.path.join(
             config['work_dir'], self.problem['user_id'])
-        self.user_out_path = os.path.join(self.user_dir, 'out')        
+        self.user_out_path = os.path.join(self.user_dir, 'out')
         # make a directory for user
         if not os.path.exists(self.user_dir):
             os.makedirs(self.user_dir)
         self.completeCodeFile()
+
     def completeCodeFile(self):
         def completeCodeFileJavaRemovLastBraces(user_code):
             fixed_code = user_code.rstrip()
             if fixed_code[-1] == '}':
                 fixed_code = fixed_code[:-1]
             return fixed_code
-        def completeCodeFileInternal(user_code, user_code_type, problem_filepath , output_filepath):
+
+        def completeCodeFileInternal(user_code, user_code_type, problem_filepath, output_filepath):
             if user_code_type in ['Java']:
                 user_code = completeCodeFileJavaRemovLastBraces(user_code)
 
@@ -58,7 +60,7 @@ class Program:
             with open(output_filepath, 'w') as f:
                 f.write(result)
             return
-        
+
         file_name = {
             'C': 'Solution.c',
             'C++': 'Solution.cpp',
@@ -76,11 +78,11 @@ class Program:
         answer_dir = config['answer_dir']
 
         output_filepath = join(self.user_dir, file_name[problem_type])
-        problem_filepath = join(answer_dir,problem_id, file_name[problem_type])
+        problem_filepath = join(answer_dir, problem_id, file_name[problem_type])
         user_code = self.problem['code']
         user_code_type = self.problem['language']
 
-        completeCodeFileInternal(user_code, user_code_type, problem_filepath , output_filepath)
+        completeCodeFileInternal(user_code, user_code_type, problem_filepath, output_filepath)
 
     def __compile(self):
         command = {
@@ -104,7 +106,7 @@ class Program:
             return False
         else:
             return True
-        
+
     def __get_program_argv(self, dir):
         command = {
             'C': '{}/Solution'.format(dir),
@@ -152,7 +154,7 @@ class Program:
         time_used, memory_used = 0.0, 0.0
         for i in range(count):
             input = in_list[i].replace('\r', '').rstrip().split()
-            
+
             logger.debug('args:%s, fp:%s', user_program + input, self.user_out_path)
             result = CodeNutJudge.run({
                 'args': user_program + input,
@@ -162,7 +164,7 @@ class Program:
                 'memory_limit': memory_limit,  # in KB
             })
             logger.debug('result:%s', result)
-            
+
             with open(self.user_out_path) as f:
                 logger.debug('fp:%s', self.user_out_path)
                 logger.debug('file:%s', f.read())
@@ -187,7 +189,7 @@ class Program:
 
     def __judge_result(self, official_out_path):
         with open(official_out_path) as f:
-            official_out_list = f.readlines()        
+            official_out_list = f.readlines()
         with open(self.user_out_path) as f:
             user_out_list = f.readlines()
         logger.debug('userfp:%s', self.user_out_path)
@@ -198,13 +200,12 @@ class Program:
             return ResultStatus.AC
         else:
             return ResultStatus.WA
-       
 
     def run(self, choice='many'):
         # can not compile them
         if self.problem['language'] not in ['JavaScript', 'Ruby', 'Python3'] and self.__compile() is False:
             with open(self.user_out_path) as f:
-                self.result.output=f.read()
+                self.result.output = f.read()
             self.result.status = ResultStatus.CE
             retval = self.result
         else:
@@ -213,36 +214,41 @@ class Program:
         return retval
 
     def __del__(self):  # clear user dir
-        
+
         __import__("shutil").rmtree(self.user_dir)
         pass
-        
+
 
 def test():
     from os import chdir
     from pickle import load
     chdir('/root/source_code.d/software_design.d/CodeNut/CodeNutJudge')
-    __import__("shutil").rmtree('../work_dir/1', ignore_errors = True)
-    with open('/tmp/CodeNutJudge_problem.bug', 'rb') as f:    
+    __import__("shutil").rmtree('../work_dir/1', ignore_errors=True)
+    with open('/tmp/CodeNutJudge_problem.bug', 'rb') as f:
         problem = load(f)
     t = Program(problem).run()
     print(t.__dict__)
+
+
 def updateData():
     if 1:
         from subprocess import run
-        run(['python3', '/root/source_code.d/software_design.d/problem_solution.d/insert_code_sql.py'], check= True)
-        run(['python3', 'download_answer.py'], check = True, shell = False, cwd = '/root/source_code.d/software_design.d/CodeNut')
+        run(['python3', '/root/source_code.d/software_design.d/problem_solution.d/insert_code_sql.py'], check=True)
+        run(['python3', 'download_answer.py'], check=True, shell=False,
+            cwd='/root/source_code.d/software_design.d/CodeNut')
+
+
 def configLogger():
     from pathlib import Path
-    from os import chdir
     import logging
     from logging import Formatter
     from datetime import datetime
-    
+
     class ColoredFormatter(Formatter):
-        def __init__(self, use_color = True, **kwargs):
+        def __init__(self, use_color=True, **kwargs):
             self.use_color = use_color
             super().__init__(**kwargs)
+
         def format(self, record):
             if record.levelname in ['DEBUG']:
                 record.name = '[*]'
@@ -251,36 +257,33 @@ def configLogger():
             if self.use_color:
                 record.name = '\x1b[32m' + record.name + '\x1b[0m'
             return super().format(record)
-        
+
     def saveCodeFile(content):
         with open('/tmp/program.code', 'w') as f:
             f.write(content)
-    
-
 
     logfilepath = str(Path(__file__).parent / 'program.log')
-    
+
     logger_name = __name__
-    logger = logging.getLogger(name= logger_name)    
+    logger = logging.getLogger(name=logger_name)
     logger.setLevel(logging.DEBUG)
 
     filename = logfilepath
-    filehander = logging.FileHandler(filename, mode= 'w')
+    filehander = logging.FileHandler(filename, mode='w')
     filehander.setLevel(logging.DEBUG)
 
-    #fmt ='%(asctime)s %(levelname)s: %(message)s'
+    # fmt ='%(asctime)s %(levelname)s: %(message)s'
     fmt = '%(name)s %(lineno)d-%(funcName)s-%(message)s'
     datefmt = '%H:%M:%S'
-    formatter = ColoredFormatter(use_color= True, fmt = fmt, datefmt = datefmt)
+    formatter = ColoredFormatter(use_color=True, fmt=fmt, datefmt=datefmt)
 
     filehander.setFormatter(formatter)
     logger.addHandler(filehander)
-    
+
     logger.saveCodeFile = saveCodeFile
-    
+
     logger.debug('starting logger %s', datetime.now().strftime('%H:%M:%S'))
-    
-    
+
     return logger
 
 
@@ -288,8 +291,8 @@ logger = configLogger()
 config = {
     'work_dir': '../work_dir',
     'answer_dir': '../answer_dir',
-}    
-    
-if __name__=='__main__':
-    #updateData()
+}
+
+if __name__ == '__main__':
+    # updateData()
     test()

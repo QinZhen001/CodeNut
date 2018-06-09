@@ -1,2 +1,2 @@
 #!/bin/bash
-./setup.py install && rm -r build
+sudo ./setup.py install && rm -r build

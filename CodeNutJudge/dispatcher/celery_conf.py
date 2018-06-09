@@ -3,9 +3,9 @@
 
 from kombu import Queue
 
-BROKER_URL = 'redis://appredis:6379'
+BROKER_URL = 'redis://localhost:6379'
 
-CELERY_RESULT_BACKEND = 'redis://appredis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 CELERY_TASK_RESULT_EXPIRES = 60 * 60
 
